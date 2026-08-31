@@ -74,7 +74,7 @@
       color: #F8FAFC;
       font-family: 'Pretendard', sans-serif;
       overflow-x: hidden;
-      font-size: 17px;
+      font-size: 16px;
       line-height: 1.75;
       user-select: none;
     }
@@ -209,43 +209,36 @@
     };
 
     function App() {
-      // 🌟 1. 각각의 창(Pane)별 독립 글씨 크기 상태 관리
-      const [chatFontSize, setChatFontSize] = useState(() => {
-        return parseFloat(localStorage.getItem('AG_FONT_CHAT') || '1.15');
-      });
-      const [systemFontSize, setSystemFontSize] = useState(() => {
-        return parseFloat(localStorage.getItem('AG_FONT_SYSTEM') || '1.15');
-      });
-      const [backupFontSize, setBackupFontSize] = useState(() => {
-        return parseFloat(localStorage.getItem('AG_FONT_BACKUP') || '1.10');
-      });
-      const [pageFontSize, setPageFontSize] = useState(() => {
-        return parseFloat(localStorage.getItem('AG_FONT_PAGE') || '1.20');
-      });
+      // 각 창별 독립 글씨 크기
+      const [chatFontSize, setChatFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_CHAT') || '1.15'));
+      const [systemFontSize, setSystemFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_SYSTEM') || '1.15'));
+      const [backupFontSize, setBackupFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_BACKUP') || '1.10'));
+      const [analysisFontSize, setAnalysisFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ANALYSIS') || '1.20'));
+      const [actionFontSize, setActionFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ACTION') || '1.20'));
 
-      const [leftWidthPercent, setLeftWidthPercent] = useState(() => {
-        return parseFloat(localStorage.getItem('AG_SPLIT_PERCENT') || '50');
-      });
+      const [leftWidthPercent, setLeftWidthPercent] = useState(() => parseFloat(localStorage.getItem('AG_SPLIT_PERCENT') || '50'));
       const [isDragging, setIsDragging] = useState(false);
       const [inputHeightPx, setInputHeightPx] = useState(90);
       const [selectedQuestion, setSelectedQuestion] = useState(null);
 
-      // 메인보드 뷰 모드
-      const [mainViewMode, setMainViewMode] = useState('WORKSPACE');
-      const [activeMasterTab, setActiveMasterTab] = useState('PRINCIPLES');
+      // 🌟 4대 메인 탭: 'WORKSPACE' | 'MATRIX' | 'ANALYSIS' | 'ACTION'
+      const [mainNavTab, setMainNavTab] = useState('WORKSPACE');
+
+      // 분석시스템 탭 내부에서 선택된 거장 ID ('DALIO' | 'ROBBINS' | 'FORTE' | 'HILL' | 'GTD')
+      const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
 
       // 4대 질문 목록
-      const [activeQuestions, setActiveQuestions] = useState(() => {
-        return generateSocratic4Questions("월 100만 원 부업 수익 만들기");
-      });
+      const [activeQuestions, setActiveQuestions] = useState(() => generateSocratic4Questions("월 100만 원 부업 수익 만들기"));
 
       // 5대 거장 심층 분석 데이터
       const [fiveMastersData, setFiveMastersData] = useState(() => {
-        const saved = localStorage.getItem('AG_FIVE_MASTERS_V3');
+        const saved = localStorage.getItem('AG_FIVE_MASTERS_V4');
         return saved ? JSON.parse(saved) : {
           dalio: {
-            bookTitle: "《원칙 (Principles)》 (레이 달리오)",
-            coreSystem: "기계론적 5단계 피드백 루프 & 의사결정 알고리즘 (Machine-like OS)",
+            id: 'DALIO',
+            bookTitle: "《원칙 (Principles)》",
+            author: "레이 달리오",
+            coreSystem: "기계론적 5단계 피드백 루프 & 의사결정 알고리즘",
             socraticQuestion: "이 문제의 근본 원인은 무엇인가? 어떤 현실을 외면하고 있는가?",
             dataSchema: "의사결정 규칙 DB (If-Then 원칙집)",
             goals: "월 100만 원 자동화 부업 파이프라인 확립",
@@ -256,8 +249,10 @@
             ifThenRule: "IF 새로운 기획을 앞두고 미루고 싶을 때, THEN 비공개 메모장에 3분간 단어 3개만 적는다."
           },
           robbins: {
-            bookTitle: "《거인을 깨워라》 (토니 로빈스)",
-            coreSystem: "신경연합조건화 (NAC) & 파워 질문 체계 (Power Questions)",
+            id: 'ROBBINS',
+            bookTitle: "《거인을 깨워라》",
+            author: "토니 로빈스",
+            coreSystem: "신경연합조건화 (NAC) & 파워 질문 체계",
             socraticQuestion: "진정으로 원하는 상태는 무엇이며, 무엇이 행동을 가로막는가?",
             dataSchema: "가치 우선순위 맵 및 잠재의식 신념 DB",
             coreDriver: "타인에게 종속되지 않는 경제적·시간적 절대 자립과 자아실현",
@@ -267,8 +262,10 @@
             powerQuestion: "이 목표를 달성함으로써 내 삶의 가치관 중 무엇이 가장 극대화되는가?"
           },
           forte: {
-            bookTitle: "《세컨드 브레인》 (티아고 포르테)",
-            coreSystem: "CODE 모델 & 4단계 계층형 PARA 지식 체계화 저장소",
+            id: 'FORTE',
+            bookTitle: "《세컨드 브레인》",
+            author: "티아고 포르테",
+            coreSystem: "CODE 모델 & 4단계 PARA 지식 계층 체계",
             socraticQuestion: "이 대화에서 장기적으로 보존해야 할 핵심 통찰은 무엇인가?",
             dataSchema: "4단계 계층형 지식 저장소 (Projects / Areas / Resources / Archives)",
             projects: "2026 1인 지식 엔터프라이즈 런칭 (마감 90일 스프린트)",
@@ -278,8 +275,10 @@
             distilledEssence: "고객의 진짜 페인포인트 1가지만 3분 안에 해결하는 최소 기능 제품(MVP)"
           },
           hill: {
-            bookTitle: "《생각하라 그리고 부자가 되어라》 (나폴레온 힐)",
-            coreSystem: "DCA (명확한 중심 목표) & 6단계 확약 진술문 (Statement Engine)",
+            id: 'HILL',
+            bookTitle: "《생각하라 부자가 되어라》",
+            author: "나폴레온 힐",
+            coreSystem: "DCA (명확한 중심 목표) & 6단계 확약 진술문",
             socraticQuestion: "이 목표를 위해 무엇을 기꺼이 포기하고 지불할 것인가?",
             dataSchema: "6단계 확약 진술문 (Statement Engine)",
             definiteChiefAim: "나는 2026년 12월 31일까지 1인 지식 시스템을 통해 월 100만 원의 지속적인 가치를 창출한다.",
@@ -290,8 +289,10 @@
             affirmationStatement: "나는 매일 더 명확해지고, 나의 실행은 무의식적인 습관이 되어 목표를 현실로 끌어당긴다."
           },
           gtd: {
-            bookTitle: "《GTD》 (데이비드 앨런)",
-            coreSystem: "Horizons of Focus & 6단계 수직적 정렬 트리 (Vision to Action)",
+            id: 'GTD',
+            bookTitle: "《GTD》",
+            author: "데이비드 앨런",
+            coreSystem: "Horizons of Focus & 6단계 수직적 정렬 트리",
             socraticQuestion: "이 비전을 실현하기 위해 지금 당장 물리적으로 취할 최소 행동은?",
             dataSchema: "6단계 수직적 정렬 트리 (Vision to Action)",
             altitude50k: "50,000ft (존재 목적): 세상에 가치 있는 지식을 전달하고 온전한 자기 결정권을 누린다.",
@@ -306,7 +307,7 @@
 
       // 백업 로그
       const [qaBackupLogs, setQaBackupLogs] = useState(() => {
-        const saved = localStorage.getItem('AG_QA_BACKUP_LOGS_V5');
+        const saved = localStorage.getItem('AG_QA_BACKUP_LOGS_V6');
         return saved ? JSON.parse(saved) : [
           {
             id: 1,
@@ -328,7 +329,7 @@
         {
           id: 1,
           sender: 'coach',
-          text: `안녕하세요! 반갑습니다 😊\n\n저는 당신의 생각을 분석하여 **세계 5대 성공학 거장의 프레임워크로 실시간 분석·체계화**해 드리는 AI 성공 파트너예요.\n\n각각의 창마다 상단에 위치한 **[ A- / A+ ]** 버튼으로 원하는 글씨 크기를 독립적으로 조절하실 수 있습니다! 👇`,
+          text: `안녕하세요! 반갑습니다 😊\n\n상단 4대 탭 **[ 대화 워크스페이스 / 5대 시스템종합 / 분석 시스템 / 행동 연계 ]**를 통해 당신의 생각을 5대 거장의 시스템으로 완벽히 분석하고 즉각적인 행동으로 연계해 드립니다! 👇`,
           time: '지금'
         }
       ]);
@@ -345,18 +346,19 @@
       const recordTimerRef = useRef(null);
 
       useEffect(() => {
-        localStorage.setItem('AG_FIVE_MASTERS_V3', JSON.stringify(fiveMastersData));
-        localStorage.setItem('AG_QA_BACKUP_LOGS_V5', JSON.stringify(qaBackupLogs));
+        localStorage.setItem('AG_FIVE_MASTERS_V4', JSON.stringify(fiveMastersData));
+        localStorage.setItem('AG_QA_BACKUP_LOGS_V6', JSON.stringify(qaBackupLogs));
         localStorage.setItem('AG_SPLIT_PERCENT', leftWidthPercent.toString());
         localStorage.setItem('AG_FONT_CHAT', chatFontSize.toString());
         localStorage.setItem('AG_FONT_SYSTEM', systemFontSize.toString());
         localStorage.setItem('AG_FONT_BACKUP', backupFontSize.toString());
-        localStorage.setItem('AG_FONT_PAGE', pageFontSize.toString());
+        localStorage.setItem('AG_FONT_ANALYSIS', analysisFontSize.toString());
+        localStorage.setItem('AG_FONT_ACTION', actionFontSize.toString());
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, fiveMastersData, qaBackupLogs, leftWidthPercent, chatFontSize, systemFontSize, backupFontSize, pageFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, activeMasterTab, mainViewMode]);
+      }, [messages, fiveMastersData, qaBackupLogs, leftWidthPercent, chatFontSize, systemFontSize, backupFontSize, analysisFontSize, actionFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis]);
 
       useEffect(() => {
         let timer = null;
@@ -535,7 +537,7 @@
             const coachMsg = {
               id: Date.now() + 1,
               sender: 'coach',
-              text: `✅ **"${qObj.title}"**에 대한 답변이 **5대 거장 분석실**에 완벽하게 체계화되었습니다! 🌟`,
+              text: `✅ **"${qObj.title}"**에 대한 답변이 **분석 시스템** 및 **행동 연계 엔진**에 실시간 반영되었습니다! 🌟`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
             setMessages(prev => [...prev, coachMsg]);
@@ -602,7 +604,7 @@
           const coachMsg = {
             id: Date.now() + 1,
             sender: 'coach',
-            text: `말씀해 주신 내용에 맞추어 **4대 질문** 및 **5대 분석실**이 업데이트되었습니다! 👇`,
+            text: `말씀해 주신 내용에 맞추어 **4대 질문** 및 **5대 분석 시스템 / 행동 연계**가 업데이트되었습니다! 👇`,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
 
@@ -626,18 +628,18 @@
       const chatPx = Math.max(14, 16 * chatFontSize);
       const systemPx = Math.max(14, 15.5 * systemFontSize);
       const backupPx = Math.max(13, 14.5 * backupFontSize);
-      const pagePx = Math.max(16, 17 * pageFontSize);
+      const analysisPx = Math.max(15, 16.5 * analysisFontSize);
+      const actionPx = Math.max(16, 17.5 * actionFontSize);
 
-      // 재사용 글씨 크기 컨트롤러 컴포넌트
       const FontController = ({ label, value, onChange }) => (
-        <div className="flex items-center space-x-1.5 bg-space-900 border border-slate-700 rounded-xl px-2 py-0.5 shadow-sm">
+        <div className="flex items-center space-x-1 bg-space-900 border border-slate-700 rounded-xl px-2 py-0.5 shadow-sm">
           {label && <span className="text-[11px] font-bold text-slate-300 mr-0.5">{label}</span>}
           <button
             onClick={() => { onChange(Math.max(0.8, value - 0.1)); playSound('pop'); }}
             className="w-6 h-6 rounded-lg bg-space-800 hover:bg-space-700 text-slate-200 font-bold text-xs flex items-center justify-center border border-slate-700">
             -
           </button>
-          <span className="text-xs font-bold font-mono text-cyan-300 px-1 min-w-[38px] text-center">
+          <span className="text-xs font-bold font-mono text-cyan-300 px-1 min-w-[36px] text-center">
             {Math.round(value * 100)}%
           </span>
           <button
@@ -669,103 +671,6 @@
               </div>
             </div>
 
-            {/* Split Size Controls */}
-            <div className="hidden lg:flex items-center gap-1 bg-space-900 border border-slate-800 rounded-xl p-1 text-xs font-bold text-slate-300">
-              <span className="text-slate-400 px-1 text-[11px]">화면 분할:</span>
-              <button 
-                onClick={() => setLeftWidthPercent(60)}
-                className={`px-2.5 py-1 rounded-lg transition text-xs ${leftWidthPercent === 60 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
-                대화 60%
-              </button>
-              <button 
-                onClick={() => setLeftWidthPercent(50)}
-                className={`px-2.5 py-1 rounded-lg transition text-xs ${leftWidthPercent === 50 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
-                50:50
-              </button>
-              <button 
-                onClick={() => setLeftWidthPercent(40)}
-                className={`px-2.5 py-1 rounded-lg transition text-xs ${leftWidthPercent === 40 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
-                시스템 60%
-              </button>
-            </div>
-          </header>
-
-          {/* 메인보드 상단 탭 바 */}
-          <nav className="bg-space-900/95 border-b border-cyan-500/20 px-4 py-2 flex items-center justify-between overflow-x-auto z-10">
-            <div className="flex items-center gap-2 min-w-max">
-              <button
-                onClick={() => { setMainViewMode('WORKSPACE'); playSound('pop'); }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
-                  mainViewMode === 'WORKSPACE'
-                    ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-black shadow-lg shadow-cyan-500/30'
-                    : 'bg-space-800 text-slate-300 hover:text-white border border-slate-700'
-                }`}>
-                <span>💬 대화 & 워크스페이스</span>
-              </button>
-
-              <button
-                onClick={() => { setMainViewMode('PAGE_MATRIX'); playSound('pop'); }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
-                  mainViewMode === 'PAGE_MATRIX'
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black shadow-lg shadow-emerald-500/30'
-                    : 'bg-space-800 text-emerald-300 hover:text-white border border-slate-700'
-                }`}>
-                <span>📑 5대 시스템 종합 매트릭스 표</span>
-              </button>
-
-              <div className="w-[1px] h-5 bg-slate-700 mx-1"></div>
-
-              <button
-                onClick={() => { setMainViewMode('PAGE_DALIO'); playSound('pop'); }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                  mainViewMode === 'PAGE_DALIO'
-                    ? 'bg-cyan-500 text-black font-black'
-                    : 'bg-space-850 text-slate-300 hover:text-white border border-slate-800'
-                }`}>
-                ① 레이 달리오 (원칙)
-              </button>
-
-              <button
-                onClick={() => { setMainViewMode('PAGE_ROBBINS'); playSound('pop'); }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                  mainViewMode === 'PAGE_ROBBINS'
-                    ? 'bg-rose-500 text-white font-black'
-                    : 'bg-space-850 text-slate-300 hover:text-white border border-slate-800'
-                }`}>
-                ② 토니 로빈스 (거인을깨워라)
-              </button>
-
-              <button
-                onClick={() => { setMainViewMode('PAGE_FORTE'); playSound('pop'); }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                  mainViewMode === 'PAGE_FORTE'
-                    ? 'bg-purple-500 text-white font-black'
-                    : 'bg-space-850 text-slate-300 hover:text-white border border-slate-800'
-                }`}>
-                ③ 티아고 포르테 (세컨드브레인)
-              </button>
-
-              <button
-                onClick={() => { setMainViewMode('PAGE_HILL'); playSound('pop'); }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                  mainViewMode === 'PAGE_HILL'
-                    ? 'bg-gold-500 text-black font-black'
-                    : 'bg-space-850 text-slate-300 hover:text-white border border-slate-800'
-                }`}>
-                ④ 나폴레온 힐 (DCA)
-              </button>
-
-              <button
-                onClick={() => { setMainViewMode('PAGE_GTD'); playSound('pop'); }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                  mainViewMode === 'PAGE_GTD'
-                    ? 'bg-cyan-400 text-black font-black'
-                    : 'bg-space-850 text-slate-300 hover:text-white border border-slate-800'
-                }`}>
-                ⑤ 데이비드 앨런 (GTD)
-              </button>
-            </div>
-
             <button
               onClick={() => {
                 const doc = `# 🌌 [Anti-Gravity 5대 거장 성공관리시스템 종합 분석 보고서]\n\n` +
@@ -776,25 +681,84 @@
                   `## 5. 데이비드 앨런 《GTD》\n- 고도: ${fiveMastersData.gtd.altitude50k} ~ ${fiveMastersData.gtd.runway}`;
                 downloadTextFile('5대_거장_성공관리시스템_전체보고서.md', doc);
               }}
-              className="hidden lg:flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30">
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30">
               <i data-lucide="download" className="w-3.5 h-3.5"></i>
-              <span>전체 보고서 다운로드</span>
+              <span>전체 보고서 다운로드 (.md)</span>
             </button>
+          </header>
+
+          {/* 🌟 4대 메인 내비게이션 탭 바 */}
+          <nav className="bg-space-900/95 border-b border-cyan-500/20 px-4 py-2.5 flex items-center justify-between overflow-x-auto z-10">
+            <div className="flex items-center gap-2 min-w-max">
+              
+              {/* 1. 대화 워크스페이스 */}
+              <button
+                onClick={() => { setMainNavTab('WORKSPACE'); playSound('pop'); }}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
+                  mainNavTab === 'WORKSPACE'
+                    ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-black shadow-lg shadow-cyan-500/30'
+                    : 'bg-space-800 text-slate-300 hover:text-white border border-slate-700'
+                }`}>
+                <span>💬 대화 워크스페이스</span>
+              </button>
+
+              {/* 2. 5대 시스템종합 */}
+              <button
+                onClick={() => { setMainNavTab('MATRIX'); playSound('pop'); }}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
+                  mainNavTab === 'MATRIX'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black shadow-lg shadow-emerald-500/30'
+                    : 'bg-space-800 text-emerald-300 hover:text-white border border-slate-700'
+                }`}>
+                <span>📑 5대 시스템종합</span>
+              </button>
+
+              {/* 3. 분석 시스템 */}
+              <button
+                onClick={() => { setMainNavTab('ANALYSIS'); playSound('pop'); }}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
+                  mainNavTab === 'ANALYSIS'
+                    ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-black shadow-lg shadow-purple-500/30'
+                    : 'bg-space-800 text-purple-300 hover:text-white border border-slate-700'
+                }`}>
+                <span>📊 분석 시스템</span>
+              </button>
+
+              {/* 4. 행동연계 */}
+              <button
+                onClick={() => { setMainNavTab('ACTION'); playSound('pop'); }}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
+                  mainNavTab === 'ACTION'
+                    ? 'bg-gradient-to-r from-gold-500 to-amber-600 text-black font-black shadow-lg shadow-gold-500/30'
+                    : 'bg-space-800 text-gold-300 hover:text-white border border-slate-700'
+                }`}>
+                <span>⚡ 행동연계</span>
+              </button>
+            </div>
+
+            {/* Split Width Presets for Workspace */}
+            {mainNavTab === 'WORKSPACE' && (
+              <div className="hidden lg:flex items-center gap-1 bg-space-900 border border-slate-800 rounded-xl p-1 text-xs font-bold text-slate-300">
+                <span className="text-slate-400 px-1 text-[11px]">화면 분할:</span>
+                <button onClick={() => setLeftWidthPercent(60)} className={`px-2 py-0.5 rounded-lg transition ${leftWidthPercent === 60 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>대화 60%</button>
+                <button onClick={() => setLeftWidthPercent(50)} className={`px-2 py-0.5 rounded-lg transition ${leftWidthPercent === 50 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>50:50</button>
+                <button onClick={() => setLeftWidthPercent(40)} className={`px-2 py-0.5 rounded-lg transition ${leftWidthPercent === 40 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>시스템 60%</button>
+              </div>
+            )}
           </nav>
 
           {/* MAIN CONTENT AREA */}
           <main className="flex-1 flex overflow-hidden relative">
 
-            {/* 🌟 1. 대화 & 워크스페이스 분할 화면 (WORKSPACE) */}
-            {mainViewMode === 'WORKSPACE' && (
+            {/* 🌟 1. [대화 워크스페이스] 탭 */}
+            {mainNavTab === 'WORKSPACE' && (
               <div className="flex-1 flex w-full h-full overflow-hidden">
                 
-                {/* 🌟 [좌측 창] 대화 영역 (자체 글씨 크기 조절기 탑재) */}
+                {/* 좌측 대화 영역 */}
                 <section 
                   className="flex flex-col bg-space-950/80 border-r border-cyan-500/10 relative overflow-hidden"
                   style={{ width: `${leftWidthPercent}%` }}>
                   
-                  {/* 좌측 대화창 상단 헤더 & 독립 글씨 조절기 */}
                   <div className="px-4 py-2 bg-space-900/90 border-b border-cyan-500/20 flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm">🌱</span>
@@ -803,17 +767,13 @@
                     <FontController label="대화 글씨:" value={chatFontSize} onChange={setChatFontSize} />
                   </div>
 
-                  {/* AI 성공 코치 대화 영역 */}
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {messages.map(m => (
                       <div key={m.id} className={`flex flex-col w-full ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
                         <div className="flex items-center gap-1.5 mb-1 px-1">
-                          <span className="text-xs font-bold text-cyan-400">
-                            {m.sender === 'coach' ? '🌱 AI 성공 코치' : '👤 나'}
-                          </span>
+                          <span className="text-xs font-bold text-cyan-400">{m.sender === 'coach' ? '🌱 AI 성공 코치' : '👤 나'}</span>
                           <span className="text-xs text-slate-500">{m.time}</span>
                         </div>
-
                         <div className={`w-full max-w-[98%] rounded-2xl p-4 leading-relaxed shadow-lg ${
                           m.sender === 'user'
                             ? 'bg-gradient-to-r from-cyan-950/90 to-indigo-950/95 border border-cyan-500/40 text-white rounded-tr-none'
@@ -823,7 +783,6 @@
                         </div>
                       </div>
                     ))}
-
                     {isThinking && (
                       <div className="flex items-center space-x-2 text-cyan-300 text-xs font-medium p-2.5 glass-box rounded-xl w-fit">
                         <i data-lucide="loader-2" className="w-3.5 h-3.5 animate-spin"></i>
@@ -833,15 +792,13 @@
                     <div ref={chatEndRef} />
                   </div>
 
-                  {/* 4대 전문 방향성 질문 카드 바 */}
-                  <div className="px-4 py-2.5 bg-space-900/95 border-t border-b border-cyan-500/20 shadow-md">
+                  {/* 4대 질문 바 */}
+                  <div className="px-4 py-2 bg-space-900/95 border-t border-b border-cyan-500/20 shadow-md">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-bold text-cyan-300 flex items-center gap-1">
-                        <span>🧭</span> 4대 전문 방향성 질문 (클릭하여 아래 답변창에 작성):
+                        <span>🧭</span> 4대 전문 방향성 질문 (클릭하여 아래 답변 작성):
                       </span>
-                      <span className="text-[10px] font-mono text-gold-300 bg-space-850 px-2 py-0.5 rounded-full">
-                        Socratic Cards
-                      </span>
+                      <span className="text-[10px] font-mono text-gold-300 bg-space-850 px-2 py-0.5 rounded-full">Socratic Cards</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-1.5">
@@ -852,9 +809,7 @@
                             key={q.id}
                             onClick={() => handleSelectQuestion(q)}
                             className={`p-2 rounded-xl text-left border transition shadow-sm ${
-                              isSelected 
-                                ? 'bg-cyan-500/25 border-cyan-300 ring-2 ring-cyan-400/40' 
-                                : 'bg-space-800 hover:bg-cyan-500/15 border-slate-700 hover:border-cyan-400'
+                              isSelected ? 'bg-cyan-500/25 border-cyan-300 ring-2 ring-cyan-400/40' : 'bg-space-800 hover:bg-cyan-500/15 border-slate-700 hover:border-cyan-400'
                             }`}>
                             <div className="flex items-center justify-between mb-0.5">
                               <span className="text-xs font-bold text-cyan-300 font-mono">Q{idx + 1}. {q.title}</span>
@@ -867,7 +822,6 @@
                     </div>
                   </div>
 
-                  {/* 선택된 질문 고정 바 */}
                   {selectedQuestion && (
                     <div className="px-4 py-2 bg-cyan-950/90 border-b border-cyan-400 flex items-center justify-between animate-fadeIn">
                       <div className="flex items-center gap-2">
@@ -877,29 +831,22 @@
                           <div className="text-xs font-medium text-white">{selectedQuestion.text}</div>
                         </div>
                       </div>
-                      <button
-                        onClick={() => setSelectedQuestion(null)}
-                        className="text-xs text-slate-400 hover:text-white px-2 py-0.5 rounded bg-space-900 border border-slate-700">
-                        취소 ✕
-                      </button>
+                      <button onClick={() => setSelectedQuestion(null)} className="text-xs text-slate-400 hover:text-white px-2 py-0.5 rounded bg-space-900 border border-slate-700">취소 ✕</button>
                     </div>
                   )}
 
-                  {/* 음성인식 배너 */}
                   {isRecording && (
                     <div className="px-5 py-1.5 bg-rose-950/90 border-t border-rose-500/40 flex items-center justify-between text-xs font-bold text-rose-200 animate-pulse">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-rose-500 mic-pulse inline-block"></span>
                         <span>🎙️ 30분 연속 음성 인식 중... (말씀하시면 실시간 입력됩니다)</span>
                       </div>
-                      <div className="font-mono text-gold-300 bg-space-900 px-2 py-0.5 rounded-lg border border-rose-500/30">
-                        ⏱️ {formatTime(recordDuration)} / 30:00+
-                      </div>
+                      <div className="font-mono text-gold-300 bg-space-900 px-2 py-0.5 rounded-lg border border-rose-500/30">⏱️ {formatTime(recordDuration)} / 30:00+</div>
                     </div>
                   )}
 
-                  {/* 답변 텍스트 입력창 */}
-                  <div className="p-3.5 bg-space-900/95 border-t border-cyan-500/20">
+                  {/* 입력창 */}
+                  <div className="p-3 bg-space-900/95 border-t border-cyan-500/20">
                     <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="flex flex-col gap-2">
                       <textarea
                         style={{ height: `${inputHeightPx}px`, fontSize: `${chatPx}px` }}
@@ -916,7 +863,7 @@
                             ? `[${selectedQuestion.title}]에 대한 나의 생각을 작성하거나 음성으로 말씀하세요...`
                             : (isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "하고 싶은 말이나 목표를 적거나 위 4개 질문 중 하나를 클릭하세요...")
                         }
-                        className="w-full bg-space-950 border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none resize-y font-sans leading-relaxed transition-all min-h-[55px] max-h-[350px]"
+                        className="w-full bg-space-950 border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none resize-y font-sans leading-relaxed min-h-[55px] max-h-[350px]"
                       />
 
                       <div className="flex items-center justify-between gap-2">
@@ -924,11 +871,8 @@
                           <button
                             type="button"
                             onClick={toggleVoiceRecording}
-                            title={isRecording ? "음성 인식 중지" : "30분 연속 음성 작성 시작"}
                             className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
-                              isRecording
-                                ? 'bg-rose-600 text-white mic-pulse shadow-md hover:bg-rose-500'
-                                : 'bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700 hover:border-cyan-400'
+                              isRecording ? 'bg-rose-600 text-white mic-pulse shadow-md hover:bg-rose-500' : 'bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700 hover:border-cyan-400'
                             }`}>
                             <i data-lucide={isRecording ? "mic-off" : "mic"} className="w-3.5 h-3.5"></i>
                             <span>{isRecording ? "녹음 중지" : "🎙️ 30분 음성"}</span>
@@ -936,24 +880,9 @@
 
                           <div className="flex items-center bg-space-800 rounded-xl border border-slate-700 p-0.5 text-xs font-bold text-slate-300">
                             <span className="px-1 text-[10px] text-slate-400">답변창:</span>
-                            <button
-                              type="button"
-                              onClick={() => setInputHeightPx(60)}
-                              className={`px-2 py-0.5 rounded-lg text-xs ${inputHeightPx === 60 ? 'bg-cyan-500 text-black font-black' : 'hover:text-white'}`}>
-                              기본
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setInputHeightPx(130)}
-                              className={`px-2 py-0.5 rounded-lg text-xs ${inputHeightPx === 130 ? 'bg-cyan-500 text-black font-black' : 'hover:text-white'}`}>
-                              중간
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setInputHeightPx(220)}
-                              className={`px-2 py-0.5 rounded-lg text-xs ${inputHeightPx === 220 ? 'bg-cyan-500 text-black font-black' : 'hover:text-white'}`}>
-                              넓게
-                            </button>
+                            <button type="button" onClick={() => setInputHeightPx(60)} className={`px-2 py-0.5 rounded-lg text-xs ${inputHeightPx === 60 ? 'bg-cyan-500 text-black font-black' : 'hover:text-white'}`}>기본</button>
+                            <button type="button" onClick={() => setInputHeightPx(130)} className={`px-2 py-0.5 rounded-lg text-xs ${inputHeightPx === 130 ? 'bg-cyan-500 text-black font-black' : 'hover:text-white'}`}>중간</button>
+                            <button type="button" onClick={() => setInputHeightPx(220)} className={`px-2 py-0.5 rounded-lg text-xs ${inputHeightPx === 220 ? 'bg-cyan-500 text-black font-black' : 'hover:text-white'}`}>넓게</button>
                           </div>
                         </div>
 
@@ -961,9 +890,7 @@
                           type="submit"
                           disabled={!inputMsg.trim() || isThinking}
                           className={`px-5 py-1.5 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1.5 transition shadow-md ${
-                            inputMsg.trim() && !isThinking
-                              ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:scale-105 shadow-cyan-500/40'
-                              : 'bg-space-800 text-slate-500 cursor-not-allowed border border-slate-750'
+                            inputMsg.trim() && !isThinking ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:scale-105 shadow-cyan-500/40' : 'bg-space-800 text-slate-500 cursor-not-allowed border border-slate-750'
                           }`}>
                           <span>{selectedQuestion ? '답변 저장' : '전송'}</span>
                           <i data-lucide="send" className="w-3.5 h-3.5"></i>
@@ -971,177 +898,39 @@
                       </div>
                     </form>
                   </div>
-
                 </section>
 
-                {/* RESIZER DRAG HANDLE */}
-                <div 
-                  onMouseDown={handleMouseDown}
-                  className={`resizer-bar ${isDragging ? 'dragging' : ''}`}
-                  title="좌우 드래그하여 대화창 폭 자유 조절">
+                <div onMouseDown={handleMouseDown} className={`resizer-bar ${isDragging ? 'dragging' : ''}`} title="드래그하여 폭 조절">
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-slate-600 rounded-full"></div>
                 </div>
 
-                {/* RIGHT PANE: [상단: 5대 거장 프레임워크 탭] & [하단: 실시간 대화 백업] */}
-                <aside 
-                  className="flex-1 flex flex-col bg-space-950/95 overflow-hidden"
-                  style={{ width: `${100 - leftWidthPercent}%` }}>
+                {/* 우측 시스템 및 백업 영역 */}
+                <aside className="flex-1 flex flex-col bg-space-950/95 overflow-hidden" style={{ width: `${100 - leftWidthPercent}%` }}>
                   
-                  {/* 🌟 [우측 상단 창] 5대 거장 시스템창 (자체 글씨 크기 조절기 탑재) */}
-                  <div className="h-[56%] border-b-2 border-slate-800 p-3.5 flex flex-col overflow-hidden space-y-2.5">
-                    
-                    {/* 헤더 & 독립 글씨 조절기 */}
+                  {/* 우측 상단 시스템 */}
+                  <div className="h-[56%] border-b-2 border-slate-800 p-3.5 flex flex-col overflow-hidden space-y-2">
                     <div className="flex items-center justify-between pb-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-base">📊</span>
-                        <h2 className="text-xs md:text-sm font-black text-white">5대 성공관리 시스템</h2>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FontController label="시스템 글씨:" value={systemFontSize} onChange={setSystemFontSize} />
-                        <button
-                          onClick={() => {
-                            const doc = `# 🌌 [Anti-Gravity 5대 거장 성공관리시스템 종합 분석]\n\n` +
-                              `## ① 레이 달리오 《원칙》\n- If-Then: ${fiveMastersData.dalio.ifThenRule}\n\n` +
-                              `## ② 토니 로빈스 《거인을 깨워라 (NAC)》\n- 핵심 동기: ${fiveMastersData.robbins.coreDriver}\n\n` +
-                              `## ③ 티아고 포르테 《세컨드 브레인》\n- PARA: ${fiveMastersData.forte.projects}\n\n` +
-                              `## ④ 나폴레온 힐 《생각하라 부자가 되어라》\n- DCA: ${fiveMastersData.hill.definiteChiefAim}\n\n` +
-                              `## ⑤ 데이비드 앨런 《GTD》\n- 6단계 고도: ${fiveMastersData.gtd.altitude50k} ~ ${fiveMastersData.gtd.runway}`;
-                            downloadTextFile('5대_거장_성공관리시스템_분석.md', doc);
-                          }}
-                          className="px-2 py-0.5 rounded-lg font-bold text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 flex items-center gap-1 shadow-sm">
-                          <i data-lucide="download" className="w-3 h-3"></i>
-                          <span>다운로드</span>
-                        </button>
-                      </div>
+                      <h2 className="text-xs font-black text-white flex items-center gap-1"><span>📊</span> 5대 성공관리 시스템</h2>
+                      <FontController label="시스템:" value={systemFontSize} onChange={setSystemFontSize} />
                     </div>
 
-                    {/* 5대 거장 미니 탭 */}
-                    <div className="flex items-center gap-1 overflow-x-auto pb-1 border-b border-slate-800">
-                      {[
-                        { id: 'PRINCIPLES', label: '① 레이 달리오' },
-                        { id: 'NAC', label: '② 토니 로빈스' },
-                        { id: 'SECOND_BRAIN', label: '③ 세컨드브레인' },
-                        { id: 'DCA', label: '④ 나폴레온 힐' },
-                        { id: 'GTD', label: '⑤ 데이비드 앨런' }
-                      ].map(tab => (
-                        <button
-                          key={tab.id}
-                          onClick={() => { setActiveMasterTab(tab.id); playSound('pop'); }}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition ${
-                            activeMasterTab === tab.id
-                              ? 'bg-cyan-500 text-black shadow-md font-black'
-                              : 'bg-space-800 text-slate-300 hover:text-white border border-slate-750'
-                          }`}>
-                          {tab.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* 탭별 분석 뷰 (systemPx 적용) */}
                     <div className="flex-1 overflow-y-auto space-y-2" style={{ fontSize: `${systemPx}px` }}>
-                      {activeMasterTab === 'PRINCIPLES' && (
-                        <div className="space-y-2">
-                          <div className="glass-box-active rounded-xl p-3 border border-cyan-400/40">
-                            <span className="text-cyan-300 block font-bold text-xs mb-1">⚡ Ray Dalio If-Then 의사결정 알고리즘</span>
-                            <p className="text-white font-bold bg-space-900 p-2.5 rounded-lg border border-slate-800 leading-relaxed">
-                              {fiveMastersData.dalio.ifThenRule}
-                            </p>
-                          </div>
-                          <div className="glass-box rounded-xl p-2.5 border border-slate-800 space-y-1">
-                            <div className="p-1 bg-space-900 rounded"><span className="text-cyan-400 font-bold">1. 목표:</span> {fiveMastersData.dalio.goals}</div>
-                            <div className="p-1 bg-space-900 rounded"><span className="text-rose-400 font-bold">2. 문제:</span> {fiveMastersData.dalio.problems}</div>
-                            <div className="p-1 bg-space-900 rounded"><span className="text-purple-400 font-bold">3. 5-Whys:</span> {fiveMastersData.dalio.diagnosis5Why}</div>
-                            <div className="p-1 bg-space-900 rounded"><span className="text-gold-400 font-bold">4. 설계:</span> {fiveMastersData.dalio.systemDesign}</div>
-                            <div className="p-1 bg-space-900 rounded"><span className="text-emerald-400 font-bold">5. 실행:</span> {fiveMastersData.dalio.execution}</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {activeMasterTab === 'NAC' && (
-                        <div className="space-y-2">
-                          <div className="glass-box rounded-xl p-3 border border-rose-500/30 space-y-1">
-                            <span className="text-rose-300 font-bold text-xs block">🔥 잠재의식적 핵심 동기 (Core Driver)</span>
-                            <p className="text-white font-bold bg-space-900 p-2.5 rounded-lg leading-relaxed">{fiveMastersData.robbins.coreDriver}</p>
-                          </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div className="p-2 bg-space-900 rounded-lg border border-rose-500/40">
-                              <span className="text-rose-400 font-bold block mb-1 text-xs">🛑 미달성 시 고통</span>
-                              <p className="text-slate-200">{fiveMastersData.robbins.painOfFailure}</p>
-                            </div>
-                            <div className="p-2 bg-space-900 rounded-lg border border-emerald-500/40">
-                              <span className="text-emerald-400 font-bold block mb-1 text-xs">✨ 달성 시 쾌락</span>
-                              <p className="text-slate-200">{fiveMastersData.robbins.pleasureOfSuccess}</p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {activeMasterTab === 'SECOND_BRAIN' && (
-                        <div className="space-y-2">
-                          <div className="grid grid-cols-2 gap-2">
-                            <div className="p-2 bg-space-900 rounded-lg border border-purple-500/30">
-                              <span className="text-purple-300 font-bold block text-xs">Projects:</span>
-                              <span className="text-slate-200">{fiveMastersData.forte.projects}</span>
-                            </div>
-                            <div className="p-2 bg-space-900 rounded-lg border border-slate-800">
-                              <span className="text-slate-400 font-bold block text-xs">Areas:</span>
-                              <span className="text-slate-200">{fiveMastersData.forte.areas}</span>
-                            </div>
-                          </div>
-                          <div className="p-2 bg-space-900 rounded-lg border border-cyan-500/30">
-                            <span className="text-cyan-300 font-bold block text-xs mb-0.5">💎 정제된 본질 (Distilled):</span>
-                            <span className="text-slate-200 leading-relaxed">{fiveMastersData.forte.distilledEssence}</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {activeMasterTab === 'DCA' && (
-                        <div className="space-y-2">
-                          <div className="glass-box-active rounded-xl p-3 border-2 border-gold-400/50 space-y-1">
-                            <span className="text-gold-300 font-bold text-xs block">🧭 명확한 중심 목표 (DCA)</span>
-                            <p className="text-white font-bold bg-space-900 p-2.5 rounded-lg leading-relaxed">"{fiveMastersData.hill.definiteChiefAim}"</p>
-                          </div>
-                          <div className="grid grid-cols-2 gap-1.5">
-                            <div className="p-1.5 bg-space-900 rounded"><span className="text-gold-400 font-bold text-xs">기한:</span> {fiveMastersData.hill.deadline}</div>
-                            <div className="p-1.5 bg-space-900 rounded"><span className="text-rose-400 font-bold text-xs">대가:</span> {fiveMastersData.hill.sacrifice}</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {activeMasterTab === 'GTD' && (
-                        <div className="space-y-1.5">
-                          <div className="p-2 bg-space-900 rounded border-l-3 border-purple-400"><strong className="text-purple-300">{fiveMastersData.gtd.altitude50k}</strong></div>
-                          <div className="p-2 bg-space-900 rounded border-l-3 border-cyan-400"><strong className="text-cyan-300">{fiveMastersData.gtd.altitude30k}</strong></div>
-                          <div className="p-2 bg-space-900 rounded border-l-3 border-gold-400"><strong className="text-gold-300">{fiveMastersData.gtd.altitude10k}</strong></div>
-                          <div className="p-2 bg-cyan-950 rounded border border-cyan-400 flex justify-between items-center">
-                            <strong className="text-cyan-200">{fiveMastersData.gtd.runway}</strong>
-                            <button onClick={() => { setTimerOn(true); playSound('pop'); }} className="px-2 py-0.5 rounded bg-cyan-500 text-black font-black text-xs">3분 시작</button>
-                          </div>
-                        </div>
-                      )}
+                      <div className="glass-box-active rounded-xl p-3 border border-cyan-400/40">
+                        <span className="text-cyan-300 block font-bold text-xs mb-0.5">⚡ Ray Dalio If-Then 의사결정 규칙</span>
+                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">{fiveMastersData.dalio.ifThenRule}</p>
+                      </div>
+                      <div className="glass-box rounded-xl p-3 border border-gold-400/40">
+                        <span className="text-gold-300 block font-bold text-xs mb-0.5">🧭 나폴레온 힐 중심 목표 (DCA)</span>
+                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">"{fiveMastersData.hill.definiteChiefAim}"</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* 🌟 [우측 하단 창] 실시간 대화 백업 기록 (자체 글씨 크기 조절기 탑재) */}
+                  {/* 우측 하단 백업 */}
                   <div className="flex-1 p-3.5 overflow-y-auto space-y-2 bg-space-900/60 flex flex-col">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm">📒</span>
-                        <h3 className="text-xs font-bold text-emerald-400">대화 백업 로그</h3>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FontController label="백업 글씨:" value={backupFontSize} onChange={setBackupFontSize} />
-                        <button
-                          onClick={() => {
-                            const doc = `# 📒 [Anti-Gravity 대화 & 답변 실시간 백업 로그]\n\n` +
-                              qaBackupLogs.map((log, idx) => `### ${idx + 1}. [${log.type}] ${log.question} (${log.time})\n- 답변: ${log.answer}\n`).join('\n');
-                            downloadTextFile('대화내용_답변_백업로그.md', doc);
-                          }}
-                          className="px-2 py-0.5 rounded-lg font-bold text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-400 hover:bg-emerald-500/30 flex items-center gap-1 shadow-sm">
-                          <i data-lucide="download" className="w-3 h-3"></i>
-                          <span>다운로드</span>
-                        </button>
-                      </div>
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-1">
+                      <h3 className="text-xs font-bold text-emerald-400 flex items-center gap-1"><span>📒</span> 대화 & 답변 백업 로그</h3>
+                      <FontController label="백업:" value={backupFontSize} onChange={setBackupFontSize} />
                     </div>
 
                     <div className="space-y-1.5 w-full flex-1 overflow-y-auto" style={{ fontSize: `${backupPx}px` }}>
@@ -1151,9 +940,7 @@
                             <span className="font-bold text-cyan-300 font-mono">#{idx + 1} {log.question}</span>
                             <span>{log.time}</span>
                           </div>
-                          <p className="text-slate-100 font-medium whitespace-pre-line leading-relaxed">
-                            {log.answer}
-                          </p>
+                          <p className="text-slate-100 font-medium whitespace-pre-line leading-relaxed">{log.answer}</p>
                         </div>
                       ))}
                     </div>
@@ -1164,26 +951,19 @@
               </div>
             )}
 
-            {/* 🌟 2. 5대 시스템 종합 매트릭스 비교표 페이지 (자체 글씨 조절기) */}
-            {mainViewMode === 'PAGE_MATRIX' && (
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-7xl mx-auto" style={{ fontSize: `${pagePx}px` }}>
+            {/* 🌟 2. [5대 시스템종합] 탭 */}
+            {mainNavTab === 'MATRIX' && (
+              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-7xl mx-auto" style={{ fontSize: `${analysisPx}px` }}>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                   <div>
                     <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-white to-cyan-300">
-                      📑 5대 성공관리시스템 종합 매트릭스 비교표
+                      📑 5대 시스템종합 매트릭스 비교표
                     </h2>
                     <p className="text-xs md:text-sm text-slate-300 mt-1">
-                      레이 달리오, 토니 로빈스, 티아고 포르테, 나폴레온 힐, 데이비드 앨런 5대 거장 시스템 비교
+                      5대 거장의 시스템 구조와 나의 대화 분석 데이터 비교 체계
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <FontController label="표 글씨 크기:" value={pageFontSize} onChange={setPageFontSize} />
-                    <button
-                      onClick={() => { setMainViewMode('WORKSPACE'); playSound('pop'); }}
-                      className="px-4 py-2 rounded-xl text-xs font-bold bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700">
-                      💬 대화창 복귀
-                    </button>
-                  </div>
+                  <FontController label="표 글씨:" value={analysisFontSize} onChange={setAnalysisFontSize} />
                 </div>
 
                 <div className="glass-box rounded-2xl overflow-hidden border border-cyan-500/30 shadow-2xl">
@@ -1198,59 +978,34 @@
                     </thead>
                     <tbody className="divide-y divide-slate-800">
                       <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">
-                          《원칙》<br/><span className="text-slate-400 font-normal text-xs">(레이 달리오)</span>
-                        </td>
+                        <td className="p-4 font-black text-white border-r border-slate-800">《원칙》<br/><span className="text-slate-400 font-normal text-xs">(레이 달리오)</span></td>
                         <td className="p-4 text-cyan-300 font-bold border-r border-slate-800">5단계 피드백 루프</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.dalio.socraticQuestion}"</td>
-                        <td className="p-4 bg-space-900/40">
-                          <strong className="text-cyan-300 block mb-1 text-xs">의사결정 규칙 DB:</strong>
-                          <p className="text-white font-bold">{fiveMastersData.dalio.ifThenRule}</p>
-                        </td>
+                        <td className="p-4 bg-space-900/40"><strong className="text-cyan-300 block mb-1 text-xs">의사결정 규칙 DB:</strong><p className="text-white font-bold">{fiveMastersData.dalio.ifThenRule}</p></td>
                       </tr>
                       <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">
-                          《거인을 깨워라》<br/><span className="text-slate-400 font-normal text-xs">(토니 로빈스)</span>
-                        </td>
+                        <td className="p-4 font-black text-white border-r border-slate-800">《거인을 깨워라》<br/><span className="text-slate-400 font-normal text-xs">(토니 로빈스)</span></td>
                         <td className="p-4 text-rose-300 font-bold border-r border-slate-800">NAC / 파워 질문</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.robbins.socraticQuestion}"</td>
-                        <td className="p-4 bg-space-900/40">
-                          <strong className="text-rose-300 block mb-1 text-xs">가치 우선순위 맵:</strong>
-                          <p className="text-white font-bold">심층 동기: {fiveMastersData.robbins.coreDriver}</p>
-                        </td>
+                        <td className="p-4 bg-space-900/40"><strong className="text-rose-300 block mb-1 text-xs">가치 우선순위 맵:</strong><p className="text-white font-bold">심층 동기: {fiveMastersData.robbins.coreDriver}</p></td>
                       </tr>
                       <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">
-                          《세컨드 브레인》<br/><span className="text-slate-400 font-normal text-xs">(티아고 포르테)</span>
-                        </td>
+                        <td className="p-4 font-black text-white border-r border-slate-800">《세컨드 브레인》<br/><span className="text-slate-400 font-normal text-xs">(티아고 포르테)</span></td>
                         <td className="p-4 text-purple-300 font-bold border-r border-slate-800">CODE / PARA</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.forte.socraticQuestion}"</td>
-                        <td className="p-4 bg-space-900/40">
-                          <strong className="text-purple-300 block mb-1 text-xs">PARA 지식 저장소:</strong>
-                          <p className="text-white font-bold">{fiveMastersData.forte.projects}</p>
-                        </td>
+                        <td className="p-4 bg-space-900/40"><strong className="text-purple-300 block mb-1 text-xs">PARA 지식 저장소:</strong><p className="text-white font-bold">{fiveMastersData.forte.projects}</p></td>
                       </tr>
                       <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">
-                          《생각하라 부자가 되어라》<br/><span className="text-slate-400 font-normal text-xs">(나폴레온 힐)</span>
-                        </td>
+                        <td className="p-4 font-black text-white border-r border-slate-800">《생각하라 부자가 되어라》<br/><span className="text-slate-400 font-normal text-xs">(나폴레온 힐)</span></td>
                         <td className="p-4 text-gold-300 font-bold border-r border-slate-800">DCA (중심 목표)</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.hill.socraticQuestion}"</td>
-                        <td className="p-4 bg-space-900/40">
-                          <strong className="text-gold-300 block mb-1 text-xs">6단계 확약 진술문:</strong>
-                          <p className="text-white font-bold">"{fiveMastersData.hill.definiteChiefAim}"</p>
-                        </td>
+                        <td className="p-4 bg-space-900/40"><strong className="text-gold-300 block mb-1 text-xs">6단계 확약 진술문:</strong><p className="text-white font-bold">"{fiveMastersData.hill.definiteChiefAim}"</p></td>
                       </tr>
                       <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">
-                          《GTD》<br/><span className="text-slate-400 font-normal text-xs">(데이비드 앨런)</span>
-                        </td>
+                        <td className="p-4 font-black text-white border-r border-slate-800">《GTD》<br/><span className="text-slate-400 font-normal text-xs">(데이비드 앨런)</span></td>
                         <td className="p-4 text-cyan-300 font-bold border-r border-slate-800">Horizons of Focus</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.gtd.socraticQuestion}"</td>
-                        <td className="p-4 bg-space-900/40">
-                          <strong className="text-cyan-300 block mb-1 text-xs">6단계 수직적 정렬:</strong>
-                          <p className="text-white font-bold">{fiveMastersData.gtd.runway}</p>
-                        </td>
+                        <td className="p-4 bg-space-900/40"><strong className="text-cyan-300 block mb-1 text-xs">6단계 수직적 정렬:</strong><p className="text-white font-bold">{fiveMastersData.gtd.runway}</p></td>
                       </tr>
                     </tbody>
                   </table>
@@ -1258,183 +1013,329 @@
               </div>
             )}
 
-            {/* 🌟 3. 레이 달리오 전용 심층 분석실 (자체 글씨 조절기) */}
-            {mainViewMode === 'PAGE_DALIO' && (
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${pagePx}px` }}>
-                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-2xl border border-cyan-400">⚙️</div>
+            {/* 🌟 3. [분석 시스템] 탭 (왼쪽에 각각의 시스템 분석 목록 + 오른쪽에 세부 심층 분석) */}
+            {mainNavTab === 'ANALYSIS' && (
+              <div className="flex-1 flex w-full h-full overflow-hidden" style={{ fontSize: `${analysisPx}px` }}>
+                
+                {/* 🌟 좌측 (Left 38%): 각각의 5개 시스템 분석 목록 카드 */}
+                <aside className="w-[38%] border-r border-cyan-500/20 bg-space-950/90 flex flex-col overflow-hidden">
+                  <div className="p-4 border-b border-slate-800 flex items-center justify-between">
                     <div>
-                      <h2 className="text-xl md:text-2xl font-black text-white">① 레이 달리오 《원칙》 전용 분석실</h2>
-                      <p className="text-xs text-slate-300">기계론적 5단계 루프 & If-Then 알고리즘</p>
+                      <h3 className="text-sm md:text-base font-black text-white flex items-center gap-1.5">
+                        <span>🏛️</span> 5대 시스템 분석 목록
+                      </h3>
+                      <p className="text-xs text-slate-400">클릭하여 우측에서 상세 분석 보기</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <FontController label="글씨 크기:" value={pageFontSize} onChange={setPageFontSize} />
-                    <button onClick={() => { setMainViewMode('WORKSPACE'); playSound('pop'); }} className="px-4 py-2 rounded-xl text-xs font-bold bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700">💬 대화창 복귀</button>
-                  </div>
-                </div>
-
-                <div className="space-y-5">
-                  <div className="glass-box-active rounded-3xl p-6 border-2 border-cyan-400 space-y-3 shadow-xl">
-                    <span className="text-cyan-300 font-bold text-sm block">⚡ 나의 If-Then 의사결정 규칙</span>
-                    <div className="bg-space-950 p-5 rounded-2xl border border-cyan-500/30">
-                      <p className="text-white font-black leading-relaxed">"{fiveMastersData.dalio.ifThenRule}"</p>
-                    </div>
+                    <FontController label="글씨:" value={analysisFontSize} onChange={setAnalysisFontSize} />
                   </div>
 
-                  <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3">
-                    <h3 className="text-base font-black text-white">⚙️ 기계론적 5단계 피드백 루프</h3>
-                    <div className="space-y-2.5">
-                      <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-cyan-400"><strong className="text-cyan-300 text-xs block mb-0.5">1단계. 목표 (Goals)</strong><p className="text-white font-bold">{fiveMastersData.dalio.goals}</p></div>
-                      <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-rose-400"><strong className="text-rose-300 text-xs block mb-0.5">2단계. 문제 (Problems)</strong><p className="text-white font-bold">{fiveMastersData.dalio.problems}</p></div>
-                      <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-purple-400"><strong className="text-purple-300 text-xs block mb-0.5">3단계. 5-Whys 원인 (Diagnosis)</strong><p className="text-white font-bold">{fiveMastersData.dalio.diagnosis5Why}</p></div>
-                      <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-gold-400"><strong className="text-gold-300 text-xs block mb-0.5">4단계. 시스템 설계 (Design)</strong><p className="text-white font-bold">{fiveMastersData.dalio.systemDesign}</p></div>
-                      <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-emerald-400"><strong className="text-emerald-300 text-xs block mb-0.5">5단계. 실행 (Execution)</strong><p className="text-white font-bold">{fiveMastersData.dalio.execution}</p></div>
-                    </div>
+                  <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                    
+                    {/* 1. 레이 달리오 카드 */}
+                    <button
+                      onClick={() => { setSelectedMasterInAnalysis('DALIO'); playSound('pop'); }}
+                      className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
+                        selectedMasterInAnalysis === 'DALIO'
+                          ? 'bg-cyan-950/80 border-cyan-400 ring-2 ring-cyan-400/40'
+                          : 'glass-box hover:border-cyan-500/40'
+                      }`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-black text-cyan-300 text-sm">① 레이 달리오 《원칙》</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-cyan-400 font-mono">5-Step Loop</span>
+                      </div>
+                      <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                        <strong>규칙:</strong> {fiveMastersData.dalio.ifThenRule}
+                      </p>
+                    </button>
+
+                    {/* 2. 토니 로빈스 카드 */}
+                    <button
+                      onClick={() => { setSelectedMasterInAnalysis('ROBBINS'); playSound('pop'); }}
+                      className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
+                        selectedMasterInAnalysis === 'ROBBINS'
+                          ? 'bg-rose-950/80 border-rose-400 ring-2 ring-rose-400/40'
+                          : 'glass-box hover:border-rose-500/40'
+                      }`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-black text-rose-300 text-sm">② 토니 로빈스 《거인을 깨워라》</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-rose-400 font-mono">NAC Driver</span>
+                      </div>
+                      <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                        <strong>동기:</strong> {fiveMastersData.robbins.coreDriver}
+                      </p>
+                    </button>
+
+                    {/* 3. 티아고 포르테 카드 */}
+                    <button
+                      onClick={() => { setSelectedMasterInAnalysis('FORTE'); playSound('pop'); }}
+                      className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
+                        selectedMasterInAnalysis === 'FORTE'
+                          ? 'bg-purple-950/80 border-purple-400 ring-2 ring-purple-400/40'
+                          : 'glass-box hover:border-purple-500/40'
+                      }`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-black text-purple-300 text-sm">③ 티아고 포르테 《세컨드 브레인》</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-purple-400 font-mono">PARA Model</span>
+                      </div>
+                      <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                        <strong>프로젝트:</strong> {fiveMastersData.forte.projects}
+                      </p>
+                    </button>
+
+                    {/* 4. 나폴레온 힐 카드 */}
+                    <button
+                      onClick={() => { setSelectedMasterInAnalysis('HILL'); playSound('pop'); }}
+                      className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
+                        selectedMasterInAnalysis === 'HILL'
+                          ? 'bg-gold-950/80 border-gold-400 ring-2 ring-gold-400/40'
+                          : 'glass-box hover:border-gold-500/40'
+                      }`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-black text-gold-300 text-sm">④ 나폴레온 힐 《생각하라 부자가 되어라》</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-gold-400 font-mono">DCA Target</span>
+                      </div>
+                      <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                        <strong>중심목표:</strong> {fiveMastersData.hill.definiteChiefAim}
+                      </p>
+                    </button>
+
+                    {/* 5. 데이비드 앨런 카드 */}
+                    <button
+                      onClick={() => { setSelectedMasterInAnalysis('GTD'); playSound('pop'); }}
+                      className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
+                        selectedMasterInAnalysis === 'GTD'
+                          ? 'bg-cyan-950/80 border-cyan-400 ring-2 ring-cyan-400/40'
+                          : 'glass-box hover:border-cyan-500/40'
+                      }`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-black text-cyan-300 text-sm">⑤ 데이비드 앨런 《GTD》</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-cyan-400 font-mono">6 Altitudes</span>
+                      </div>
+                      <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                        <strong>Runway:</strong> {fiveMastersData.gtd.runway}
+                      </p>
+                    </button>
+
                   </div>
-                </div>
+                </aside>
+
+                {/* 🌟 우측 (Right 62%): 선택된 시스템의 심층 분석 상세 화면 */}
+                <section className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6">
+                  
+                  {/* ① 레이 달리오 심층 뷰 */}
+                  {selectedMasterInAnalysis === 'DALIO' && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h2 className="text-xl md:text-2xl font-black text-cyan-300">① 레이 달리오 《원칙》 심층 분석</h2>
+                        <span className="text-xs font-mono text-slate-400">Machine-like OS</span>
+                      </div>
+
+                      <div className="glass-box-active rounded-3xl p-6 border-2 border-cyan-400 space-y-3">
+                        <span className="text-cyan-300 font-black text-sm block">⚡ 나의 Ray Dalio If-Then 의사결정 알고리즘</span>
+                        <div className="bg-space-950 p-5 rounded-2xl border border-cyan-500/30">
+                          <p className="text-white font-black text-base md:text-lg leading-relaxed">"{fiveMastersData.dalio.ifThenRule}"</p>
+                        </div>
+                      </div>
+
+                      <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3">
+                        <h3 className="text-base font-black text-white">⚙️ 기계론적 5단계 피드백 루프</h3>
+                        <div className="space-y-2.5">
+                          <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-cyan-400"><strong className="text-cyan-300 text-xs block mb-0.5">1단계. 목표 (Goals)</strong><p className="text-white font-bold">{fiveMastersData.dalio.goals}</p></div>
+                          <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-rose-400"><strong className="text-rose-300 text-xs block mb-0.5">2단계. 문제 (Problems)</strong><p className="text-white font-bold">{fiveMastersData.dalio.problems}</p></div>
+                          <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-purple-400"><strong className="text-purple-300 text-xs block mb-0.5">3단계. 5-Whys 원인 (Diagnosis)</strong><p className="text-white font-bold">{fiveMastersData.dalio.diagnosis5Why}</p></div>
+                          <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-gold-400"><strong className="text-gold-300 text-xs block mb-0.5">4단계. 시스템 설계 (Design)</strong><p className="text-white font-bold">{fiveMastersData.dalio.systemDesign}</p></div>
+                          <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-emerald-400"><strong className="text-emerald-300 text-xs block mb-0.5">5단계. 실행 (Execution)</strong><p className="text-white font-bold">{fiveMastersData.dalio.execution}</p></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ② 토니 로빈스 심층 뷰 */}
+                  {selectedMasterInAnalysis === 'ROBBINS' && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h2 className="text-xl md:text-2xl font-black text-rose-300">② 토니 로빈스 《거인을 깨워라 (NAC)》 심층 분석</h2>
+                        <span className="text-xs font-mono text-slate-400">Power Questions</span>
+                      </div>
+
+                      <div className="glass-box-active rounded-3xl p-6 border-2 border-rose-500/50 space-y-3">
+                        <span className="text-rose-300 font-black text-sm block">💎 잠재의식적 핵심 동기 (Core Driver)</span>
+                        <div className="bg-space-950 p-5 rounded-2xl border border-rose-500/30">
+                          <p className="text-white font-black text-base md:text-lg leading-relaxed">"{fiveMastersData.robbins.coreDriver}"</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {fiveMastersData.robbins.valueHierarchy.map((v, i) => (
+                            <span key={i} className="px-3.5 py-1 rounded-xl bg-space-900 border border-rose-500/40 text-gold-300 font-bold text-xs">#{i + 1} {v}</span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="glass-box rounded-3xl p-5 border border-rose-500/40 space-y-2">
+                          <span className="text-rose-400 font-black text-sm block">🛑 미달성 시 고통</span>
+                          <p className="text-slate-100 leading-relaxed bg-space-900 p-3.5 rounded-xl">{fiveMastersData.robbins.painOfFailure}</p>
+                        </div>
+                        <div className="glass-box rounded-3xl p-5 border border-emerald-500/40 space-y-2">
+                          <span className="text-emerald-400 font-black text-sm block">✨ 달성 시 쾌락</span>
+                          <p className="text-slate-100 leading-relaxed bg-space-900 p-3.5 rounded-xl">{fiveMastersData.robbins.pleasureOfSuccess}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ③ 티아고 포르테 심층 뷰 */}
+                  {selectedMasterInAnalysis === 'FORTE' && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h2 className="text-xl md:text-2xl font-black text-purple-300">③ 티아고 포르테 《세컨드 브레인》 심층 분석</h2>
+                        <span className="text-xs font-mono text-slate-400">PARA Framework</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="glass-box rounded-3xl p-5 border-2 border-purple-500/40 space-y-1.5"><strong className="text-purple-300 text-sm block">📁 Projects</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.projects}</p></div>
+                        <div className="glass-box rounded-3xl p-5 border border-slate-800 space-y-1.5"><strong className="text-slate-300 text-sm block">📂 Areas</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.areas}</p></div>
+                        <div className="glass-box rounded-3xl p-5 border border-slate-800 space-y-1.5"><strong className="text-slate-300 text-sm block">📚 Resources</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.resources}</p></div>
+                        <div className="glass-box rounded-3xl p-5 border border-slate-800 space-y-1.5"><strong className="text-slate-300 text-sm block">🗄️ Archives</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.archives}</p></div>
+                      </div>
+                      <div className="glass-box-active rounded-3xl p-6 border-2 border-cyan-400 space-y-2"><strong className="text-cyan-300 text-sm block">💎 정제된 본질 (Distilled Essence)</strong><p className="text-white font-bold leading-relaxed bg-space-950 p-4 rounded-xl">{fiveMastersData.forte.distilledEssence}</p></div>
+                    </div>
+                  )}
+
+                  {/* ④ 나폴레온 힐 심층 뷰 */}
+                  {selectedMasterInAnalysis === 'HILL' && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h2 className="text-xl md:text-2xl font-black text-gold-300">④ 나폴레온 힐 《생각하라 그리고 부자가 되어라》 심층 분석</h2>
+                        <span className="text-xs font-mono text-slate-400">DCA Protocol</span>
+                      </div>
+
+                      <div className="glass-box-active rounded-3xl p-7 border-2 border-gold-400 shadow-2xl space-y-3">
+                        <span className="text-gold-300 font-bold text-sm block">📜 나의 6단계 확약 진술문</span>
+                        <div className="bg-space-950 p-5 rounded-2xl border border-gold-500/40"><p className="text-white font-black leading-relaxed">"{fiveMastersData.hill.definiteChiefAim}"</p></div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-gold-400 font-bold text-xs block mb-1">💰 목표 금액/가치</span><p className="text-white font-bold">{fiveMastersData.hill.exactAmount}</p></div>
+                        <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-gold-400 font-bold text-xs block mb-1">⏳ 완수 기한</span><p className="text-white font-bold">{fiveMastersData.hill.deadline}</p></div>
+                        <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-rose-400 font-bold text-xs block mb-1">⚖️ 지불할 대가</span><p className="text-white font-bold">{fiveMastersData.hill.sacrifice}</p></div>
+                        <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-emerald-400 font-bold text-xs block mb-1">🚀 즉시 실행 계획</span><p className="text-white font-bold">{fiveMastersData.hill.immediatePlan}</p></div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ⑤ 데이비드 앨런 심층 뷰 */}
+                  {selectedMasterInAnalysis === 'GTD' && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h2 className="text-xl md:text-2xl font-black text-cyan-300">⑤ 데이비드 앨런 《GTD》 심층 분석</h2>
+                        <span className="text-xs font-mono text-slate-400">Horizons of Focus</span>
+                      </div>
+
+                      <div className="glass-box rounded-3xl p-6 border border-cyan-500/40 space-y-3">
+                        <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-purple-400"><strong className="text-purple-300 block">{fiveMastersData.gtd.altitude50k}</strong></div>
+                        <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-indigo-400"><strong className="text-indigo-300 block">{fiveMastersData.gtd.altitude40k}</strong></div>
+                        <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-cyan-400"><strong className="text-cyan-300 block">{fiveMastersData.gtd.altitude30k}</strong></div>
+                        <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-emerald-400"><strong className="text-emerald-300 block">{fiveMastersData.gtd.altitude20k}</strong></div>
+                        <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-gold-400"><strong className="text-gold-300 block">{fiveMastersData.gtd.altitude10k}</strong></div>
+                        <div className="p-4 bg-cyan-950 rounded-2xl border-2 border-cyan-400 flex justify-between items-center">
+                          <div>
+                            <span className="text-cyan-400 font-bold text-xs block">오늘 3분 활성화 미션:</span>
+                            <strong className="text-white text-base font-black">{fiveMastersData.gtd.runway}</strong>
+                          </div>
+                          <button onClick={() => { setTimerOn(true); playSound('pop'); }} className="px-4 py-2 rounded-xl bg-cyan-500 text-black font-black text-xs">⏱️ 3분 시작</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                </section>
               </div>
             )}
 
-            {/* 🌟 4. 토니 로빈스 전용 심층 분석실 (자체 글씨 조절기) */}
-            {mainViewMode === 'PAGE_ROBBINS' && (
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${pagePx}px` }}>
+            {/* 🌟 4. [행동연계] 탭 (즉각 실행 및 행동 관제 엔진) */}
+            {mainNavTab === 'ACTION' && (
+              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${actionPx}px` }}>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-2xl border border-rose-400">🔥</div>
-                    <div>
-                      <h2 className="text-xl md:text-2xl font-black text-white">② 토니 로빈스 《거인을 깨워라》 전용 분석실</h2>
-                      <p className="text-xs text-slate-300">신경연합조건화(NAC) & 가치 계층구조</p>
-                    </div>
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-white to-amber-300">
+                      ⚡ 5대 시스템 행동연계 관제탑 (Action Engine Hub)
+                    </h2>
+                    <p className="text-xs md:text-sm text-slate-300 mt-1">
+                      분석된 원칙과 목표를 오늘 당장 3분 안에 실행 가능한 물리적 행동으로 즉각 전환
+                    </p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <FontController label="글씨 크기:" value={pageFontSize} onChange={setPageFontSize} />
-                    <button onClick={() => { setMainViewMode('WORKSPACE'); playSound('pop'); }} className="px-4 py-2 rounded-xl text-xs font-bold bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700">💬 대화창 복귀</button>
-                  </div>
+                  <FontController label="행동 글씨:" value={actionFontSize} onChange={setActionFontSize} />
                 </div>
 
-                <div className="space-y-5">
-                  <div className="glass-box-active rounded-3xl p-6 border-2 border-rose-500/50 space-y-3">
-                    <span className="text-rose-300 font-bold text-sm block">💎 잠재의식적 핵심 동기 (Core Driver)</span>
-                    <div className="bg-space-950 p-5 rounded-2xl border border-rose-500/30">
-                      <p className="text-white font-black leading-relaxed">"{fiveMastersData.robbins.coreDriver}"</p>
+                <div className="space-y-6">
+                  
+                  {/* 1. 즉시 3분 활성화 타이머 미션 카드 */}
+                  <div className="glass-box-active rounded-3xl p-8 border-2 border-cyan-400 shadow-2xl space-y-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-cyan-300 font-black text-base md:text-lg flex items-center gap-2">
+                        <span>🚀</span> 오늘 지금 당장 3분 마이크로 실행 미션 (Runway)
+                      </span>
+                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400">
+                        Immediate Action
+                      </span>
                     </div>
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {fiveMastersData.robbins.valueHierarchy.map((v, i) => (
-                        <span key={i} className="px-3.5 py-1 rounded-xl bg-space-900 border border-rose-500/40 text-gold-300 font-bold text-xs">
-                          #{i + 1} {v}
+
+                    <div className="bg-space-950 p-6 rounded-2xl border border-cyan-500/40">
+                      <p className="text-white font-black text-lg md:text-xl leading-relaxed">
+                        "{fiveMastersData.gtd.runway}"
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm text-slate-300 font-bold">남은 시간:</span>
+                        <span className="text-3xl font-black font-mono text-gold-300 bg-space-900 px-4 py-1 rounded-xl border border-gold-500/40">
+                          {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                         </span>
-                      ))}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => { setTimeLeft(180); setTimerOn(true); playSound('pop'); }}
+                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-black text-sm md:text-base hover:scale-105 transition shadow-lg shadow-cyan-500/40">
+                          🚀 3분 타이머 시작
+                        </button>
+                        <button
+                          onClick={() => { setTimerOn(false); playSound('pop'); }}
+                          className="px-4 py-3 rounded-xl bg-space-800 hover:bg-space-700 text-slate-300 font-bold text-sm border border-slate-700">
+                          정지
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="glass-box rounded-3xl p-5 border border-rose-500/40 space-y-2">
-                      <span className="text-rose-400 font-black text-sm block">🛑 미달성 시 고통</span>
-                      <p className="text-slate-100 leading-relaxed bg-space-900 p-3.5 rounded-xl">{fiveMastersData.robbins.painOfFailure}</p>
-                    </div>
-                    <div className="glass-box rounded-3xl p-5 border border-emerald-500/40 space-y-2">
-                      <span className="text-emerald-400 font-black text-sm block">✨ 달성 시 쾌락</span>
-                      <p className="text-slate-100 leading-relaxed bg-space-900 p-3.5 rounded-xl">{fiveMastersData.robbins.pleasureOfSuccess}</p>
-                    </div>
+                  {/* 2. Ray Dalio If-Then 행동 원칙집 카드 */}
+                  <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3">
+                    <span className="text-gold-300 font-black text-base flex items-center gap-2">
+                      <span>⚡</span> 레이 달리오 If-Then 자동 방어 알고리즘
+                    </span>
+                    <p className="text-white font-bold text-base bg-space-900 p-4 rounded-xl leading-relaxed">
+                      {fiveMastersData.dalio.ifThenRule}
+                    </p>
                   </div>
-                </div>
-              </div>
-            )}
 
-            {/* 🌟 5. 티아고 포르테 전용 심층 분석실 (자체 글씨 조절기) */}
-            {mainViewMode === 'PAGE_FORTE' && (
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${pagePx}px` }}>
-                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl border border-purple-400">🧠</div>
-                    <div>
-                      <h2 className="text-xl md:text-2xl font-black text-white">③ 티아고 포르테 《세컨드 브레인》 전용 분석실</h2>
-                      <p className="text-xs text-slate-300">CODE & PARA 지식 체계화 저장소</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <FontController label="글씨 크기:" value={pageFontSize} onChange={setPageFontSize} />
-                    <button onClick={() => { setMainViewMode('WORKSPACE'); playSound('pop'); }} className="px-4 py-2 rounded-xl text-xs font-bold bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700">💬 대화창 복귀</button>
-                  </div>
-                </div>
-
-                <div className="space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="glass-box rounded-3xl p-5 border-2 border-purple-500/40 space-y-1.5"><strong className="text-purple-300 text-sm block">📁 Projects</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.projects}</p></div>
-                    <div className="glass-box rounded-3xl p-5 border border-slate-800 space-y-1.5"><strong className="text-slate-300 text-sm block">📂 Areas</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.areas}</p></div>
-                    <div className="glass-box rounded-3xl p-5 border border-slate-800 space-y-1.5"><strong className="text-slate-300 text-sm block">📚 Resources</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.resources}</p></div>
-                    <div className="glass-box rounded-3xl p-5 border border-slate-800 space-y-1.5"><strong className="text-slate-300 text-sm block">🗄️ Archives</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.archives}</p></div>
-                  </div>
-                  <div className="glass-box-active rounded-3xl p-6 border-2 border-cyan-400 space-y-2"><strong className="text-cyan-300 text-sm block">💎 정제된 본질 (Distilled Essence)</strong><p className="text-white font-bold leading-relaxed bg-space-950 p-4 rounded-xl">{fiveMastersData.forte.distilledEssence}</p></div>
-                </div>
-              </div>
-            )}
-
-            {/* 🌟 6. 나폴레온 힐 전용 심층 분석실 (자체 글씨 조절기) */}
-            {mainViewMode === 'PAGE_HILL' && (
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${pagePx}px` }}>
-                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-gold-500/20 text-gold-400 flex items-center justify-center text-2xl border border-gold-400">🧭</div>
-                    <div>
-                      <h2 className="text-xl md:text-2xl font-black text-white">④ 나폴레온 힐 《생각하라 그리고 부자가 되어라》 전용 분석실</h2>
-                      <p className="text-xs text-slate-300">명확한 중심 목표 (DCA) & 6단계 확약 진술문</p>
+                  {/* 3. 나폴레온 힐 즉시 실행 약속 카드 */}
+                  <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3">
+                    <span className="text-emerald-400 font-black text-base flex items-center gap-2">
+                      <span>📜</span> 나폴레온 힐 대가 지불 & 즉시 실행 서약
+                    </span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="p-4 bg-space-900 rounded-xl">
+                        <span className="text-rose-400 font-bold block mb-1">포기할 대가 (Sacrifice):</span>
+                        <p className="text-white font-bold">{fiveMastersData.hill.sacrifice}</p>
+                      </div>
+                      <div className="p-4 bg-space-900 rounded-xl">
+                        <span className="text-emerald-400 font-bold block mb-1">실행 계획 (Action Plan):</span>
+                        <p className="text-white font-bold">{fiveMastersData.hill.immediatePlan}</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <FontController label="글씨 크기:" value={pageFontSize} onChange={setPageFontSize} />
-                    <button onClick={() => { setMainViewMode('WORKSPACE'); playSound('pop'); }} className="px-4 py-2 rounded-xl text-xs font-bold bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700">💬 대화창 복귀</button>
-                  </div>
-                </div>
 
-                <div className="space-y-5">
-                  <div className="glass-box-active rounded-3xl p-7 border-2 border-gold-400 shadow-2xl space-y-3">
-                    <span className="text-gold-300 font-bold text-sm block">📜 나의 6단계 확약 진술문</span>
-                    <div className="bg-space-950 p-5 rounded-2xl border border-gold-500/40"><p className="text-white font-black leading-relaxed">"{fiveMastersData.hill.definiteChiefAim}"</p></div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-gold-400 font-bold text-xs block mb-1">💰 목표 금액/가치</span><p className="text-white font-bold">{fiveMastersData.hill.exactAmount}</p></div>
-                    <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-gold-400 font-bold text-xs block mb-1">⏳ 완수 기한</span><p className="text-white font-bold">{fiveMastersData.hill.deadline}</p></div>
-                    <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-rose-400 font-bold text-xs block mb-1">⚖️ 지불할 대가</span><p className="text-white font-bold">{fiveMastersData.hill.sacrifice}</p></div>
-                    <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-emerald-400 font-bold text-xs block mb-1">🚀 즉시 실행 계획</span><p className="text-white font-bold">{fiveMastersData.hill.immediatePlan}</p></div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 🌟 7. 데이비드 앨런 전용 심층 분석실 (자체 글씨 조절기) */}
-            {mainViewMode === 'PAGE_GTD' && (
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${pagePx}px` }}>
-                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-cyan-400/20 text-cyan-300 flex items-center justify-center text-2xl border border-cyan-400">🛫</div>
-                    <div>
-                      <h2 className="text-xl md:text-2xl font-black text-white">⑤ 데이비드 앨런 《GTD》 전용 분석실</h2>
-                      <p className="text-xs text-slate-300">Horizons of Focus & 6단계 수직적 정렬 트리</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <FontController label="글씨 크기:" value={pageFontSize} onChange={setPageFontSize} />
-                    <button onClick={() => { setMainViewMode('WORKSPACE'); playSound('pop'); }} className="px-4 py-2 rounded-xl text-xs font-bold bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700">💬 대화창 복귀</button>
-                  </div>
-                </div>
-
-                <div className="glass-box rounded-3xl p-6 border border-cyan-500/40 space-y-3">
-                  <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-purple-400"><strong className="text-purple-300 block">{fiveMastersData.gtd.altitude50k}</strong></div>
-                  <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-indigo-400"><strong className="text-indigo-300 block">{fiveMastersData.gtd.altitude40k}</strong></div>
-                  <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-cyan-400"><strong className="text-cyan-300 block">{fiveMastersData.gtd.altitude30k}</strong></div>
-                  <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-emerald-400"><strong className="text-emerald-300 block">{fiveMastersData.gtd.altitude20k}</strong></div>
-                  <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-gold-400"><strong className="text-gold-300 block">{fiveMastersData.gtd.altitude10k}</strong></div>
-                  <div className="p-4 bg-cyan-950 rounded-2xl border-2 border-cyan-400 flex justify-between items-center">
-                    <div>
-                      <span className="text-cyan-400 font-bold text-xs block">오늘 3분 활성화 미션:</span>
-                      <strong className="text-white text-base font-black">{fiveMastersData.gtd.runway}</strong>
-                    </div>
-                    <button onClick={() => { setTimerOn(true); playSound('pop'); }} className="px-4 py-2 rounded-xl bg-cyan-500 text-black font-black text-xs">⏱️ 3분 시작</button>
-                  </div>
                 </div>
               </div>
             )}
