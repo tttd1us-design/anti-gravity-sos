@@ -374,11 +374,17 @@
     };
 
     function App() {
-      // 각 영역별 독립 글씨 크기
+      // 🌟 [핵심 개선] 각 영역별 독립 글씨 크기 상태
+      // 1. AI 성공코치 & 사용자 말풍선 대화 글씨
       const [coachChatFontSize, setCoachChatFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_COACH_CHAT') || '1.15'));
+      // 2. 4대 계층 심층 방향성 질문 글씨 (질문 카드 + 추천답변 칩)
+      const [questionsFontSize, setQuestionsFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_QUESTIONS') || '1.15'));
+      // 3. 대화창 (답변 작성 및 음성 텍스트 입력창) 글씨
       const [inputBoxFontSize, setInputBoxFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_INPUT_BOX') || '1.15'));
+      // 4. 4개 계층 심층 성공관리시스템 (Tier 1~4) 글씨
       const [tierSystemFontSize, setTierSystemFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_TIER_SYSTEM') || '1.15'));
 
+      // 기타 탭 글씨 크기
       const [backupFontSize, setBackupFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_BACKUP') || '1.10'));
       const [analysisFontSize, setAnalysisFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ANALYSIS') || '1.20'));
       const [actionFontSize, setActionFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ACTION') || '1.20'));
@@ -388,7 +394,7 @@
       const [isDragging, setIsDragging] = useState(false);
       const [inputHeightPx, setInputHeightPx] = useState(90);
       
-      // 🌟 질문 선택 및 질문 기본값 설정 (처음부터 1번 질문 활성화)
+      // 질문 선택 기본값 (1번 질문 활성화)
       const [activeQuestions, setActiveQuestions] = useState(() => generateSocratic4Questions("월 100만 원 부업 수익 만들기"));
       const [selectedQuestion, setSelectedQuestion] = useState(() => activeQuestions[0]);
 
@@ -521,7 +527,7 @@
         {
           id: 1,
           sender: 'coach',
-          text: `안녕하세요! 반갑습니다 😊\n\n대화를 나눌수록 작성자님의 생각이 **[Tier 1 잠재의식 & DCA] ➔ [Tier 2 PARA 지식구조화] ➔ [Tier 3 GTD 수직정렬] ➔ [Tier 4 If-Then 원칙진화]**로 체계화됩니다.\n\n👇 아래 추천 답변을 **마우스로 1클릭**하거나, 숫자 **1, 2, 3, 4**를 입력하시면 쉽고 빠르게 성공시스템을 완성할 수 있습니다!`,
+          text: `안녕하세요! 반갑습니다 😊\n\n대화를 나눌수록 작성자님의 생각이 **[Tier 1 잠재의식 & DCA] ➔ [Tier 2 PARA 지식구조화] ➔ [Tier 3 GTD 수직정렬] ➔ [Tier 4 If-Then 원칙진화]**로 체계화됩니다.\n\n👇 아래 4대 방향성 질문과 추천 답변을 **마우스로 1클릭**하거나, 숫자 **1, 2, 3, 4**를 입력하시면 쉽고 빠르게 성공시스템을 완성할 수 있습니다!`,
           time: '지금'
         }
       ]);
@@ -546,7 +552,9 @@
         localStorage.setItem('AG_DIALOGUE_COUNT', dialogueCount.toString());
         localStorage.setItem('AG_SPLIT_PERCENT', leftWidthPercent.toString());
         
+        // 4대 영역 독립 글씨 크기 로컬 저장
         localStorage.setItem('AG_FONT_COACH_CHAT', coachChatFontSize.toString());
+        localStorage.setItem('AG_FONT_QUESTIONS', questionsFontSize.toString());
         localStorage.setItem('AG_FONT_INPUT_BOX', inputBoxFontSize.toString());
         localStorage.setItem('AG_FONT_TIER_SYSTEM', tierSystemFontSize.toString());
 
@@ -558,7 +566,7 @@
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, fiveMastersData, qaBackupLogs, socialAlarmSettings, buildStep, buildProgressPercent, dialogueCount, leftWidthPercent, coachChatFontSize, inputBoxFontSize, tierSystemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis, tierFilter]);
+      }, [messages, fiveMastersData, qaBackupLogs, socialAlarmSettings, buildStep, buildProgressPercent, dialogueCount, leftWidthPercent, coachChatFontSize, questionsFontSize, inputBoxFontSize, tierSystemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis, tierFilter]);
 
       useEffect(() => {
         let timer = null;
@@ -671,7 +679,7 @@
         playSound('pop');
       };
 
-      // 🌟 [핵심 기능] 마우스 원클릭으로 추천 답변 선택 및 즉시 전송/채우기
+      // 마우스 원클릭으로 추천 답변 선택 및 즉시 전송/채우기
       const handleSelectOptionPreset = (optionText, autoSubmit = true) => {
         setInputMsg(optionText);
         playSound('pop');
@@ -685,7 +693,7 @@
         let text = (rawText || inputMsg).trim();
         if (!text || isThinking) return;
 
-        // 🌟 [핵심 기능] 숫자(1, 2, 3, 4)만 입력했을 때 현재 선택된 질문의 해당 번호 보기로 자동 변환
+        // 숫자(1, 2, 3, 4)만 입력했을 때 현재 선택된 질문의 해당 번호 보기로 자동 변환
         if (selectedQuestion && selectedQuestion.options) {
           const numMatch = text.match(/^[1-4]$/);
           if (numMatch) {
@@ -877,7 +885,9 @@
         playSound('cheer');
       };
 
+      // 🌟 각각 독립된 4개 영역 픽셀 폰트 계산
       const coachChatPx = Math.max(14, 16 * coachChatFontSize);
+      const questionsPx = Math.max(13, 15 * questionsFontSize);
       const inputBoxPx = Math.max(14, 16 * inputBoxFontSize);
       const tierSystemPx = Math.max(14, 15.5 * tierSystemFontSize);
 
@@ -1065,18 +1075,16 @@
                     <div ref={chatEndRef} />
                   </div>
 
-                  {/* 4대 전문 방향성 질문 카드 바 (세로 4개 1열 리스트) */}
-                  <div className="px-4 py-2 bg-space-900/95 border-t border-b border-cyan-500/20 shadow-md max-h-[35%] overflow-y-auto">
-                    <div className="flex items-center justify-between mb-1.5">
+                  {/* 🌟 4대 전문 방향성 질문 카드 바 (세로 4개 1열 리스트 & 독립 글씨 조절기 탑재) */}
+                  <div className="px-4 py-2.5 bg-space-900/95 border-t border-b border-cyan-500/20 shadow-md max-h-[36%] overflow-y-auto">
+                    <div className="flex items-center justify-between mb-2">
                       <span className="text-xs md:text-sm font-bold text-cyan-300 flex items-center gap-1.5">
-                        <span>🧭</span> 4대 계층 심층 방향성 질문 (클릭하여 아래 추천답변 선택):
+                        <span>🧭</span> 4대 계층 심층 방향성 질문 (클릭하여 추천답변 선택):
                       </span>
-                      <span className="text-[10px] font-mono text-gold-300 bg-space-850 px-2 py-0.5 rounded-full">
-                        Tier 1~4 Probing
-                      </span>
+                      <FontController label="질문 글씨:" value={questionsFontSize} onChange={setQuestionsFontSize} />
                     </div>
 
-                    <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-1.5" style={{ fontSize: `${questionsPx}px` }}>
                       {activeQuestions.map((q, idx) => {
                         const isSelected = selectedQuestion?.id === q.id;
                         return (
@@ -1089,7 +1097,7 @@
                                 : 'bg-space-800 hover:bg-cyan-500/15 border-slate-700 hover:border-cyan-400'
                             }`}>
                             <div className="flex items-center justify-between mb-0.5">
-                              <span className="text-xs md:text-sm font-black text-cyan-300 font-mono flex items-center gap-1.5">
+                              <span className="font-black text-cyan-300 font-mono flex items-center gap-1.5">
                                 <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-300 inline-flex items-center justify-center text-xs font-bold border border-cyan-500/40">
                                   {idx + 1}
                                 </span>
@@ -1099,7 +1107,7 @@
                                 {q.pillar}
                               </span>
                             </div>
-                            <p className="text-xs text-slate-200 leading-relaxed font-medium pl-6 line-clamp-1">
+                            <p className="text-slate-200 leading-relaxed font-medium pl-6 line-clamp-1">
                               {q.text}
                             </p>
                           </button>
@@ -1108,12 +1116,12 @@
                     </div>
                   </div>
 
-                  {/* 🌟 [신규 기능] 마우스 원클릭 추천 답변 & 숫자 단축 선택 바 */}
+                  {/* 🌟 마우스 원클릭 추천 답변 & 숫자 단축 선택 바 (글씨 크기 동기화) */}
                   {selectedQuestion && selectedQuestion.options && (
-                    <div className="px-4 py-2 bg-space-850 border-t border-cyan-400/30 space-y-1.5 animate-fadeIn">
+                    <div className="px-4 py-2 bg-space-850 border-t border-cyan-400/30 space-y-1.5 animate-fadeIn" style={{ fontSize: `${questionsPx}px` }}>
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-gold-300 flex items-center gap-1">
-                          <span>💡</span> [질문 {selectedQuestion.title}] 1클릭 마우스 선택 / 숫자(1~4) 작성 추천답변:
+                          <span>💡</span> [질문 {selectedQuestion.title}] 1클릭 마우스 선택 / 숫자(1~4) 추천답변:
                         </span>
                         <span className="text-[10.5px] text-slate-400 font-mono">
                           입력창에 숫자만 쓰고 엔터쳐도 즉시 등록됩니다
@@ -1126,7 +1134,7 @@
                             key={i}
                             type="button"
                             onClick={() => handleSelectOptionPreset(opt, true)}
-                            className="p-2 text-left rounded-xl bg-space-900 hover:bg-cyan-500/20 border border-slate-750 hover:border-cyan-400 text-xs text-slate-100 font-medium transition flex items-start gap-1.5 shadow-sm group">
+                            className="p-2 text-left rounded-xl bg-space-900 hover:bg-cyan-500/20 border border-slate-750 hover:border-cyan-400 text-slate-100 font-medium transition flex items-start gap-1.5 shadow-sm group">
                             <span className="w-5 h-5 rounded-md bg-gold-500/20 text-gold-300 font-mono font-black inline-flex items-center justify-center text-xs shrink-0 group-hover:bg-gold-500 group-hover:text-black">
                               {i + 1}
                             </span>
@@ -1508,7 +1516,7 @@
                         <td className="p-4 bg-space-900/40"><strong className="text-cyan-300 block mb-1 text-xs">의사결정 규칙 DB:</strong><p className="text-white font-bold">{fiveMastersData.dalio.ifThenRule}</p></td>
                       </tr>
                       <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">《거인을 깨워라》<br/><span className="text-slate-400 font-normal text-xs">(토니 로빈스)</span></td>
+                        <td className="p-4 font-black text-white border-r border-slate-800">《거인을 깨워라》<br/><span className="text-slate-400 font-normal text-xs">(토니 로宾스)</span></td>
                         <td className="p-4 text-rose-300 font-bold border-r border-slate-800">Tier 1. NAC / 파워 질문</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.robbins.socraticQuestion}"</td>
                         <td className="p-4 bg-space-900/40"><strong className="text-rose-300 block mb-1 text-xs">가치 우선순위 맵:</strong><p className="text-white font-bold">심층 동기: {fiveMastersData.robbins.coreDriver}</p></td>
