@@ -1034,33 +1034,38 @@
         playSound('cheer');
       };
 
-      const questionsPx = Math.max(13, 14.5 * questionsFontSize);
-      const set2Px = Math.max(13, 14.5 * set2FontSize); // 🌟 세트 2 글씨 픽셀
-      const inputBoxPx = Math.max(14, 15.5 * inputBoxFontSize);
-      const tierSystemPx = Math.max(14, 15.5 * tierSystemFontSize);
+      // 🌟 [9pt 최소 보장 폰트 스케일링 엔진: 9pt = 12px]
+      const MIN_9PT = 12; // 9pt
 
-      const backupPx = Math.max(13, 15 * backupFontSize);
-      const backupQuestionPx = Math.max(11, Math.round(13.5 * backupFontSize));
-      const backupAnswerPx = Math.max(13, Math.round(15.5 * backupFontSize));
-      const backupMetaPx = Math.max(10, Math.round(11 * backupFontSize));
-      const analysisPx = Math.max(14, 15.5 * analysisFontSize);
+      const questionsPx = Math.max(MIN_9PT, Math.round(14.5 * questionsFontSize));
+      const set2Px = Math.max(MIN_9PT, Math.round(15 * set2FontSize)); // 🌟 세트 2 메인 글씨 (9pt 이상 보장)
+      const set2SubPx = Math.max(MIN_9PT, Math.round(13.5 * set2FontSize)); // 🌟 처방전/통찰 내용 (9pt 이상 보장)
+      const set2HeaderPx = Math.max(MIN_9PT, Math.round(12.5 * set2FontSize)); // 🌟 처방전 헤더 (9pt 이상 보장)
+      const inputBoxPx = Math.max(MIN_9PT, Math.round(15.5 * inputBoxFontSize));
+      const tierSystemPx = Math.max(MIN_9PT, Math.round(15.5 * tierSystemFontSize));
+
+      const backupPx = Math.max(MIN_9PT, Math.round(15 * backupFontSize));
+      const backupQuestionPx = Math.max(MIN_9PT, Math.round(13.5 * backupFontSize));
+      const backupAnswerPx = Math.max(MIN_9PT, Math.round(15.5 * backupFontSize));
+      const backupMetaPx = Math.max(MIN_9PT, Math.round(12 * backupFontSize));
+      const analysisPx = Math.max(MIN_9PT, Math.round(15.5 * analysisFontSize));
       const analysisH1Px = Math.max(17, Math.round(23 * analysisFontSize));
       const analysisH2Px = Math.max(14, Math.round(18 * analysisFontSize));
       const analysisTitlePx = Math.max(13, Math.round(16 * analysisFontSize));
-      const analysisBodyPx = Math.max(12, Math.round(14.5 * analysisFontSize));
-      const analysisSmallPx = Math.max(10, Math.round(12 * analysisFontSize));
-      const actionPx = Math.max(16, 17.5 * actionFontSize);
+      const analysisBodyPx = Math.max(MIN_9PT, Math.round(14.5 * analysisFontSize));
+      const analysisSmallPx = Math.max(MIN_9PT, Math.round(12 * analysisFontSize));
+      const actionPx = Math.max(16, Math.round(17.5 * actionFontSize));
       const actionH1Px = Math.max(17, Math.round(23 * actionFontSize));
       const actionH2Px = Math.max(14, Math.round(18 * actionFontSize));
       const actionTitlePx = Math.max(13, Math.round(16 * actionFontSize));
-      const actionBodyPx = Math.max(12, Math.round(14.5 * actionFontSize));
-      const actionSmallPx = Math.max(10, Math.round(12 * actionFontSize));
-      const alarmPx = Math.max(14, 15.5 * alarmFontSize);
+      const actionBodyPx = Math.max(MIN_9PT, Math.round(14.5 * actionFontSize));
+      const actionSmallPx = Math.max(MIN_9PT, Math.round(12 * actionFontSize));
+      const alarmPx = Math.max(MIN_9PT, Math.round(15.5 * alarmFontSize));
       const alarmH1Px = Math.max(17, Math.round(23 * alarmFontSize));
       const alarmH2Px = Math.max(14, Math.round(18 * alarmFontSize));
       const alarmTitlePx = Math.max(13, Math.round(16 * alarmFontSize));
-      const alarmBodyPx = Math.max(12, Math.round(14.5 * alarmFontSize));
-      const alarmSmallPx = Math.max(10, Math.round(12 * alarmFontSize));
+      const alarmBodyPx = Math.max(MIN_9PT, Math.round(14.5 * alarmFontSize));
+      const alarmSmallPx = Math.max(MIN_9PT, Math.round(12 * alarmFontSize));
 
       const FontController = ({ label, value, onChange }) => (
         <div className="flex items-center space-x-1 bg-space-900 border border-slate-700 rounded-xl px-2 py-0.5 shadow-sm">
@@ -1415,14 +1420,14 @@
                           </div>
 
                           {/* AI 맞춤 행동 처방 & 잠재의식 통찰 */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                             <div className="p-2.5 bg-space-950/60 rounded-xl border border-emerald-500/30">
-                              <span className="text-emerald-300 font-black block text-[10px] mb-0.5">⚡ AI 맞춤 행동 처방 (지금 할 일):</span>
-                              <p className="text-slate-100 font-medium leading-snug">{currentTailInsight.aiPrescription}</p>
+                              <span style={{ fontSize: `${set2HeaderPx}px` }} className="text-emerald-300 font-black block mb-0.5">⚡ AI 맞춤 행동 처방 (지금 할 일):</span>
+                              <p style={{ fontSize: `${set2SubPx}px` }} className="text-slate-100 font-medium leading-snug">{currentTailInsight.aiPrescription}</p>
                             </div>
                             <div className="p-2.5 bg-space-950/60 rounded-xl border border-cyan-500/30">
-                              <span className="text-cyan-300 font-black block text-[10px] mb-0.5">💎 잠재의식 본질 통찰:</span>
-                              <p className="text-slate-200 leading-snug">{currentTailInsight.deepInsight}</p>
+                              <span style={{ fontSize: `${set2HeaderPx}px` }} className="text-cyan-300 font-black block mb-0.5">💎 잠재의식 본질 통찰:</span>
+                              <p style={{ fontSize: `${set2SubPx}px` }} className="text-slate-200 leading-snug">{currentTailInsight.deepInsight}</p>
                             </div>
                           </div>
                         </div>
