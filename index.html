@@ -100,6 +100,11 @@
       box-shadow: 0 0 35px rgba(0, 240, 255, 0.18);
     }
 
+    .pipeline-step-active {
+      border-left: 4px solid #00F0FF;
+      background: rgba(34, 211, 238, 0.08);
+    }
+
     .mic-pulse {
       animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
     }
@@ -209,7 +214,6 @@
     };
 
     function App() {
-      // 각 창별 독립 글씨 크기
       const [chatFontSize, setChatFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_CHAT') || '1.15'));
       const [systemFontSize, setSystemFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_SYSTEM') || '1.15'));
       const [backupFontSize, setBackupFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_BACKUP') || '1.10'));
@@ -221,10 +225,8 @@
       const [inputHeightPx, setInputHeightPx] = useState(90);
       const [selectedQuestion, setSelectedQuestion] = useState(null);
 
-      // 🌟 4대 메인 탭: 'WORKSPACE' | 'MATRIX' | 'ANALYSIS' | 'ACTION'
+      // 4대 메인 탭
       const [mainNavTab, setMainNavTab] = useState('WORKSPACE');
-
-      // 분석시스템 탭 내부에서 선택된 거장 ID ('DALIO' | 'ROBBINS' | 'FORTE' | 'HILL' | 'GTD')
       const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
 
       // 4대 질문 목록
@@ -624,7 +626,6 @@
         playSound('cheer');
       };
 
-      // 각각의 창별 픽셀 계산
       const chatPx = Math.max(14, 16 * chatFontSize);
       const systemPx = Math.max(14, 15.5 * systemFontSize);
       const backupPx = Math.max(13, 14.5 * backupFontSize);
@@ -687,11 +688,9 @@
             </button>
           </header>
 
-          {/* 🌟 4대 메인 내비게이션 탭 바 */}
+          {/* 4대 메인 내비게이션 탭 바 */}
           <nav className="bg-space-900/95 border-b border-cyan-500/20 px-4 py-2.5 flex items-center justify-between overflow-x-auto z-10">
             <div className="flex items-center gap-2 min-w-max">
-              
-              {/* 1. 대화 워크스페이스 */}
               <button
                 onClick={() => { setMainNavTab('WORKSPACE'); playSound('pop'); }}
                 className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
@@ -702,7 +701,6 @@
                 <span>💬 대화 워크스페이스</span>
               </button>
 
-              {/* 2. 5대 시스템종합 */}
               <button
                 onClick={() => { setMainNavTab('MATRIX'); playSound('pop'); }}
                 className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
@@ -713,7 +711,6 @@
                 <span>📑 5대 시스템종합</span>
               </button>
 
-              {/* 3. 분석 시스템 */}
               <button
                 onClick={() => { setMainNavTab('ANALYSIS'); playSound('pop'); }}
                 className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
@@ -724,7 +721,6 @@
                 <span>📊 분석 시스템</span>
               </button>
 
-              {/* 4. 행동연계 */}
               <button
                 onClick={() => { setMainNavTab('ACTION'); playSound('pop'); }}
                 className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
@@ -736,7 +732,6 @@
               </button>
             </div>
 
-            {/* Split Width Presets for Workspace */}
             {mainNavTab === 'WORKSPACE' && (
               <div className="hidden lg:flex items-center gap-1 bg-space-900 border border-slate-800 rounded-xl p-1 text-xs font-bold text-slate-300">
                 <span className="text-slate-400 px-1 text-[11px]">화면 분할:</span>
@@ -792,36 +787,51 @@
                     <div ref={chatEndRef} />
                   </div>
 
-                  {/* 4대 질문 바 */}
-                  <div className="px-4 py-2 bg-space-900/95 border-t border-b border-cyan-500/20 shadow-md">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-bold text-cyan-300 flex items-center gap-1">
+                  {/* 🌟 4대 전문 방향성 질문 카드 바 (세로 4개 1열 리스트로 배치) */}
+                  <div className="px-4 py-2.5 bg-space-900/95 border-t border-b border-cyan-500/20 shadow-md max-h-[42%] overflow-y-auto">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs md:text-sm font-bold text-cyan-300 flex items-center gap-1.5">
                         <span>🧭</span> 4대 전문 방향성 질문 (클릭하여 아래 답변 작성):
                       </span>
-                      <span className="text-[10px] font-mono text-gold-300 bg-space-850 px-2 py-0.5 rounded-full">Socratic Cards</span>
+                      <span className="text-[10px] font-mono text-gold-300 bg-space-850 px-2.5 py-0.5 rounded-full">
+                        Vertical Socratic Cards
+                      </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-1.5">
+                    {/* 세로 4개 1열 리스트 */}
+                    <div className="flex flex-col gap-2">
                       {activeQuestions.map((q, idx) => {
                         const isSelected = selectedQuestion?.id === q.id;
                         return (
                           <button
                             key={q.id}
                             onClick={() => handleSelectQuestion(q)}
-                            className={`p-2 rounded-xl text-left border transition shadow-sm ${
-                              isSelected ? 'bg-cyan-500/25 border-cyan-300 ring-2 ring-cyan-400/40' : 'bg-space-800 hover:bg-cyan-500/15 border-slate-700 hover:border-cyan-400'
+                            className={`w-full p-3 rounded-xl text-left border transition shadow-sm ${
+                              isSelected 
+                                ? 'bg-cyan-500/25 border-cyan-300 ring-2 ring-cyan-400/40' 
+                                : 'bg-space-800 hover:bg-cyan-500/15 border-slate-700 hover:border-cyan-400'
                             }`}>
-                            <div className="flex items-center justify-between mb-0.5">
-                              <span className="text-xs font-bold text-cyan-300 font-mono">Q{idx + 1}. {q.title}</span>
-                              <span className="text-[10px] text-slate-400 px-1 py-0.2 rounded bg-space-900">{idx + 1}</span>
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs md:text-sm font-black text-cyan-300 font-mono flex items-center gap-1.5">
+                                <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-300 inline-flex items-center justify-center text-xs font-bold border border-cyan-500/40">
+                                  {idx + 1}
+                                </span>
+                                {q.title}
+                              </span>
+                              <span className="text-[10.5px] text-slate-300 px-2 py-0.5 rounded bg-space-900 border border-slate-800 font-medium">
+                                {q.pillar}
+                              </span>
                             </div>
-                            <p className="text-[11px] text-slate-200 line-clamp-1 leading-snug">{q.text}</p>
+                            <p className="text-xs md:text-sm text-slate-100 leading-relaxed font-medium pl-6">
+                              {q.text}
+                            </p>
                           </button>
                         );
                       })}
                     </div>
                   </div>
 
+                  {/* 선택된 질문 고정 바 */}
                   {selectedQuestion && (
                     <div className="px-4 py-2 bg-cyan-950/90 border-b border-cyan-400 flex items-center justify-between animate-fadeIn">
                       <div className="flex items-center gap-2">
@@ -1013,11 +1023,11 @@
               </div>
             )}
 
-            {/* 🌟 3. [분석 시스템] 탭 (왼쪽에 각각의 시스템 분석 목록 + 오른쪽에 세부 심층 분석) */}
+            {/* 🌟 3. [분석 시스템] 탭 (왼쪽 5개 시스템 목록 + 오른쪽 상세 뷰) */}
             {mainNavTab === 'ANALYSIS' && (
               <div className="flex-1 flex w-full h-full overflow-hidden" style={{ fontSize: `${analysisPx}px` }}>
                 
-                {/* 🌟 좌측 (Left 38%): 각각의 5개 시스템 분석 목록 카드 */}
+                {/* 좌측 38%: 5대 시스템 분석 목록 */}
                 <aside className="w-[38%] border-r border-cyan-500/20 bg-space-950/90 flex flex-col overflow-hidden">
                   <div className="p-4 border-b border-slate-800 flex items-center justify-between">
                     <div>
@@ -1030,8 +1040,6 @@
                   </div>
 
                   <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                    
-                    {/* 1. 레이 달리오 카드 */}
                     <button
                       onClick={() => { setSelectedMasterInAnalysis('DALIO'); playSound('pop'); }}
                       className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
@@ -1048,7 +1056,6 @@
                       </p>
                     </button>
 
-                    {/* 2. 토니 로빈스 카드 */}
                     <button
                       onClick={() => { setSelectedMasterInAnalysis('ROBBINS'); playSound('pop'); }}
                       className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
@@ -1065,7 +1072,6 @@
                       </p>
                     </button>
 
-                    {/* 3. 티아고 포르테 카드 */}
                     <button
                       onClick={() => { setSelectedMasterInAnalysis('FORTE'); playSound('pop'); }}
                       className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
@@ -1082,7 +1088,6 @@
                       </p>
                     </button>
 
-                    {/* 4. 나폴레온 힐 카드 */}
                     <button
                       onClick={() => { setSelectedMasterInAnalysis('HILL'); playSound('pop'); }}
                       className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
@@ -1099,7 +1104,6 @@
                       </p>
                     </button>
 
-                    {/* 5. 데이비드 앨런 카드 */}
                     <button
                       onClick={() => { setSelectedMasterInAnalysis('GTD'); playSound('pop'); }}
                       className={`w-full text-left p-4 rounded-2xl border transition shadow-md ${
@@ -1115,28 +1119,23 @@
                         <strong>Runway:</strong> {fiveMastersData.gtd.runway}
                       </p>
                     </button>
-
                   </div>
                 </aside>
 
-                {/* 🌟 우측 (Right 62%): 선택된 시스템의 심층 분석 상세 화면 */}
+                {/* 우측 62%: 선택된 거장 심층 분석 */}
                 <section className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6">
-                  
-                  {/* ① 레이 달리오 심층 뷰 */}
                   {selectedMasterInAnalysis === 'DALIO' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h2 className="text-xl md:text-2xl font-black text-cyan-300">① 레이 달리오 《원칙》 심층 분석</h2>
                         <span className="text-xs font-mono text-slate-400">Machine-like OS</span>
                       </div>
-
                       <div className="glass-box-active rounded-3xl p-6 border-2 border-cyan-400 space-y-3">
                         <span className="text-cyan-300 font-black text-sm block">⚡ 나의 Ray Dalio If-Then 의사결정 알고리즘</span>
                         <div className="bg-space-950 p-5 rounded-2xl border border-cyan-500/30">
                           <p className="text-white font-black text-base md:text-lg leading-relaxed">"{fiveMastersData.dalio.ifThenRule}"</p>
                         </div>
                       </div>
-
                       <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3">
                         <h3 className="text-base font-black text-white">⚙️ 기계론적 5단계 피드백 루프</h3>
                         <div className="space-y-2.5">
@@ -1150,14 +1149,12 @@
                     </div>
                   )}
 
-                  {/* ② 토니 로빈스 심층 뷰 */}
                   {selectedMasterInAnalysis === 'ROBBINS' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h2 className="text-xl md:text-2xl font-black text-rose-300">② 토니 로빈스 《거인을 깨워라 (NAC)》 심층 분석</h2>
                         <span className="text-xs font-mono text-slate-400">Power Questions</span>
                       </div>
-
                       <div className="glass-box-active rounded-3xl p-6 border-2 border-rose-500/50 space-y-3">
                         <span className="text-rose-300 font-black text-sm block">💎 잠재의식적 핵심 동기 (Core Driver)</span>
                         <div className="bg-space-950 p-5 rounded-2xl border border-rose-500/30">
@@ -1169,28 +1166,19 @@
                           ))}
                         </div>
                       </div>
-
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="glass-box rounded-3xl p-5 border border-rose-500/40 space-y-2">
-                          <span className="text-rose-400 font-black text-sm block">🛑 미달성 시 고통</span>
-                          <p className="text-slate-100 leading-relaxed bg-space-900 p-3.5 rounded-xl">{fiveMastersData.robbins.painOfFailure}</p>
-                        </div>
-                        <div className="glass-box rounded-3xl p-5 border border-emerald-500/40 space-y-2">
-                          <span className="text-emerald-400 font-black text-sm block">✨ 달성 시 쾌락</span>
-                          <p className="text-slate-100 leading-relaxed bg-space-900 p-3.5 rounded-xl">{fiveMastersData.robbins.pleasureOfSuccess}</p>
-                        </div>
+                        <div className="glass-box rounded-3xl p-5 border border-rose-500/40 space-y-2"><span className="text-rose-400 font-black text-sm block">🛑 미달성 시 고통</span><p className="text-slate-100 leading-relaxed bg-space-900 p-3.5 rounded-xl">{fiveMastersData.robbins.painOfFailure}</p></div>
+                        <div className="glass-box rounded-3xl p-5 border border-emerald-500/40 space-y-2"><span className="text-emerald-400 font-black text-sm block">✨ 달성 시 쾌락</span><p className="text-slate-100 leading-relaxed bg-space-900 p-3.5 rounded-xl">{fiveMastersData.robbins.pleasureOfSuccess}</p></div>
                       </div>
                     </div>
                   )}
 
-                  {/* ③ 티아고 포르테 심층 뷰 */}
                   {selectedMasterInAnalysis === 'FORTE' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h2 className="text-xl md:text-2xl font-black text-purple-300">③ 티아고 포르테 《세컨드 브레인》 심층 분석</h2>
                         <span className="text-xs font-mono text-slate-400">PARA Framework</span>
                       </div>
-
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="glass-box rounded-3xl p-5 border-2 border-purple-500/40 space-y-1.5"><strong className="text-purple-300 text-sm block">📁 Projects</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.projects}</p></div>
                         <div className="glass-box rounded-3xl p-5 border border-slate-800 space-y-1.5"><strong className="text-slate-300 text-sm block">📂 Areas</strong><p className="text-white font-bold bg-space-900 p-3.5 rounded-xl">{fiveMastersData.forte.areas}</p></div>
@@ -1201,19 +1189,16 @@
                     </div>
                   )}
 
-                  {/* ④ 나폴레온 힐 심층 뷰 */}
                   {selectedMasterInAnalysis === 'HILL' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h2 className="text-xl md:text-2xl font-black text-gold-300">④ 나폴레온 힐 《생각하라 그리고 부자가 되어라》 심층 분석</h2>
                         <span className="text-xs font-mono text-slate-400">DCA Protocol</span>
                       </div>
-
                       <div className="glass-box-active rounded-3xl p-7 border-2 border-gold-400 shadow-2xl space-y-3">
                         <span className="text-gold-300 font-bold text-sm block">📜 나의 6단계 확약 진술문</span>
                         <div className="bg-space-950 p-5 rounded-2xl border border-gold-500/40"><p className="text-white font-black leading-relaxed">"{fiveMastersData.hill.definiteChiefAim}"</p></div>
                       </div>
-
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-gold-400 font-bold text-xs block mb-1">💰 목표 금액/가치</span><p className="text-white font-bold">{fiveMastersData.hill.exactAmount}</p></div>
                         <div className="glass-box p-4 rounded-2xl border border-slate-800"><span className="text-gold-400 font-bold text-xs block mb-1">⏳ 완수 기한</span><p className="text-white font-bold">{fiveMastersData.hill.deadline}</p></div>
@@ -1223,14 +1208,12 @@
                     </div>
                   )}
 
-                  {/* ⑤ 데이비드 앨런 심층 뷰 */}
                   {selectedMasterInAnalysis === 'GTD' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h2 className="text-xl md:text-2xl font-black text-cyan-300">⑤ 데이비드 앨런 《GTD》 심층 분석</h2>
                         <span className="text-xs font-mono text-slate-400">Horizons of Focus</span>
                       </div>
-
                       <div className="glass-box rounded-3xl p-6 border border-cyan-500/40 space-y-3">
                         <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-purple-400"><strong className="text-purple-300 block">{fiveMastersData.gtd.altitude50k}</strong></div>
                         <div className="p-3.5 bg-space-900 rounded-xl border-l-4 border-indigo-400"><strong className="text-indigo-300 block">{fiveMastersData.gtd.altitude40k}</strong></div>
@@ -1247,12 +1230,11 @@
                       </div>
                     </div>
                   )}
-
                 </section>
               </div>
             )}
 
-            {/* 🌟 4. [행동연계] 탭 (즉각 실행 및 행동 관제 엔진) */}
+            {/* 🌟 4. [행동연계] 탭 */}
             {mainNavTab === 'ACTION' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${actionPx}px` }}>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -1268,8 +1250,6 @@
                 </div>
 
                 <div className="space-y-6">
-                  
-                  {/* 1. 즉시 3분 활성화 타이머 미션 카드 */}
                   <div className="glass-box-active rounded-3xl p-8 border-2 border-cyan-400 shadow-2xl space-y-5">
                     <div className="flex items-center justify-between">
                       <span className="text-cyan-300 font-black text-base md:text-lg flex items-center gap-2">
@@ -1309,7 +1289,6 @@
                     </div>
                   </div>
 
-                  {/* 2. Ray Dalio If-Then 행동 원칙집 카드 */}
                   <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3">
                     <span className="text-gold-300 font-black text-base flex items-center gap-2">
                       <span>⚡</span> 레이 달리오 If-Then 자동 방어 알고리즘
@@ -1319,7 +1298,6 @@
                     </p>
                   </div>
 
-                  {/* 3. 나폴레온 힐 즉시 실행 약속 카드 */}
                   <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3">
                     <span className="text-emerald-400 font-black text-base flex items-center gap-2">
                       <span>📜</span> 나폴레온 힐 대가 지불 & 즉시 실행 서약
@@ -1335,7 +1313,6 @@
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             )}
