@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ANTI-GRAVITY OS (AG-OS) - Master Production Engine</title>
+  <title>ANTI-GRAVITY OS (AG-OS) - 누구나 쉽게 쓰는 성공 OS</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React 18 & ReactDOM -->
@@ -18,7 +18,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=JetBrains+Mono:wght@400;600;700;800&family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=JetBrains+Mono:wght@400;600;700&family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -66,14 +66,14 @@
       color: #F1F5F9;
       font-family: 'Pretendard', sans-serif;
       overflow-x: hidden;
-      font-size: 18px;
+      transition: font-size 0.2s ease;
     }
     
     .bg-grid-pattern {
       background-image: 
         linear-gradient(to right, rgba(34, 211, 238, 0.04) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
-      background-size: 40px 40px;
+      background-size: 36px 36px;
     }
     
     .glass-panel {
@@ -92,10 +92,6 @@
 
     .neon-border-cyan {
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(0, 240, 255, 0.15);
-    }
-
-    .neon-border-gold {
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.35), inset 0 0 20px rgba(255, 215, 0, 0.15);
     }
 
     ::-webkit-scrollbar {
@@ -131,666 +127,463 @@
           const gain = ctx.createGain();
           osc.type = 'sine';
           osc.frequency.setValueAtTime(750, ctx.currentTime);
-          gain.gain.setValueAtTime(0.05, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+          gain.gain.setValueAtTime(0.04, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start();
-          osc.stop(ctx.currentTime + 0.06);
-        } else if (type === 'bypass') {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(440, ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.25);
-          gain.gain.setValueAtTime(0.08, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start();
-          osc.stop(ctx.currentTime + 0.3);
-        } else if (type === 'celebrate') {
-          [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
+          osc.stop(ctx.currentTime + 0.05);
+        } else if (type === 'magic') {
+          [440, 554.37, 659.25, 880].forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.06);
+            gain.gain.setValueAtTime(0.05, ctx.currentTime + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.06 + 0.2);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + i * 0.06);
+            osc.stop(ctx.currentTime + i * 0.06 + 0.2);
+          });
+        } else if (type === 'bell') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.05);
-            gain.gain.setValueAtTime(0.06, ctx.currentTime + i * 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.05 + 0.22);
+            osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.06);
+            gain.gain.setValueAtTime(0.06, ctx.currentTime + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.06 + 0.25);
             osc.connect(gain);
             gain.connect(ctx.destination);
-            osc.start(ctx.currentTime + i * 0.05);
-            osc.stop(ctx.currentTime + i * 0.05 + 0.22);
+            osc.start(ctx.currentTime + i * 0.06);
+            osc.stop(ctx.currentTime + i * 0.06 + 0.25);
           });
         }
       } catch (e) {}
     };
 
-    // --- 5-LAYER WHY LADDERING SPEC ---
-    const WHY_LAYERS = [
-      { layer: 1, name: 'Layer 1: Surface Want', desc: '표면적 목표 및 가시적 욕망', color: 'text-slate-300' },
-      { layer: 2, name: 'Layer 2: Strategic Outcome', desc: '결과적 기대 및 비즈니스 제국', color: 'text-cyan-400' },
-      { layer: 3, name: 'Layer 3: Emotional Driver', desc: '근원적 감정 및 절대적 자립', color: 'text-purple-400' },
-      { layer: 4, name: 'Layer 4: Shadow Probing', desc: '무의식적 회피 및 평가 공포', color: 'text-rose-400' },
-      { layer: 5, name: 'Layer 5: Core Driver & Anchor', desc: '실존적 동인 & 무마찰 앵커링', color: 'text-gold-400' }
+    // --- QUICK CHIPS (일반인용 1초 답변 버튼) ---
+    const GOAL_CHIPS = [
+      { id: 'diet', label: '🏋️ 다이어트 / 매일 운동', text: '올해 5kg 감량하고 매일 20분씩 운동하는 습관을 만들고 싶어요.' },
+      { id: 'side', label: '💰 월 100만원 부업 벌기', text: '월급 외에 부업이나 자동화 수익으로 월 100만 원을 더 벌고 싶어요.' },
+      { id: 'exam', label: '📚 자격증 / 시험 합격', text: '올해 안에 목표로 하는 자격증 시험에 꼭 합격하고 싶어요.' },
+      { id: 'sns', label: '📱 유튜브 / 블로그 시작', text: '나만의 콘텐츠로 유튜브나 블로그를 꾸준히 운영하고 싶어요.' },
+      { id: 'job', label: '💼 이직 / 포트폴리오 완성', text: '더 좋은 조건의 회사로 이직하기 위해 포트폴리오를 완성하고 싶어요.' }
     ];
 
-    // --- DEFAULT PRD STATE ---
-    const DEFAULT_DATA = {
-      dialogueDepth: 1, // 1 to 5
-      currentLayer: 1,
-      fontSizeScale: 2.0,
-      githubRepo: 'tttd1us-design/anti-gravity-sos',
-      
-      // Activation Energy Parameters (PRD Section 4.3)
-      physics: {
-        eBase: 8.0,      // Task Complexity (1~10)
-        cf: 8.5,         // Friction Coefficient (1.0~10.0)
-        momentum: 1.0,   // Momentum Index
-        eAct: 68.0,      // eBase * cf / (momentum + 0.00001)
-        originalTask: "도서 1장 1절 본문 A4 10장 집필 및 IR 사업계획서 완성",
-        bypassedTask: "Obsidian을 열고 '1장 1절' 제목 아래 가장 형편없는 문장 1줄 적기 (5분 타이머)",
-        isBypassed: false
-      },
-
-      // Subconscious Ontological Nodes & Edges (PRD Section 4.2)
-      desires: [
-        { id: 1, label: '도서 100권 집필 & 10조 비즈니스 제국 수립', weight: 98, layer: 2, category: 'STRATEGIC_OUTCOME' },
-        { id: 2, label: '누구도 나를 통제할 수 없는 절대적 자립과 지적 통제권', weight: 95, layer: 3, category: 'EMOTIONAL_DRIVER' },
-        { id: 3, label: '1인 지식 엔터프라이즈 자동화 파이프라인 완성', weight: 89, layer: 1, category: 'SURFACE_WANT' }
-      ],
-      gravityFrictions: [
-        { id: 1, label: '지적 유능함이 시장에서 부정당할지도 모른다는 존재론적 공포', severity: 'CRITICAL', score: 8.5 },
-        { id: 2, label: '완벽하지 않은 초고 노출에 대한 완벽주의적 회피성 딴짓', severity: 'HIGH', score: 7.8 }
-      ],
-
-      dca: {
-        statement: '2027년 12월까지 AG-OS를 통해 100권 도서 출판과 10조 비즈니스 제국 기반 10만 고성과자 락인을 달성한다',
-        deadline: '2027-12-31',
-        priceToPay: '단기적 유흥과 타협의 완전한 포기, 매일 아침 2시간의 딥워크 몰입',
-        keyStrategy: '소크라테스 인지 마이닝 ➔ Neo4j 지식 그래프 ➔ 무마찰 일일 마이크로 실행'
-      },
-
-      memoryTopology: {
-        working: '활성 대화 세션 버퍼 (Redis Active State: 14 Keys)',
-        episodic: '일일 회고 및 정서 변곡점 임베딩 (Qdrant Vector DB: 128 Points)',
-        semantic: '확정된 가치 체계 및 원칙 (PostgreSQL JSONB: 32 Records)',
-        subconscious: '욕망-공포-행동 상관망 (Neo4j AuraDB: 8 Nodes, 14 Edges)'
-      },
-
-      principles: [
-        {
-          id: 1,
-          condition: "작업 직전 숨이 턱 막히고 유튜브나 단순 잡무로 도피하고 싶을 때",
-          rule: "의지력을 자책하지 않고 마찰 계수(Cf)를 즉시 측정하여 물리적 과제 난이도를 1/50로 다운사이징(Bypass)한다",
-          tag: "ANTI-FRICTION",
-          date: "2026-08-31"
-        },
-        {
-          id: 2,
-          condition: "시간이 부족하다는 자기합리화가 발생할 때",
-          rule: "시간 부족이 아닌 잠재의식의 '평가 공포'를 직면하고 절대 비공개 로컬 모드에서 5분 타이머를 가동한다",
-          tag: "NEUTRALIZER",
-          date: "2026-08-31"
-        }
-      ]
-    };
-
-    // --- Socratic 5-Layer Why Engine ---
-    function processSocraticPRD(userInput, currentData, history) {
-      const text = userInput.trim();
-      let updated = JSON.parse(JSON.stringify(currentData));
-      let reply = "";
-
-      // Cognitive Defense Detection (Rationalization Check)
-      const isExcuse = text.includes("시간") || text.includes("바빠") || text.includes("피곤") || text.includes("다음에") || text.includes("나중에");
-
-      if (isExcuse && updated.dialogueDepth <= 3) {
-        reply = `[인지 방어기제 무력화: Cognitive Defense Neutralizer]\n\n"시간이나 피로는 표면적 핑계일 뿐입니다. 시스템 로그상 당신은 피로한 상태에서도 본인이 통제권을 느끼는 게임이나 투자 분석에는 몇 시간씩 몰입할 수 있습니다.\n\n이 과제를 앞두고 당신의 무의식이 회피하고자 했던 진짜 불쾌한 감정이나 공포(Gravity)는 정확히 무엇입니까?"`;
-        updated.physics.cf = Math.min(10.0, updated.physics.cf + 0.5);
-      } else if (updated.dialogueDepth === 1) {
-        updated.dialogueDepth = 2;
-        updated.currentLayer = 2;
-        reply = `[Layer 1 ➔ Layer 2: Strategic Outcome 진입]\n\n당신의 표면적 욕망 뒤에 숨겨진 결과적 기대를 포착했습니다.\n\n이 목표가 실현되어 세상에 당신의 시스템이 자리 잡았을 때, 당신이 구축하게 될 **'10조 규모의 비즈니스 제국 혹은 지적 독점권'**의 구체적인 모습은 무엇입니까?`;
-        updated.desires.unshift({
-          id: Date.now(),
-          label: `발굴된 전략적 기대: "${text.slice(0, 30)}..."`,
-          weight: 94,
-          layer: 2,
-          category: 'STRATEGIC_OUTCOME'
-        });
-      } else if (updated.dialogueDepth === 2) {
-        updated.dialogueDepth = 3;
-        updated.currentLayer = 3;
-        reply = `[Layer 2 ➔ Layer 3: Emotional Driver 진입]\n\n그 거대한 비즈니스 제국을 완성했을 때 당신이 얻게 될 **'누구도 침범할 수 없는 절대적 자립과 자유'**라는 근원적 감정에 도달했습니다.\n\n그렇다면 반대로 질문합니다. 이것을 시도했다가 세상의 냉소나 실패를 마주했을 때, 당신이 감당하기 가장 두려운 **'무의식적 수치심이나 손실(Shadow Probing)'**은 무엇입니까?`;
-      } else if (updated.dialogueDepth === 3) {
-        updated.dialogueDepth = 4;
-        updated.currentLayer = 4;
-        reply = `[Layer 3 ➔ Layer 4: Shadow Probing 저항 해체]\n\n당신의 뇌가 브레이크를 밟았던 진짜 원인인 **'평가 공포와 완벽주의적 저항(Gravity Score: 8.5)'**이 데이터로 규명되었습니다. 당신이 게으른 것이 아니라, 무의식이 당신의 자존감을 보호하기 위해 회피를 선택했던 것입니다.\n\n지금 이 순간 **'절대 비공개 1인 로컬 모드'**를 발동합니다.\n\n누구에게도 보여주지 않을, 가장 거칠고 엉망인 핵심 키워드 3개를 지금 적어보십시오.`;
-        updated.gravityFrictions.unshift({
-          id: Date.now(),
-          label: `규명된 실존적 공포: ${text.slice(0, 35)}...`,
-          severity: 'CRITICAL',
-          score: 8.5
-        });
-      } else {
-        updated.dialogueDepth = 5;
-        updated.currentLayer = 5;
-        updated.physics.momentum = 1.4;
-        updated.physics.cf = 2.1;
-        updated.physics.eAct = (0.1 * 2.1) / (1.4 + 0.00001);
-        reply = `[Layer 5: Core Driver & Anchor 무마찰 가속 진입]\n\n마찰이 해제되었습니다! 모멘텀 지수(M)가 1.4로 급상승하고 인지 활성화 에너지(E_act)가 0.15로 극소화되었습니다.\n\n방금 추출된 인지 디버깅 규칙이 **Obsidian 로컬 볼트** 및 **Ray Dalio 의사결정 원칙집**에 영구 각인되었습니다. 지금 즉시 다음 7분 딥워크로 진입하십시오!`;
-      }
-
-      // Recalculate physics
-      updated.physics.eAct = parseFloat(((updated.physics.eBase * updated.physics.cf) / (updated.physics.momentum + 0.00001)).toFixed(2));
-      return { reply, updated };
-    }
+    const EXCUSE_CHIPS = [
+      { label: '완벽하게 하려다 시작을 못 해요', text: '완벽하게 준비해서 잘하고 싶은 마음에 자꾸 시작을 미루게 돼요.' },
+      { label: '막막해서 어디서부터 할지 몰라요', text: '양이 너무 많고 막막해서 어디서부터 손대야 할지 엄두가 안 나요.' },
+      { label: '실패하면 창피할까 봐 두려워요', text: '열심히 했는데 결과가 안 좋거나 남들에게 비판받을까 봐 두려워요.' },
+      { label: '퇴근하고 오면 기운이 없어서 폰만 봐요', text: '하루 종일 일하고 오면 에너지가 다 떨어져서 유튜브 쇼츠만 보게 돼요.' }
+    ];
 
     function App() {
-      const [data, setData] = useState(() => {
-        const saved = localStorage.getItem('AG_OS_PRD_MASTER_V1');
-        return saved ? JSON.parse(saved) : DEFAULT_DATA;
+      // Font Scale (1.0 = 100%, 1.3 = 130%, 1.6 = 160%, 2.0 = 200%)
+      const [fontScale, setFontScale] = useState(() => {
+        const saved = localStorage.getItem('AG_FONT_SCALE');
+        return saved ? parseFloat(saved) : 1.6; // 기본값을 아주 편안하고 큰 1.6x로 설정
       });
 
+      // View Mode: 'EASY' (일반인/초심자용) vs 'PRO' (전문가/공학용)
+      const [viewMode, setViewMode] = useState('EASY');
+
+      // Mind State
+      const [mindState, setMindState] = useState({
+        burdenScore: 85, // 시작하기 귀찮은 정도 (0~100)
+        fearScore: 78,   // 실패 걱정 점수 (0~100)
+        momentum: 1,     // 연속 달성 횟수
+        todayMission: "스마트폰 메모장을 열고 제목 딱 1줄만 적기",
+        isEasyModeActive: false,
+        streakDays: 3
+      });
+
+      // Timer state
+      const [timerSeconds, setTimerSeconds] = useState(180); // 3분 타이머
+      const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+      // Chat Messages
       const [messages, setMessages] = useState([
         {
-          id: 'init-1',
-          sender: 'system',
-          text: `[ANTI-GRAVITY OS: 인지 역설계 엔진 가동]\n\n이 시스템은 5-Layer Why Laddering을 통해 잠재의식의 공포와 마찰력(Gravity)을 해체하고 무마찰 실행 알고리즘으로 전환합니다.\n\n당신이 머리로는 간절히 원하지만, 실행 직전 자꾸만 딴짓을 하거나 미루게 되는 **'가장 중요한 단 하나의 과제나 목표'**는 무엇입니까?`,
-          timestamp: new Date().toLocaleTimeString()
+          id: 'msg-1',
+          sender: 'coach',
+          text: `안녕하세요! 반갑습니다 😊\n\n저는 당신이 **'귀찮음과 두려움'을 이겨내고 원하는 목표를 쉽게 이루도록 돕는 든든한 AI 성공 코치**예요.\n\n거창한 계획을 세워도 자꾸 미루게 되는 건 당신이 게을러서가 아니라, 뇌가 마음에 큰 부담을 느끼기 때문이에요!\n\n현재 가장 이루고 싶은 목표가 무엇인가요? 아래 버튼을 누르시거나 편하게 말씀해 주세요.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
 
       const [inputText, setInputText] = useState("");
-      const [activeTab, setActiveTab] = useState('physics'); // physics, why, ontology, asset, tier
       const [isThinking, setIsThinking] = useState(false);
-      const [fontSizeScale, setFontSizeScale] = useState(data.fontSizeScale || 2.0);
-      const chatScrollRef = useRef(null);
+      const chatEndRef = useRef(null);
+
+      // Save Font Scale
+      const handleFontScaleChange = (newScale) => {
+        const clamped = Math.min(2.5, Math.max(1.0, parseFloat(newScale.toFixed(1))));
+        setFontScale(clamped);
+        localStorage.setItem('AG_FONT_SCALE', clamped.toString());
+        playAudio('tick');
+      };
+
+      // Timer Effect
+      useEffect(() => {
+        let interval = null;
+        if (isTimerRunning && timerSeconds > 0) {
+          interval = setInterval(() => {
+            setTimerSeconds(prev => prev - 1);
+          }, 1000);
+        } else if (timerSeconds === 0 && isTimerRunning) {
+          setIsTimerRunning(false);
+          playAudio('bell');
+          if (window.confetti) {
+            window.confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+          }
+          alert("🎉 3분 집중 미션 완료! 오늘의 성공 도장을 획득하셨습니다!");
+          setMindState(prev => ({
+            ...prev,
+            burdenScore: Math.max(10, prev.burdenScore - 40),
+            momentum: prev.momentum + 1
+          }));
+        }
+        return () => clearInterval(interval);
+      }, [isTimerRunning, timerSeconds]);
 
       useEffect(() => {
-        localStorage.setItem('AG_OS_PRD_MASTER_V1', JSON.stringify({ ...data, fontSizeScale }));
-        chatScrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, data, activeTab, fontSizeScale]);
+      }, [messages, viewMode, fontScale]);
 
-      const handleSendMessage = (e) => {
-        e.preventDefault();
-        if (!inputText.trim() || isThinking) return;
+      // Message Handling
+      const handleSendMessage = (textToSend) => {
+        const text = (textToSend || inputText).trim();
+        if (!text || isThinking) return;
 
         const userMsg = {
           id: `u-${Date.now()}`,
           sender: 'user',
-          text: inputText.trim(),
-          timestamp: new Date().toLocaleTimeString()
+          text,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
 
         setMessages(prev => [...prev, userMsg]);
-        const curInput = inputText.trim();
         setInputText("");
         playAudio('tick');
         setIsThinking(true);
 
         setTimeout(() => {
-          const { reply, updated } = processSocraticPRD(curInput, data, messages);
-          setData(updated);
+          let reply = "";
+          if (messages.length === 1) {
+            reply = `좋은 목표예요! 그런데 이 목표를 시작하려고 할 때, 마음에 브레이크가 걸리거나 자꾸 딴짓을 하게 만드는 **'진짜 속마음(이유)'**은 무엇인가요?\n\n솔직하게 아래 버튼을 선택해 보세요.`;
+            setMindState(prev => ({ ...prev, burdenScore: 75 }));
+          } else if (messages.length === 3) {
+            reply = `맞아요, 그 마음 100% 이해해요! 😊\n\n완벽하게 잘하고 싶은 마음이 크다 보니 뇌가 너무 큰 에너지가 든다고 착각해서 시작을 망설이는 거예요.\n\n그래서 지금 이 순간, **'마음 편한 3분 초간단 시작 모드'**를 선물해 드릴게요!\n\n오늘 딱 3분 동안만 **"${mindState.todayMission}"** 해볼까요? 아래 [⏱️ 3분 타이머 시작]을 누르시면 같이 시작해 드릴게요!`;
+            setMindState(prev => ({ ...prev, isEasyModeActive: true, burdenScore: 20 }));
+            playAudio('magic');
+            if (window.confetti) {
+              window.confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
+            }
+          } else {
+            reply = `정말 대단해요! 한 걸음씩 가볍게 나아갈 때 뇌는 도파민을 뿜어내며 점점 더 몰입하게 돼요.\n\n오늘 해낸 작은 3분의 성공이 내일의 거대한 성공을 만듭니다. 지금 기분이 어떠신가요?`;
+          }
 
-          const sysMsg = {
-            id: `s-${Date.now()}`,
-            sender: 'system',
+          const coachMsg = {
+            id: `c-${Date.now()}`,
+            sender: 'coach',
             text: reply,
-            timestamp: new Date().toLocaleTimeString()
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
 
-          setMessages(prev => [...prev, sysMsg]);
+          setMessages(prev => [...prev, coachMsg]);
           setIsThinking(false);
-
-          if (updated.dialogueDepth >= 4) {
-            playAudio('celebrate');
-            if (window.confetti) {
-              window.confetti({ particleCount: 80, spread: 70, origin: { y: 0.65 } });
-            }
-          }
         }, 500);
       };
 
-      // PRD Section 4.3: Dynamic Task Downsizing (Bypass Logic)
-      const triggerBypassLogic = () => {
-        playAudio('bypass');
-        setData(prev => {
-          const newEbase = 0.1;
-          const newCf = prev.physics.cf * 0.4;
-          const newMomentum = prev.physics.momentum + 0.3;
-          const newEact = parseFloat(((newEbase * newCf) / (newMomentum + 0.00001)).toFixed(2));
-          return {
-            ...prev,
-            physics: {
-              ...prev.physics,
-              eBase: newEbase,
-              cf: parseFloat(newCf.toFixed(1)),
-              momentum: parseFloat(newMomentum.toFixed(1)),
-              eAct: newEact,
-              isBypassed: true
-            }
-          };
-        });
-        if (window.confetti) {
-          window.confetti({ particleCount: 50, spread: 50, origin: { y: 0.7 } });
-        }
-      };
-
-      const exportAssetEngine = (type) => {
-        let content = "";
-        let filename = "";
-
-        if (type === 'blueprint') {
-          content = `# 🛡️ THE ANTI-GRAVITY BLUEPRINT (개인 인지 설계도)
-문서 식별 번호: AG-BLUEPRINT-2026-PRO
-발행 일시: ${new Date().toLocaleString()}
-
-## 1. 존재론적 정체성 및 50,000ft 존재 이유
-- **정체성 선언**: ${data.dca.statement}
-- **목표 마감 시한**: ${data.dca.deadline}
-- **지불할 기회비용**: ${data.dca.priceToPay}
-
-## 2. 5-Layer Why 심층 욕망 & 저항 온톨로지
-${data.desires.map(d => `- [Layer ${d.layer}] ${d.label} (가중치: ${d.weight}%)`).join('\n')}
-
-### 무의식적 중력 저항 (Gravity Frictions):
-${data.gravityFrictions.map(g => `- [${g.severity}] ${g.label} (마찰점수: ${g.score})`).join('\n')}
-
-## 3. 물리적 인지 활성화 상태
-- 과제 복잡도 (E_base): ${data.physics.eBase}
-- 심리적 마찰 계수 (C_f): ${data.physics.cf}
-- 축적된 모멘텀 (M): ${data.physics.momentum}
-- 인지 활성화 에너지 (E_act): ${data.physics.eAct}
-`;
-          filename = `Anti_Gravity_Blueprint_${new Date().toISOString().slice(0,10)}.md`;
-        } else {
-          content = `# 📚 AUTOMATED BOOK MANUSCRIPT & IR FRAMEWORK
-프로덕트: Anti-Gravity 100권 도서 & 10조 비즈니스 컴파일러
-생성 일시: ${new Date().toLocaleString()}
-
-## [Ch.1] 인지 역설계와 무의식의 마찰력 해체
-1.1. 인간 의지력의 한계와 잠재의식 공포의 상관관계
-1.2. 마찰 계수(Cf)를 극소화하는 수학적 실행 알고리즘 (E_act 공식)
-
-## [Ch.2] 1인 지식 엔터프라이즈와 초격차 자산화
-2.1. 대화 데이터를 도서 원고로 자동 컴파일하는 메커니즘
-2.2. 10조 비즈니스 제국을 위한 자본 배치 및 M&A 프레임워크
-
-### 실제 세션 기반 추출 원칙 (Dalio Principles):
-${data.principles.map((p, idx) => `${idx + 1}. [IF: ${p.condition}] -> [THEN: ${p.rule}]`).join('\n')}
-`;
-          filename = `AG_Book_IR_Compiler_${new Date().toISOString().slice(0,10)}.md`;
-        }
-
-        const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-        playAudio('tick');
-      };
+      // Base font size calculations
+      const baseFontSizePx = 15 * fontScale;
 
       return (
         <div className="flex flex-col h-screen max-h-screen">
           
-          {/* Header */}
-          <header className="h-20 border-b border-cyan-500/20 glass-panel px-6 flex items-center justify-between z-20">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 via-indigo-600 to-purple-600 flex items-center justify-center neon-border-cyan shadow-lg">
-                <i data-lucide="orbit" className="w-7 h-7 text-white animate-spin" style={{ animationDuration: '20s' }}></i>
+          {/* Top Header */}
+          <header className="h-20 border-b border-cyan-500/20 glass-panel px-4 md:px-8 flex items-center justify-between z-20">
+            <div className="flex items-center space-x-3 md:space-x-4">
+              <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center neon-border-cyan shadow-lg">
+                <i data-lucide="sparkles" className="w-6 h-6 text-white animate-spin" style={{ animationDuration: '15s' }}></i>
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl md:text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-gold-400 font-serif">
-                    ANTI-GRAVITY OS
+                  <h1 className="text-lg md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-gold-300 font-sans tracking-tight">
+                    안티그레비티 OS
                   </h1>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                    MASTER PRD V1
+                  <span className="hidden sm:inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                    성공 습관 코치
                   </span>
                 </div>
-                <p className="text-sm text-slate-300 font-mono flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
-                  <span className="text-cyan-300 font-bold">5-LAYER WHY: Lv.{data.currentLayer}/5</span>
-                  <span className="text-slate-500">|</span>
-                  <span className="text-purple-300 font-bold">E_act: {data.physics.eAct}</span>
+                <p className="text-xs md:text-sm text-slate-400 font-medium">
+                  {viewMode === 'EASY' ? '🌱 누구나 쉽게 시작하는 마음 편한 성공 관리' : '⚡ 5-Layer Why & 인지 활성화 물리 모델'}
                 </p>
               </div>
             </div>
 
-            {/* Font & Export Controls */}
-            <div className="flex items-center space-x-3">
-              <div className="bg-space-900 border border-cyan-500/30 rounded-xl p-1 flex items-center gap-1">
-                <button 
-                  onClick={() => { setFontSizeScale(1.4); playAudio('tick'); }}
-                  className={`px-2.5 py-1 text-xs font-mono font-bold rounded-lg transition ${fontSizeScale === 1.4 ? 'bg-cyan-500 text-black' : 'text-slate-400 hover:text-white'}`}>
-                  1.4x
+            {/* Controls: Easy/Pro Mode + Font Size Controller */}
+            <div className="flex items-center space-x-2 md:space-x-4">
+              
+              {/* Mode Toggle */}
+              <div className="bg-space-900 border border-cyan-500/30 rounded-2xl p-1 flex items-center">
+                <button
+                  onClick={() => { setViewMode('EASY'); playAudio('tick'); }}
+                  className={`px-3 py-1.5 text-xs md:text-sm font-bold rounded-xl flex items-center gap-1.5 transition ${
+                    viewMode === 'EASY' ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                  }`}>
+                  <span>🌱 쉬운 모드</span>
                 </button>
-                <button 
-                  onClick={() => { setFontSizeScale(2.0); playAudio('tick'); }}
-                  className={`px-3 py-1 text-sm font-mono font-bold rounded-lg transition ${fontSizeScale === 2.0 ? 'bg-cyan-500 text-black shadow-lg' : 'text-slate-400 hover:text-white'}`}>
-                  2.0x (대형)
-                </button>
-                <button 
-                  onClick={() => { setFontSizeScale(2.5); playAudio('tick'); }}
-                  className={`px-2.5 py-1 text-xs font-mono font-bold rounded-lg transition ${fontSizeScale === 2.5 ? 'bg-cyan-500 text-black' : 'text-slate-400 hover:text-white'}`}>
-                  2.5x
+                <button
+                  onClick={() => { setViewMode('PRO'); playAudio('tick'); }}
+                  className={`px-3 py-1.5 text-xs md:text-sm font-bold rounded-xl flex items-center gap-1.5 transition ${
+                    viewMode === 'PRO' ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                  }`}>
+                  <span>⚡ 프로 모드</span>
                 </button>
               </div>
 
-              <button 
-                onClick={() => exportAssetEngine('blueprint')}
-                className="px-3.5 py-2 text-sm font-mono font-bold bg-space-800 hover:bg-space-700 text-cyan-300 hover:text-white border border-cyan-500/40 rounded-xl flex items-center gap-2 transition shadow-md">
-                <i data-lucide="file-check" className="w-4 h-4"></i>
-                <span className="hidden md:inline">청사진 PDF/MD</span>
-              </button>
-              
-              <button 
-                onClick={() => exportAssetEngine('book')}
-                className="px-3.5 py-2 text-sm font-mono font-bold bg-space-800 hover:bg-space-700 text-gold-300 hover:text-white border border-gold-500/40 rounded-xl flex items-center gap-2 transition shadow-md">
-                <i data-lucide="book-marked" className="w-4 h-4"></i>
-                <span className="hidden md:inline">도서/IR 컴파일러</span>
-              </button>
+              {/* Intuitive Font Size Controller (A- / A+ / Presets) */}
+              <div className="bg-space-900 border border-slate-700/80 rounded-2xl px-2 py-1 flex items-center gap-1 shadow-inner">
+                <button 
+                  onClick={() => handleFontScaleChange(fontScale - 0.2)}
+                  title="글씨 축소"
+                  className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-space-800 hover:bg-space-700 text-slate-300 font-bold text-sm flex items-center justify-center transition">
+                  A-
+                </button>
+                
+                <span className="text-xs md:text-sm font-bold font-mono text-cyan-300 px-1.5 min-w-[50px] text-center">
+                  {Math.round(fontScale * 100)}%
+                </span>
+
+                <button 
+                  onClick={() => handleFontScaleChange(fontScale + 0.2)}
+                  title="글씨 확대"
+                  className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-space-800 hover:bg-space-700 text-slate-300 font-bold text-sm flex items-center justify-center transition">
+                  A+
+                </button>
+
+                {/* Quick Presets */}
+                <div className="hidden lg:flex items-center gap-1 ml-1 border-l border-slate-800 pl-1">
+                  {[
+                    { label: '보통', scale: 1.0 },
+                    { label: '크게', scale: 1.4 },
+                    { label: '아주크게', scale: 1.8 },
+                    { label: '2배', scale: 2.0 }
+                  ].map(p => (
+                    <button
+                      key={p.scale}
+                      onClick={() => handleFontScaleChange(p.scale)}
+                      className={`px-2 py-1 text-xs font-bold rounded-lg transition ${
+                        Math.abs(fontScale - p.scale) < 0.1 ? 'bg-cyan-400 text-black font-extrabold' : 'text-slate-400 hover:text-white'
+                      }`}>
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
             </div>
           </header>
 
-          {/* Main 2-Column Split Workspace */}
+          {/* Main Layout Container */}
           <div className="flex-1 flex overflow-hidden">
             
-            {/* LEFT: Socratic 5-Layer Why Dialogue Stream (50%) */}
-            <section className="w-full md:w-1/2 lg:w-6/12 flex flex-col border-r border-cyan-500/10 bg-space-950/75 relative">
-              <div className="bg-space-900/90 border-b border-cyan-500/10 px-5 py-3 flex items-center justify-between text-sm text-slate-300">
+            {/* LEFT: Socratic Dialogue Stream */}
+            <section className={`flex flex-col bg-space-950/80 relative transition-all duration-300 ${
+              viewMode === 'EASY' ? 'w-full md:w-7/12 lg:w-8/12 border-r border-cyan-500/10' : 'w-full md:w-1/2 border-r border-cyan-500/10'
+            }`}>
+              
+              {/* Quick Status Bar */}
+              <div className="bg-space-900/90 border-b border-cyan-500/10 px-5 py-2.5 flex items-center justify-between text-xs md:text-sm text-slate-300 font-medium">
                 <div className="flex items-center gap-2">
-                  <i data-lucide="shield-check" className="w-4 h-4 text-cyan-400"></i>
-                  <span className="font-bold">소크라테스 산파술 + 방어기제 무력화 엔진</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>AI 코치 실시간 연결 중</span>
                 </div>
-                <span className="font-mono text-purple-400 font-bold text-sm">
-                  {WHY_LAYERS[data.currentLayer - 1]?.name || "Layer 5"}
-                </span>
+                <div className="flex items-center gap-3 text-slate-400">
+                  <span>🔥 {mindState.streakDays}일 연속 성공 중</span>
+                  <span>|</span>
+                  <span className="text-cyan-400 font-bold">마음 부담감: {mindState.burdenScore > 50 ? '⚠️ 높음' : '✨ 가벼움'}</span>
+                </div>
               </div>
 
-              {/* Chat Stream (Large 2X Scale) */}
-              <div className="flex-1 overflow-y-auto p-5 md:p-7 space-y-7">
+              {/* Chat Message Stream */}
+              <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
                 {messages.map((m) => (
                   <div key={m.id} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
-                    <div className="flex items-center gap-2 mb-1.5 px-1">
-                      <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold">
-                        {m.sender === 'system' ? '🛡️ ANTI-GRAVITY CSO' : '👤 HIGH PERFORMER (YOU)'}
+                    <div className="flex items-center gap-2 mb-1 px-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">
+                        {m.sender === 'coach' ? '🌱 안티그레비티 AI 코치' : '👤 나 (사용자)'}
                       </span>
                       <span className="text-xs text-slate-500 font-mono">{m.timestamp}</span>
                     </div>
 
-                    <div className={`max-w-[94%] md:max-w-[88%] rounded-3xl p-5 md:p-6 leading-relaxed shadow-xl ${
+                    <div className={`max-w-[92%] md:max-w-[85%] rounded-3xl p-5 leading-relaxed shadow-lg ${
                       m.sender === 'user'
                         ? 'bg-gradient-to-r from-cyan-950/90 to-indigo-950/95 border-2 border-cyan-500/40 text-white rounded-tr-none'
                         : 'glass-panel-glow text-slate-100 border-l-[6px] border-l-cyan-400 rounded-tl-none'
-                    }`} style={{ fontSize: `${fontSizeScale * 10.5}px` }}>
+                    }`} style={{ fontSize: `${baseFontSizePx}px` }}>
                       <p className="whitespace-pre-line font-sans font-medium leading-relaxed">{m.text}</p>
                     </div>
                   </div>
                 ))}
 
                 {isThinking && (
-                  <div className="flex items-center space-x-3 text-cyan-400 text-base font-mono p-4 glass-panel rounded-2xl w-fit">
+                  <div className="flex items-center space-x-3 text-cyan-400 text-sm font-medium p-4 glass-panel rounded-2xl w-fit">
                     <i data-lucide="loader-2" className="w-5 h-5 animate-spin"></i>
-                    <span>잠재의식 인지 역설계 및 마찰 계수(Cf) 산출 중...</span>
+                    <span>당신의 마음을 편안하게 돕는 답변을 준비하고 있어요...</span>
                   </div>
                 )}
-                <div ref={chatScrollRef} />
+                <div ref={chatEndRef} />
               </div>
 
-              {/* Input Bar */}
-              <div className="p-5 bg-space-900/95 border-t border-cyan-500/20">
-                <form onSubmit={handleSendMessage} className="relative flex items-center">
+              {/* Quick Choice Chips (1초 원클릭 선택지) */}
+              {messages.length === 1 && (
+                <div className="px-5 py-3 bg-space-900/90 border-t border-cyan-500/10 flex flex-wrap gap-2">
+                  <span className="text-xs font-bold text-slate-400 w-full mb-1">💡 원클릭 빠른 선택:</span>
+                  {GOAL_CHIPS.map(chip => (
+                    <button
+                      key={chip.id}
+                      onClick={() => handleSendMessage(chip.text)}
+                      className="px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold bg-space-800 hover:bg-cyan-500/20 text-slate-200 hover:text-cyan-300 border border-slate-700 hover:border-cyan-400 transition shadow-sm">
+                      {chip.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {messages.length === 2 && (
+                <div className="px-5 py-3 bg-space-900/90 border-t border-cyan-500/10 flex flex-wrap gap-2">
+                  <span className="text-xs font-bold text-slate-400 w-full mb-1">💡 왜 시작이 망설여지나요?</span>
+                  {EXCUSE_CHIPS.map((chip, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleSendMessage(chip.text)}
+                      className="px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold bg-space-800 hover:bg-rose-500/20 text-slate-200 hover:text-rose-300 border border-slate-700 hover:border-rose-400 transition shadow-sm">
+                      {chip.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Input Area */}
+              <div className="p-4 md:p-5 bg-space-900/95 border-t border-cyan-500/20">
+                <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="relative flex items-center">
                   <textarea
-                    rows="3"
+                    rows="2"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        handleSendMessage(e);
+                        handleSendMessage();
                       }
                     }}
-                    placeholder="당신의 진짜 욕망, 직면한 두려움, 혹은 회피하려 했던 감정을 솔직하게 입력하십시오..."
-                    className="w-full bg-space-950 border-2 border-slate-700 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 rounded-2xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none resize-none pr-28 font-sans leading-relaxed"
-                    style={{ fontSize: `${fontSizeScale * 9.5}px` }}
+                    placeholder="생각나는 대로 편하게 이야기해 주세요..."
+                    className="w-full bg-space-950 border-2 border-slate-700 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 rounded-2xl px-5 py-3.5 text-white placeholder-slate-500 focus:outline-none resize-none pr-28 font-sans leading-relaxed"
+                    style={{ fontSize: `${baseFontSizePx}px` }}
                   />
                   <button
                     type="submit"
                     disabled={!inputText.trim() || isThinking}
-                    className={`absolute right-3 bottom-4 px-5 py-3 rounded-xl font-black text-sm font-mono flex items-center gap-2 transition ${
+                    className={`absolute right-3 bottom-3.5 px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 transition ${
                       inputText.trim() && !isThinking
-                        ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-xl shadow-cyan-500/40 hover:scale-105'
+                        ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg shadow-cyan-500/40 hover:scale-105'
                         : 'bg-space-800 text-slate-600 cursor-not-allowed'
                     }`}>
-                    <span>기록</span>
+                    <span>보내기</span>
                     <i data-lucide="send" className="w-4 h-4"></i>
                   </button>
                 </form>
-                <div className="flex items-center justify-between mt-2.5 px-2 text-xs text-slate-400 font-mono">
-                  <span>Enter 전송 | Shift + Enter 줄바꿈</span>
-                  <span className="text-cyan-400 font-semibold">무의식의 마찰력을 0으로 만들어 행동을 가속화합니다</span>
-                </div>
               </div>
             </section>
 
-            {/* RIGHT: PRD Master Intelligence Engine (50%) */}
-            <aside className="hidden md:flex md:w-1/2 lg:w-6/12 flex-col bg-space-950/95 overflow-y-auto">
+            {/* RIGHT: Dashboard Panel */}
+            <aside className={`hidden md:flex flex-col bg-space-950/95 overflow-y-auto p-6 space-y-6 ${
+              viewMode === 'EASY' ? 'w-5/12 lg:w-4/12' : 'w-1/2'
+            }`}>
               
-              {/* Tabs */}
-              <div className="flex border-b border-cyan-500/15 bg-space-900/80 p-2.5 gap-2">
-                {[
-                  { id: 'physics', label: '1. 활성화 에너지 공식', icon: 'zap' },
-                  { id: 'why', label: '2. 5-Layer 래더링', icon: 'git-merge' },
-                  { id: 'ontology', label: '3. 4계층 메모리', icon: 'database' },
-                  { id: 'asset', label: '4. 도서/IR 컴파일러', icon: 'book-open' }
-                ].map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => { setActiveTab(tab.id); playAudio('tick'); }}
-                    className={`flex-1 py-3 px-2.5 rounded-xl text-sm font-bold font-mono flex items-center justify-center gap-2 transition ${
-                      activeTab === tab.id
-                        ? 'bg-cyan-500/25 text-cyan-300 border-2 border-cyan-400 shadow-md'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-space-800'
-                    }`}>
-                    <i data-lucide={tab.icon} className="w-4 h-4"></i>
-                    <span>{tab.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* TAB 1: Activation Energy Physics & Bypass Logic (PRD Section 4.3) */}
-              {activeTab === 'physics' && (
-                <div className="p-6 space-y-6">
+              {/* EASY MODE DASHBOARD */}
+              {viewMode === 'EASY' && (
+                <div className="space-y-6">
                   
-                  {/* Physics Dashboard Card */}
-                  <div className="glass-panel-glow rounded-3xl p-6 border-2 border-cyan-400/50">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2.5">
-                        <i data-lucide="gauge" className="w-6 h-6 text-cyan-400"></i>
-                        <h3 className="text-base font-bold font-mono tracking-wider text-cyan-300 uppercase">
-                          ACTIVATION ENERGY ENGINE (E_act)
-                        </h3>
-                      </div>
-                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
-                        수학적 마찰 해소 공식
-                      </span>
+                  {/* 3-Minute Focus Mission & Timer Card */}
+                  <div className="glass-panel-glow rounded-3xl p-6 border-2 border-cyan-400/40 text-center">
+                    <div className="flex items-center justify-center gap-2 text-cyan-400 font-bold text-sm mb-2">
+                      <i data-lucide="zap" className="w-5 h-5"></i>
+                      <span>오늘의 부담 없는 3분 미션</span>
                     </div>
 
-                    {/* Formula Display */}
-                    <div className="bg-space-900/95 p-4 rounded-2xl border border-cyan-500/30 font-mono text-center mb-4">
-                      <p className="text-xs text-slate-400 mb-1">인지 활성화 에너지 공식 (E_act)</p>
-                      <p className="text-lg font-black text-cyan-300 tracking-wider">
-                        E_act = ( E_base × C_f ) / ( M + ε )
-                      </p>
-                    </div>
-
-                    {/* Physics Parameters Grid */}
-                    <div className="grid grid-cols-3 gap-3 text-center font-mono mb-4">
-                      <div className="bg-space-900 p-3.5 rounded-2xl border border-slate-800">
-                        <span className="text-xs text-slate-500 block mb-1 font-bold">E_base (복잡도)</span>
-                        <span className="text-lg font-extrabold text-white">{data.physics.eBase}</span>
-                      </div>
-                      <div className="bg-space-900 p-3.5 rounded-2xl border border-slate-800">
-                        <span className="text-xs text-rose-400 block mb-1 font-bold">C_f (마찰계수)</span>
-                        <span className="text-lg font-extrabold text-rose-400">{data.physics.cf}</span>
-                      </div>
-                      <div className="bg-space-900 p-3.5 rounded-2xl border border-slate-800">
-                        <span className="text-xs text-emerald-400 block mb-1 font-bold">M (모멘텀)</span>
-                        <span className="text-lg font-extrabold text-emerald-400">{data.physics.momentum}</span>
-                      </div>
-                    </div>
-
-                    {/* Total E_act Result Indicator */}
-                    <div className={`p-4 rounded-2xl border flex items-center justify-between ${
-                      data.physics.eAct > 30 
-                        ? 'bg-rose-950/40 border-rose-500/40 text-rose-300' 
-                        : 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
-                    }`}>
-                      <div>
-                        <span className="text-xs font-mono block font-bold">현재 인지 활성화 에너지 (E_act)</span>
-                        <span className="text-2xl font-black font-mono">{data.physics.eAct}</span>
-                      </div>
-                      <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-black/40 border border-current">
-                        {data.physics.eAct > 30 ? "⚠️ 행동 마비 위험 (High Resistance)" : "⚡ 즉각 무마찰 실행 (Flow State)"}
-                      </span>
-                    </div>
-
-                    {/* Dynamic Task Downsizing (Bypass Logic Button) */}
-                    <div className="mt-5 pt-4 border-t border-slate-800">
-                      <div className="mb-3">
-                        <span className="text-xs font-mono text-slate-400 block mb-1 font-bold">현재 직면한 과제:</span>
-                        <p className="text-sm text-slate-200 font-medium">
-                          {data.physics.isBypassed ? data.physics.bypassedTask : data.physics.originalTask}
-                        </p>
-                      </div>
-
-                      {!data.physics.isBypassed ? (
-                        <button
-                          onClick={triggerBypassLogic}
-                          className="w-full py-3.5 rounded-2xl font-black text-sm font-mono bg-gradient-to-r from-rose-500 via-purple-600 to-cyan-500 text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.02] transition flex items-center justify-center gap-2">
-                          <i data-lucide="zap" className="w-5 h-5"></i>
-                          <span>마찰 우회 발동 (Dynamic Task Downsizing: 5분 마이크로 변환)</span>
-                        </button>
-                      ) : (
-                        <div className="p-3.5 rounded-2xl bg-emerald-950/50 border border-emerald-500/40 text-emerald-300 text-xs font-mono text-center font-bold">
-                          ✓ 마찰 우회 완료! (E_base: 0.1 ➔ 도파민 회로 활성화)
-                        </div>
-                      )}
-                    </div>
-
-                  </div>
-
-                </div>
-              )}
-
-              {/* TAB 2: 5-Layer Why Laddering (PRD Section 4.1) */}
-              {activeTab === 'why' && (
-                <div className="p-6 space-y-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-base font-bold font-mono text-cyan-300">5-LAYER WHY LADDERING ARCHITECTURE</h3>
-                    <span className="text-xs font-mono text-slate-400">심층 산파술 계층</span>
-                  </div>
-
-                  <div className="space-y-3">
-                    {WHY_LAYERS.map(l => {
-                      const isCurrent = data.currentLayer === l.layer;
-                      const isPassed = data.currentLayer >= l.layer;
-                      return (
-                        <div key={l.layer} className={`p-4 rounded-2xl border transition ${
-                          isCurrent 
-                            ? 'glass-panel-glow border-2 border-cyan-400 shadow-lg' 
-                            : isPassed 
-                            ? 'bg-space-900/90 border-slate-800 text-slate-300' 
-                            : 'bg-space-950/50 border-slate-900 text-slate-600'
-                        }`}>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className={`text-xs font-mono font-bold ${l.color}`}>
-                              {l.name}
-                            </span>
-                            {isCurrent && <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-400 text-black font-bold animate-pulse">ACTIVE PROBING</span>}
-                            {isPassed && !isCurrent && <i data-lucide="check" className="w-4 h-4 text-emerald-400"></i>}
-                          </div>
-                          <p className="text-sm font-medium text-slate-200">{l.desc}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 3: 4-Tier Memory Topology (PRD Section 4.2) */}
-              {activeTab === 'ontology' && (
-                <div className="p-6 space-y-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-base font-bold font-mono text-cyan-300">4-TIER COGNITIVE MEMORY TOPOLOGY</h3>
-                    <span className="text-xs font-mono text-purple-400 font-bold">Neo4j & Vector Vault</span>
-                  </div>
-
-                  <div className="space-y-3 font-mono text-sm">
-                    <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
-                      <span className="text-xs text-cyan-400 block mb-1 font-bold">1. Working Memory (Redis Buffer)</span>
-                      <p className="text-slate-200 text-xs">{data.memoryTopology.working}</p>
-                    </div>
-
-                    <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
-                      <span className="text-xs text-purple-400 block mb-1 font-bold">2. Episodic Memory (Qdrant Vector DB)</span>
-                      <p className="text-slate-200 text-xs">{data.memoryTopology.episodic}</p>
-                    </div>
-
-                    <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
-                      <span className="text-xs text-gold-400 block mb-1 font-bold">3. Semantic Memory (PostgreSQL JSONB)</span>
-                      <p className="text-slate-200 text-xs">{data.memoryTopology.semantic}</p>
-                    </div>
-
-                    <div className="bg-space-900 p-4 rounded-2xl border border-emerald-500/30">
-                      <span className="text-xs text-emerald-400 block mb-1 font-bold">4. Subconscious Ontology (Neo4j Graph DB)</span>
-                      <p className="text-slate-200 text-xs">{data.memoryTopology.subconscious}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 4: Asset Engine & Compiler (PRD Section 6) */}
-              {activeTab === 'asset' && (
-                <div className="p-6 space-y-5">
-                  <div className="glass-panel-glow rounded-3xl p-6 border-2 border-gold-400/40">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2.5">
-                        <i data-lucide="book-open-check" className="w-6 h-6 text-gold-400"></i>
-                        <h3 className="text-base font-bold font-mono tracking-wider text-gold-300 uppercase">
-                          AUTOMATED ASSET & IR COMPILER
-                        </h3>
-                      </div>
-                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-gold-400/20 text-gold-300 font-bold border border-gold-400/30">
-                        10조 비즈니스 자산화
-                      </span>
-                    </div>
-
-                    <p className="text-sm text-slate-300 leading-relaxed mb-4">
-                      세션에서 진행된 소크라테스 산파술 대화와 인지 디버깅 원칙은 **100권 도서 출판 원고** 및 **10조 비즈니스 IR 프레임워크**로 실시간 자동 컴파일됩니다.
+                    <p className="text-base font-bold text-white mb-4 leading-snug">
+                      "{mindState.todayMission}"
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <button
-                        onClick={() => exportAssetEngine('blueprint')}
-                        className="p-4 rounded-2xl bg-space-900 border border-cyan-500/40 hover:bg-space-800 text-left transition">
-                        <span className="text-cyan-400 font-bold font-mono text-sm block mb-1">📄 The Blueprint</span>
-                        <span className="text-xs text-slate-400">20페이지 개인 인지 청사진 MD/PDF</span>
-                      </button>
+                    {/* Big Countdown Timer */}
+                    <div className="bg-space-900 p-5 rounded-2xl border border-cyan-500/30 mb-4">
+                      <span className="text-xs text-slate-400 block mb-1 font-mono">남은 집중 시간</span>
+                      <span className="text-4xl font-black font-mono text-cyan-300">
+                        {Math.floor(timerSeconds / 60)}:{(timerSeconds % 60).toString().padStart(2, '0')}
+                      </span>
+                    </div>
 
+                    {/* Timer Trigger Button */}
+                    {!isTimerRunning ? (
                       <button
-                        onClick={() => exportAssetEngine('book')}
-                        className="p-4 rounded-2xl bg-space-900 border border-gold-500/40 hover:bg-space-800 text-left transition">
-                        <span className="text-gold-400 font-bold font-mono text-sm block mb-1">📚 Book & IR Draft</span>
-                        <span className="text-xs text-slate-400">도서 초고 및 M&A 프레임워크</span>
+                        onClick={() => { setIsTimerRunning(true); playAudio('tick'); }}
+                        className="w-full py-3.5 rounded-2xl font-black text-sm md:text-base bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 text-white shadow-xl shadow-cyan-500/30 hover:scale-105 transition flex items-center justify-center gap-2">
+                        <i data-lucide="play" className="w-5 h-5"></i>
+                        <span>⏱️ 3분 타이머 시작하기</span>
                       </button>
+                    ) : (
+                      <button
+                        onClick={() => { setIsTimerRunning(false); playAudio('tick'); }}
+                        className="w-full py-3.5 rounded-2xl font-black text-sm bg-rose-600/80 hover:bg-rose-600 text-white transition flex items-center justify-center gap-2">
+                        <i data-lucide="pause" className="w-5 h-5"></i>
+                        <span>일시 정지</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Mind Burden Gauge (친절한 마음 게이지) */}
+                  <div className="glass-panel rounded-3xl p-5 border border-slate-800 space-y-4">
+                    <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                      <i data-lucide="heart-pulse" className="w-4 h-4 text-purple-400"></i>
+                      <span>내 마음의 부담감 상태</span>
+                    </h3>
+
+                    <div>
+                      <div className="flex justify-between text-xs font-semibold mb-1">
+                        <span className="text-slate-400">시작하기 귀찮은 정도</span>
+                        <span className="text-cyan-400">{mindState.burdenScore}점</span>
+                      </div>
+                      <div className="w-full bg-space-900 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                        <div className="bg-gradient-to-r from-cyan-500 to-rose-500 h-full transition-all duration-500" style={{ width: `${mindState.burdenScore}%` }}></div>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-space-900 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed">
+                      💡 <strong>AI 코치의 조언:</strong> 목표가 너무 거창하면 마음이 무거워져요. 오늘 딱 3분만 끝내면 부담감이 20점 밑으로 뚝 떨어집니다!
+                    </div>
+                  </div>
+
+                </div>
+              )}
+
+              {/* PRO MODE DASHBOARD */}
+              {viewMode === 'PRO' && (
+                <div className="space-y-6">
+                  <div className="glass-panel-glow rounded-3xl p-6 border-2 border-cyan-400/50">
+                    <h3 className="text-sm font-bold font-mono text-cyan-300 mb-2">ACTIVATION ENERGY FORMULA</h3>
+                    <p className="text-xs font-mono text-slate-300 mb-3">E_act = ( E_base × C_f ) / ( M + ε )</p>
+                    <div className="p-3 bg-space-900 rounded-xl border border-slate-800 text-xs font-mono">
+                      <div>E_base (복잡도): 8.0 ➔ 0.1 (Bypass)</div>
+                      <div>C_f (마찰계수): 8.5</div>
+                      <div>Momentum: {mindState.momentum}</div>
                     </div>
                   </div>
                 </div>
