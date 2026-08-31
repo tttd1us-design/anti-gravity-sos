@@ -312,11 +312,260 @@
       }
     };
 
-    // 상단 세트: 4대 계층 심층 방향성 질문 생성기
-    const generateChainedSocraticQuestions = (latestAnswer, round = 1) => {
+    // 🧭 [소크라테스식 5대 차원 질문 탐색 엔진]
+    const generateChainedSocraticQuestions = (latestAnswer, round = 1, lensMode = 'ALL') => {
       const ans = latestAnswer ? latestAnswer.trim() : "월 100만 원 부업 시스템";
-      const shortAns = ans.length > 20 ? ans.substring(0, 18) + '...' : ans;
+      const shortAns = ans.length > 22 ? ans.substring(0, 20) + '...' : ans;
 
+      // 🧠 [차원 1: 잠재의식 & DCA 발굴 모드 - 토니 로빈스 & 나폴레온 힐]
+      if (lensMode === 'SUBCONSCIOUS') {
+        return [
+          {
+            id: 'sub_q1',
+            slot: 'endState',
+            round: round,
+            pillar: 'Tier 1. 잠재의식 본원적 결핍 (Need)',
+            title: `🧠 [잠재의식] Want 너머 '영혼의 결핍'`,
+            text: `[${shortAns}]를 통해 진짜 쟁취하고 싶은 '내면의 궁극적 감정 상태'는 무엇인가요?`,
+            options: [
+              "타인에게 1초도 지배당하지 않는 절대적인 시간의 주도권과 자유",
+              "세상에 나만의 족적과 브랜드 지식 자산을 남기는 탁월한 성취감",
+              "경제적 불안에서 완전히 벗어나 사랑하는 사람들을 보호하는 안도감",
+              "남들의 평가나 시선에서 완전히 초연해지는 내면의 자율성"
+            ]
+          },
+          {
+            id: 'sub_q2',
+            slot: 'endState',
+            round: round,
+            pillar: 'Tier 1. DCA 6단계 북극성 (Hill)',
+            title: `🎯 [DCA 확약] 2026년 12월 31일의 정량적 숫자`,
+            text: `타협할 수 없는 명확한 중심 목표(DCA)로서 '2026년 말까지 찍힐 구체적 성과'는?`,
+            options: [
+              "2026년 12월 31일까지 월 100만 원 순이익 자동화 파이프라인 안착",
+              "2026년 말까지 유료 고객 100명 확보 및 1인 기업 브랜드 확립",
+              "2027년까지 10조 자산가 비전의 1단계 씨앗 자본 1억 원 축적",
+              "매월 300만 원의 패시브 인컴 시스템 구축으로 완전한 조기 경제독립"
+            ]
+          },
+          {
+            id: 'sub_q3',
+            slot: 'bottleneck',
+            round: round,
+            pillar: 'Tier 1. 기꺼이 치를 대가 (Sacrifice)',
+            title: `⚔️ [대가 지불] 오늘부터 버릴 1순위 타협거리`,
+            text: `이 위대한 비전을 쟁취하기 위해 오늘부터 가차없이 삭제할 '나태함의 타성'은?`,
+            options: [
+              "퇴근 후 숏폼/유튜브/넷플릭스 시청 시간 100% 삭제",
+              "불필요한 인맥 관리와 영양가 없는 술자리/모임 80% 단절",
+              "초안이 완벽해야 한다는 쓸데없는 자존심과 실패에 대한 수치심",
+              "‘내일부터 하겠다’는 비겁한 내면의 핑계와 게으름의 타성"
+            ]
+          },
+          {
+            id: 'sub_q4',
+            slot: 'microAction',
+            round: round,
+            pillar: 'Tier 1. 신경연합조건화 지렛대 (NAC)',
+            title: `🔥 [Pain vs Pleasure] 5년 뒤의 고통 vs 극상 희열`,
+            text: `지금 변화하지 않았을 때 겪을 끔찍한 고통과 성공했을 때의 극상 희열은?`,
+            options: [
+              "실패 시: 평생 남의 꿈을 위해 일하다 후회 / 성공 시: 매일 아침 온전한 내 시간으로 기상",
+              "실패 시: 타성에 젖어 무기력한 5년 / 성공 시: 전 세계 어디서든 작동하는 지식 시스템 보유",
+              "실패 시: 돈 때문에 비굴해지는 현실 / 성공 시: 가격표 보지 않고 선택하는 자립의 기쁨",
+              "실패 시: 시작도 못 해본 패배감 / 성공 시: 수많은 사람의 인생을 바꾼 멘토로 등극"
+            ]
+          }
+        ];
+      }
+
+      // 🛑 [차원 2: 5-Whys 저항 & 편향 진단 모드 - 레이 달리오]
+      if (lensMode === 'FRICTION') {
+        return [
+          {
+            id: 'fric_q1',
+            slot: 'bottleneck',
+            round: round,
+            pillar: 'Tier 4. 5-Whys 근본 원인 진단',
+            title: `🛑 [5-Whys] 시작을 미루게 만드는 진짜 원인`,
+            text: `왜 지금까지 [${shortAns}]를 실행하지 못하고 미뤄왔을까요? (심리적 5-Whys)`,
+            options: [
+              "완벽하지 않은 초안을 세상에 내놓았을 때 받을 혹평/비난이 두려워서",
+              "목표가 너무 거대해서(10조 자산) 첫 발을 떼는 데 필요한 뇌의 마찰이 과열되어서",
+              "실행을 강제해 주는 환경(소셜 알람, 금전적 서약)이 없어서",
+              "무엇부터 해야 할지 모호하여 생각만 복잡하게 굴리다 에너지가 고갈되어서"
+            ]
+          },
+          {
+            id: 'fric_q2',
+            slot: 'bottleneck',
+            round: round,
+            pillar: 'Tier 4. 기계론적 피드백 루프 (Dalio)',
+            title: `🤖 [Machine OS] 나라는 기계에서 고장 난 부품`,
+            text: `나를 하나의 기계(Machine)로 바라볼 때, 현재 피드백 루프의 결함 위치는?`,
+            options: [
+              "목표(Goals)는 크지만 시스템 설계(Design)와 3분 루틴이 누락됨",
+              "진단(Diagnosis) 대신 자기비하에 빠져 피드백 루프가 멈춤",
+              "감정을 기계적으로 분리하지 못하고 기분 따라 행동이 오락가락함",
+              "실패를 데이터로 보지 않고 인격의 상처로 받아들이는 에고의 결함"
+            ]
+          },
+          {
+            id: 'fric_q3',
+            slot: 'leverage',
+            round: round,
+            pillar: 'Tier 4. If-Then 개인 의사결정 헌법',
+            title: `📜 [If-Then 헌법] 타성 발동 시 0.1초 방어 규칙`,
+            text: `미루기 습관과 타성이 고개를 들 때 0.1초 만에 가동할 If-Then 방어 헌법은?`,
+            options: [
+              "IF '귀찮다/나중에 하자'는 생각이 스칠 때, THEN 3분 타이머 켜고 메모장에 단어 3개만 적는다.",
+              "IF '완벽하지 않다'는 두려움이 올 때, THEN '초안은 원래 쓰레기다'를 외치며 그대로 배포한다.",
+              "IF 퇴근 후 피로감이 몰려올 때, THEN 소셜 알람 파트너에게 착수 인증 카톡을 즉시 전송한다.",
+              "IF 목표가 막막하게 느껴질 때, THEN 오늘 지상(Runway)의 단 1가지 마이크로 액션만 본다."
+            ]
+          },
+          {
+            id: 'fric_q4',
+            slot: 'bottleneck',
+            round: round,
+            pillar: 'Tier 4. 맹점(Blind Spot) 제거',
+            title: `🔍 [자기기만 타파] 가장 치명적인 인지 편향`,
+            text: `내 성공을 가로막고 있는 가장 치명적인 자기기만(Blind Spot)은 무엇인가요?`,
+            options: [
+              "'책을 더 읽고 준비를 더 해야 한다'는 공부 중독 핑계",
+              "'시간이 부족하다'고 말하면서 스마트폰은 2시간씩 보는 착각",
+              "'혼자서도 잘할 수 있다'며 외부 강제성을 거부하는 오만",
+              "'언젠가는 잘되겠지'라며 오늘 하루의 3분 실행을 가볍게 여기는 안일함"
+            ]
+          }
+        ];
+      }
+
+      // 💎 [차원 3: 지식 증류 & Second Brain 자산화 모드 - 티아고 포르테]
+      if (lensMode === 'KNOWLEDGE') {
+        return [
+          {
+            id: 'know_q1',
+            slot: 'leverage',
+            round: round,
+            pillar: 'Tier 2. CODE 지식 캡처 (Capture)',
+            title: `💎 [CODE 증류] 10년 뒤에도 쓸 단 1줄 통찰`,
+            text: `[${shortAns}]와 관련해 최근 겪은 시행착오나 깨달음 중 평생 보존할 단 1문장은?`,
+            options: [
+              "거대한 비전은 3분 마이크로 액션으로 쪼갤 때만 뇌의 마찰이 0이 된다.",
+              "동기부여는 휘발되지만, 소셜 알람과 If-Then 시스템은 영구 작동한다.",
+              "고객은 완벽한 제품이 아니라 자신의 고통을 덜어줄 1장의 핵심 솔루션을 산다.",
+              "감정을 배제하고 기계처럼 5-Whys 피드백 루프를 돌릴 때 성공은 필연이 된다."
+            ]
+          },
+          {
+            id: 'know_q2',
+            slot: 'leverage',
+            round: round,
+            pillar: 'Tier 2. PARA 4대 바구니 (Organize)',
+            title: `📁 [PARA 분류] 이 지식을 보존할 영구 바구니`,
+            text: `이 깨달음 자산을 PARA 4대 바구니 중 어디에 체계적으로 저장하시겠습니까?`,
+            options: [
+              "Projects (현재 진행 중인 2주 스프린트 프로젝트 볼트)",
+              "Areas (지속적으로 관리할 1인 기업/수익화 핵심 책임 영역)",
+              "Resources (언제든 꺼내 쓸 수 있는 의사결정 원칙 & 템플릿 라이브러리)",
+              "Archives (완료된 프로젝트의 시행착오 데이터베이스)"
+            ]
+          },
+          {
+            id: 'know_q3',
+            slot: 'leverage',
+            round: round,
+            pillar: 'Tier 2. 본질 1문장 압축 (Distill)',
+            title: `🧪 [에센스 압축] 3초 만에 이해되는 핵심 공식`,
+            text: `이 지식을 초등학생도 3초 만에 이해할 수 있는 '핵심 에센스 1문장'으로 압축한다면?`,
+            options: [
+              "생각은 50,000ft에서 하고, 실행은 3분 지상에서 가볍게 끝낸다.",
+              "실패는 데이터일 뿐, 시스템을 수정하면 100% 해결된다.",
+              "1장의 핵심 템플릿이 100권의 미완성 책보다 강력하다.",
+              "의지력을 쓰지 말고 환경의 강제성을 세팅하라."
+            ]
+          },
+          {
+            id: 'know_q4',
+            slot: 'leverage',
+            round: round,
+            pillar: 'Tier 2. 실행 자산화 상품 (Express)',
+            title: `🚀 [Express 표현] 24시간 판매될 디지털 자산`,
+            text: `이 지식을 활용해 다른 사람에게 유료로 제공할 수 있는 디지털 상품(Express)은?`,
+            options: [
+              "3분 만에 적용 가능한 노션/PDF 원페이지 실행 템플릿 패키지",
+              "실패 패턴을 1클릭으로 진단해 주는 5-Whys 자가 점검 체크리스트",
+              "30일 동안 매일 카톡으로 전송되는 If-Then 의사결정 뉴스레터",
+              "초보자의 착수 마찰을 0으로 만드는 3분 런치패드 전자책"
+            ]
+          }
+        ];
+      }
+
+      // ⚡ [차원 4: GTD 3분 지상 실행 모드 - 데이비드 앨런]
+      if (lensMode === 'RUNWAY') {
+        return [
+          {
+            id: 'run_q1',
+            slot: 'microAction',
+            round: round,
+            pillar: 'Tier 3. GTD 수직 고도 정렬 (Horizons)',
+            title: `🌌 [수직 정렬] 50,000ft 비전 ➔ 지상 3분 연계`,
+            text: `50,000ft 존재 비전과 오늘 지상(Runway)의 직접적인 연결 고리는 무엇인가요?`,
+            options: [
+              "50,000ft 절대적 자유 ➔ 오늘 지상 3분: 상품 타이틀 1줄 메모장에 쓰기",
+              "10,000ft 1인 기업 런칭 ➔ 오늘 지상 3분: 잠재 고객 1명에게 피드백 메시지 발송",
+              "50,000ft 10조 자산가 비전 ➔ 오늘 지상 3분: 오늘의 If-Then 헌법 1회 낭독",
+              "20,000ft 수동 수익 구축 ➔ 오늘 지상 3분: 3분 타이머 켜고 무료 템플릿 초안 저장"
+            ]
+          },
+          {
+            id: 'run_q2',
+            slot: 'microAction',
+            round: round,
+            pillar: 'Tier 3. Next Physical Action (Runway)',
+            title: `⚡ [지상 3분] 지금 즉시 손가락을 움직일 행동`,
+            text: `지금 당장 스마트폰이나 PC로 3분 만에 끝낼 수 있는 'Next Physical Action'은?`,
+            options: [
+              "비공개 메모장을 열고 내 상품의 핵심 혜택 3단어 타이핑하기",
+              "3분 타이머 누르고 책상 위 불필요한 물건 치운 뒤 1줄 기획 적기",
+              "성공 파트너에게 오늘 밤 완수할 미션 내용 카톡 1통 보내기",
+              "DCA 6단계 중심 목표 확약문을 소리 내어 1회 낭독하기"
+            ]
+          },
+          {
+            id: 'run_q3',
+            slot: 'microAction',
+            round: round,
+            pillar: 'Tier 3. 소셜 강제성 서약 (Pledge)',
+            title: `🔔 [소셜 서약] 미완수 시 패널티 강제 계약`,
+            text: `오늘 밤 10시까지 파트너에게 인증하지 못했을 때 지불할 패널티 서약은?`,
+            options: [
+              "오늘 밤 10시까지 메모장 1줄 미인증 시 파트너에게 1만 원 즉시 송금",
+              "미완수 시 주말 커피 쿠폰 3장 파트너에게 선물하기",
+              "미완수 시 SNS에 '오늘의 게으름 반성문' 공개 포스팅하기",
+              "미완수 시 내일 아침 6시 기상 인증 카톡 전송하기"
+            ]
+          },
+          {
+            id: 'run_q4',
+            slot: 'microAction',
+            round: round,
+            pillar: 'Tier 3. 착수 마찰 0 돌파 (Inertia Breaker)',
+            title: `⏱️ [3분 가동] 관성을 깨고 즉시 착수 결단`,
+            text: `완벽한 2시간 작업 대신 '3분 타이머 1회'로 관성을 깨고 즉시 착수하시겠습니까?`,
+            options: [
+              "예, 지금 즉시 3분 타이머를 누르고 메모장에 첫 단어를 적겠습니다!",
+              "예, 1시간 고민할 시간에 3분 만에 첫 결과물을 완성하겠습니다!",
+              "예, 완벽주의를 버리고 3분 동안 미완성 초안을 쏟아내겠습니다!",
+              "예, 머리로 생각하지 않고 손가락의 감각으로 3분간 밀어붙이겠습니다!"
+            ]
+          }
+        ];
+      }
+
+      // 🌟 [차원 기본: 5대 거장 전방위 융합 모드 (ALL)]
       if (round === 1) {
         return [
           {
@@ -429,7 +678,7 @@
           title: `⚡ [심화 ${round}차] 파트너 실시간 서약 메시지`,
           text: `지금 당장 성공 파트너에게 보낼 '오늘 밤 3분 완수 확약'은?`,
           options: [
-            "'오늘 밤 10시까지 [${shortAns}] 1차 결과물을 인증 못하면 1만 원을 송금합니다.'",
+            `'오늘 밤 10시까지 [${shortAns}] 1차 결과물을 인증 못하면 1만 원을 송금합니다.'`,
             "'지금 3분 타이머 누르고 바로 착수합니다. 완료 후 스크린샷 보낼게요!'",
             "'나의 DCA 확약문을 공유합니다. 매일 감시해 주세요.'",
             "'오늘의 If-Then 방어 헌법을 세웠습니다. 흔들릴 때 경고해 주세요.'"
@@ -439,7 +688,7 @@
     };
 
     // 하단 세트: 실시간 꼬꼬무 자아탐색 질문 & AI 행동 처방 생성기
-    const generateDeepTailQuestionAndPrescription = (userInput, historyCount = 1) => {
+    const generateDeepTailQuestionAndPrescription = (userInput, lensMode = 'ALL', historyCount = 1) => {
       const text = (userInput || "").trim();
 
       if (!text) {
@@ -450,19 +699,27 @@
         };
       }
 
-      if (text.includes("돈") || text.includes("수익") || text.includes("월") || text.includes("부업") || text.includes("사업")) {
+      if (lensMode === 'SUBCONSCIOUS' || text.includes("돈") || text.includes("수익") || text.includes("자산") || text.includes("자유")) {
         return {
-          tailQuestion: `말씀하신 "${text.substring(0, 22)}..."을(를) 달성하려는 '진짜 내면의 결핍'은 무엇인가요? (돈 그 자체가 아닌, 돈이 가져다줄 자유인가요, 아니면 인정 욕구인가요?)`,
-          aiPrescription: `🎯 [AI 맞춤 처방]: 지금 당장 고객에게 판매할 '3분짜리 핵심 해결책(PDF/템플릿)' 1장의 제목을 정하고, 스마트폰 메모장에 3단어로 적으세요.`,
+          tailQuestion: `말씀하신 "${text.substring(0, 22)}..."을(를) 달성하려는 '진짜 내면의 결핍'은 무엇인가요? (돈 그 자체가 아닌, 타인에게 종속되지 않는 시간의 주도권인가요?)`,
+          aiPrescription: `🎯 [AI 잠재의식 처방]: 2026년 12월 31일의 명확한 중심 목표(DCA)를 확정하고, 오늘 당장 버릴 타협거리 1가지를 스마트폰 메모장에 적으세요.`,
           deepInsight: `작성자님의 본질은 '수익 그 자체'보다 '타인에게 통제받지 않는 절대적인 시간의 주도권'을 갈망하고 계십니다.`
         };
       }
 
-      if (text.includes("시간") || text.includes("피곤") || text.includes("퇴근") || text.includes("귀찮") || text.includes("미루")) {
+      if (lensMode === 'FRICTION' || text.includes("미루") || text.includes("피곤") || text.includes("귀찮") || text.includes("완벽")) {
         return {
-          tailQuestion: `"${text.substring(0, 20)}..."라고 느끼게 만드는 가장 결정적인 에너지 누수 요인(스마트폰 숏폼, 불필요한 생각, 완벽주의)은 무엇이며, 왜 그것을 끊지 못하고 있을까요?`,
-          aiPrescription: `⚡ [AI 맞춤 처방]: 1시간 작업하려 하지 말고, 지금 즉시 '3분 타이머'를 켜고 딱 1줄만 적고 작업을 멈추세요. 관성만 깨면 뇌가 알아서 몰입합니다.`,
-          deepInsight: `의지력 부족이 아니라, 시작에 필요한 '마찰 에너지'가 너무 높게 설정되어 있습니다. 3분 단위로 마찰을 0으로 쪼개야 합니다.`
+          tailQuestion: `"${text.substring(0, 20)}..."라고 느끼게 만드는 가장 결정적인 에너지 누수 요인(완벽주의, 실패 회피, 생각 과다)은 무엇이며, 이를 차단할 If-Then 방어 헌법은 무엇인가요?`,
+          aiPrescription: `🛑 [AI 저항 돌파 처방]: 1시간 고민하지 말고, 지금 즉시 '3분 타이머'를 켜고 '초안은 원래 쓰레기다'를 외치며 3단어만 메모장에 적으세요.`,
+          deepInsight: `의지력 부족이 아니라 시작에 필요한 '마찰 계수'가 너무 높습니다. 3분 단위로 마찰을 0으로 쪼개야 뇌가 움직입니다.`
+        };
+      }
+
+      if (lensMode === 'KNOWLEDGE' || text.includes("지식") || text.includes("템플릿") || text.includes("책") || text.includes("경험")) {
+        return {
+          tailQuestion: `방금 말씀하신 "${text.substring(0, 22)}..."의 경험에서 추출할 수 있는 '초등학생도 이해하는 1문장 불변 공식'은 무엇인가요?`,
+          aiPrescription: `💎 [AI 지식 자산화 처방]: 오늘 얻은 1문장 노하우를 PARA Resources에 저장하고, 고객에게 판매할 '3분짜리 PDF 템플릿' 1장의 제목을 정하세요.`,
+          deepInsight: `경험을 언어화하여 아카이빙하는 순간, 나의 시간과 무관하게 24시간 작동하는 Second Brain 지식 자산이 구축됩니다.`
         };
       }
 
@@ -493,8 +750,10 @@
       const [isDragging, setIsDragging] = useState(false);
       const [inputHeightPx, setInputHeightPx] = useState(85);
       
+      // 🧭 [소크라테스식 5대 차원 질문 탐색 렌즈 상태]
+      const [questionLensMode, setQuestionLensMode] = useState(() => localStorage.getItem('AG_QUESTION_LENS_MODE') || 'ALL');
       const [socraticRound, setSocraticRound] = useState(() => parseInt(localStorage.getItem('AG_SOCRATIC_ROUND') || '1', 10));
-      const [activeQuestions, setActiveQuestions] = useState(() => generateChainedSocraticQuestions("월 100만 원 부업 수익 만들기", 1));
+      const [activeQuestions, setActiveQuestions] = useState(() => generateChainedSocraticQuestions("월 100만 원 부업 수익 만들기", 1, localStorage.getItem('AG_QUESTION_LENS_MODE') || 'ALL'));
       const [selectedQuestion, setSelectedQuestion] = useState(() => activeQuestions[0]);
 
       const [currentTailInsight, setCurrentTailInsight] = useState(() => {
@@ -885,6 +1144,31 @@
         playSound('pop');
       };
 
+      // 🧭 [소크라테스식 질문 탐색 차원 전환 핸들러]
+      const handleSwitchLensMode = (mode) => {
+        setQuestionLensMode(mode);
+        localStorage.setItem('AG_QUESTION_LENS_MODE', mode);
+        const lastAnswer = qaBackupLogs.length > 0 ? qaBackupLogs[qaBackupLogs.length - 1].answer : (selectedQuestion ? selectedQuestion.text : "월 100만 원 부업");
+        const nextQuestions = generateChainedSocraticQuestions(lastAnswer, socraticRound, mode);
+        setActiveQuestions(nextQuestions);
+        setSelectedQuestion(nextQuestions[0]);
+        const nextTailInsight = generateDeepTailQuestionAndPrescription(lastAnswer, mode, dialogueCount);
+        setCurrentTailInsight(nextTailInsight);
+        setCustomTailQuestionText(nextTailInsight.tailQuestion);
+        setCustomPrescriptionText(nextTailInsight.aiPrescription);
+        setCustomInsightText(nextTailInsight.deepInsight);
+        
+        const modeNames = {
+          ALL: "🌟 5대 거장 전방위 융합 탐색",
+          SUBCONSCIOUS: "🧠 1단계: 잠재의식 & DCA 발굴",
+          FRICTION: "🛑 2단계: 5-Whys 저항 & 편향 진단",
+          KNOWLEDGE: "💎 3단계: 지식 증류 & Second Brain 자산화",
+          RUNWAY: "⚡ 4단계: GTD 3분 지상 실행"
+        };
+        setLatestCoachFeedback(`🧭 [질문 차원 전환]: '${modeNames[mode] || mode}' 렌즈가 활성화되었습니다. 해당 관점의 심화 질문이 생성되었습니다!`);
+        playSound('pop');
+      };
+
       const executeSend = (rawText) => {
         let text = (rawText || inputMsg).trim();
         if (!text || isThinking) return;
@@ -937,22 +1221,22 @@
 
         setFiveMastersData(prev => {
           const next = { ...prev };
-          if (qObj.slot === 'endState' || finalAnswerText.includes("원") || finalAnswerText.includes("목표")) {
+          if (qObj.slot === 'endState' || finalAnswerText.includes("원") || finalAnswerText.includes("목표") || finalAnswerText.includes("자산") || finalAnswerText.includes("자유")) {
             next.robbins.coreDriver = finalAnswerText;
             next.hill.definiteChiefAim = `2026년 중심 목표: [${finalAnswerText}] 완성`;
             next.gtd.altitude50k = `50,000ft (궁극적 가치): ${finalAnswerText}`;
             next.dalio.goals = finalAnswerText;
-          } else if (qObj.slot === 'bottleneck' || finalAnswerText.includes("피곤") || finalAnswerText.includes("마찰")) {
+          } else if (qObj.slot === 'bottleneck' || finalAnswerText.includes("피곤") || finalAnswerText.includes("마찰") || finalAnswerText.includes("미루") || finalAnswerText.includes("완벽")) {
             next.dalio.problems = finalAnswerText;
-            next.dalio.diagnosis5Why = `표면 저항: [${finalAnswerText}] ➔ 마찰 최소화 필요`;
-            next.robbins.painOfFailure = `${finalAnswerText}를 극복하지 못할 경우 정체되는 고통`;
-          } else if (qObj.slot === 'leverage' || finalAnswerText.includes("지식") || finalAnswerText.includes("템플릿")) {
+            next.dalio.diagnosis5Why = `표면 저항: [${finalAnswerText}] ➔ 5-Whys 근본 진단 및 마찰 최소화 필요`;
+            next.robbins.painOfFailure = `${finalAnswerText}를 극복하지 못할 경우 5년 뒤 정체되는 고통`;
+          } else if (qObj.slot === 'leverage' || finalAnswerText.includes("지식") || finalAnswerText.includes("템플릿") || finalAnswerText.includes("원칙")) {
             next.dalio.ifThenRule = `IF [${finalAnswerText}] 마찰 발생 시, THEN 감정에 휘둘리지 않고 사전 프로토콜을 즉시 실행한다.`;
-            next.forte.distilledEssence = `핵심 레버리지: ${finalAnswerText}`;
-            next.gtd.altitude10k = `10,000ft 프로젝트: ${finalAnswerText} 기반 스프린트`;
+            next.forte.distilledEssence = `핵심 레버리지 자산: ${finalAnswerText}`;
+            next.gtd.altitude10k = `10,000ft 프로젝트: ${finalAnswerText} 기반 2주 스프린트`;
           } else {
             next.dalio.execution = finalAnswerText;
-            next.gtd.runway = `지상 (Runway): ${finalAnswerText} (3분 착수)`;
+            next.gtd.runway = `지상 (Runway): ${finalAnswerText} (3분 즉각 착수)`;
             next.hill.immediatePlan = `오늘 당장 착수: ${finalAnswerText}`;
           }
           return next;
@@ -968,18 +1252,18 @@
         setIsThinking(true);
 
         setTimeout(() => {
-          const nextQuestions = generateChainedSocraticQuestions(finalAnswerText, nextRound);
+          const nextQuestions = generateChainedSocraticQuestions(finalAnswerText, nextRound, questionLensMode);
           setActiveQuestions(nextQuestions);
           setSelectedQuestion(nextQuestions[0]);
 
-          const nextTailInsight = generateDeepTailQuestionAndPrescription(finalAnswerText, newDialogueCount);
+          const nextTailInsight = generateDeepTailQuestionAndPrescription(finalAnswerText, questionLensMode, newDialogueCount);
           setCurrentTailInsight(nextTailInsight);
           setCustomTailQuestionText(nextTailInsight.tailQuestion);
           setCustomPrescriptionText(nextTailInsight.aiPrescription);
           setCustomInsightText(nextTailInsight.deepInsight);
 
           setLatestCoachFeedback(
-            `✨ [분석 완료!] 방금 답변하신 "${finalAnswerText.substring(0, 20)}..."을 분석하여, [세트 2 꼬꼬무 질문 & AI 행동 처방]이 실시간으로 갱신되었습니다!`
+            `✨ [분석 완료!] 방금 답변하신 "${finalAnswerText.substring(0, 20)}..."을 분석하여, 4대 계층 시스템 및 꼬꼬무 질문 & 처방전이 실시간 동기화되었습니다!`
           );
           setIsThinking(false);
           playSound('pop');
@@ -1286,6 +1570,43 @@
                     {!set1Collapsed && (
                       <div className="space-y-2 pt-1 animate-fadeIn">
                         
+                        {/* 🧭 다각적 차원 소크라테스식 질문 탐색 렌즈 툴바 */}
+                        <div className="p-2 rounded-2xl bg-space-950/90 border border-cyan-500/30 space-y-1.5 shadow-inner">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-bold text-cyan-300 flex items-center gap-1">
+                              <span>🧭</span> 질문 탐색 차원 렌즈 (원클릭 맞춤 질문 전환):
+                            </span>
+                            <span className="text-[10px] font-mono text-slate-400">
+                              3단계 파이프라인 연동
+                            </span>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {[
+                              { key: 'ALL', label: '🌟 전방위 융합', desc: '5대 거장 + 4대 계층 통합 밸런스 탐색', activeCls: 'bg-cyan-500/30 text-cyan-200 border-cyan-400 ring-2 ring-cyan-400/40' },
+                              { key: 'SUBCONSCIOUS', label: '🧠 1단계: 잠재의식 & DCA', desc: '토니 로빈스 & 나폴레온 힐의 본원적 욕망/결핍/대가 산파술', activeCls: 'bg-rose-500/30 text-rose-200 border-rose-400 ring-2 ring-rose-400/40' },
+                              { key: 'FRICTION', label: '🛑 2단계: 5-Whys 저항 진단', desc: '레이 달리오의 기계론적 피드백 & If-Then 의사결정 헌법', activeCls: 'bg-amber-500/30 text-amber-200 border-amber-400 ring-2 ring-amber-400/40' },
+                              { key: 'KNOWLEDGE', label: '💎 3단계: 지식 자산화', desc: '티아고 포르테의 CODE 증류 & PARA Second Brain', activeCls: 'bg-purple-500/30 text-purple-200 border-purple-400 ring-2 ring-purple-400/40' },
+                              { key: 'RUNWAY', label: '⚡ 4단계: GTD 3분 지상실행', desc: '데이비드 앨런의 50kft ➔ 지상 3분 물리 행동 정렬', activeCls: 'bg-emerald-500/30 text-emerald-200 border-emerald-400 ring-2 ring-emerald-400/40' }
+                            ].map(lens => {
+                              const isAct = questionLensMode === lens.key;
+                              return (
+                                <button
+                                  key={lens.key}
+                                  onClick={() => handleSwitchLensMode(lens.key)}
+                                  className={`px-2.5 py-1 rounded-xl font-bold whitespace-nowrap transition flex items-center gap-1 text-xs border ${
+                                    isAct
+                                      ? `${lens.activeCls} font-black shadow-md`
+                                      : 'bg-space-900 border-slate-800 text-slate-300 hover:border-slate-600 hover:text-white'
+                                  }`}
+                                  title={lens.desc}>
+                                  {lens.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
                         {/* 4대 질문 카드 리스트 */}
                         <div className="flex flex-col gap-1.5" style={{ fontSize: `${questionsPx}px` }}>
                           {activeQuestions.map((q, idx) => {
