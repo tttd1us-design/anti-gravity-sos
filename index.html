@@ -199,12 +199,11 @@
       } catch (e) {}
     };
 
-    // 🌟 [핵심] 사용자의 답변에 따라 지속적으로 꼬리를 물고 진화하는 연쇄적 소크라테스 질문 생성 엔진
+    // 연쇄적 소크라테스 질문 생성 엔진
     const generateChainedSocraticQuestions = (latestAnswer, round = 1, currentMasters = null) => {
       const ans = latestAnswer ? latestAnswer.trim() : "월 100만 원 부업 시스템";
       const shortAns = ans.length > 20 ? ans.substring(0, 18) + '...' : ans;
 
-      // 라운드 1: 본원적 결핍 및 북극성 지표 발굴 차수
       if (round === 1) {
         return [
           {
@@ -266,7 +265,6 @@
         ];
       }
 
-      // 라운드 2: 심화 역학 분석 및 마찰 파쇄 차수 (이전 답변 [shortAns]에 연계)
       if (round === 2) {
         return [
           {
@@ -328,7 +326,6 @@
         ];
       }
 
-      // 라운드 3: 시스템 고도화 및 의사결정 헌법 컴파일 차수
       if (round === 3) {
         return [
           {
@@ -390,7 +387,6 @@
         ];
       }
 
-      // 라운드 4+: 지속적 최적화 및 24시간 자동화 파이프라인 차수
       return [
         {
           id: 'q1',
@@ -456,7 +452,9 @@
       const [inputBoxFontSize, setInputBoxFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_INPUT_BOX') || '1.15'));
       const [tierSystemFontSize, setTierSystemFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_TIER_SYSTEM') || '1.15'));
 
-      const [backupFontSize, setBackupFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_BACKUP') || '1.10'));
+      // 🌟 백업로그 전용 독립 글씨 크기 조절기 상태
+      const [backupFontSize, setBackupFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_BACKUP') || '1.15'));
+      
       const [analysisFontSize, setAnalysisFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ANALYSIS') || '1.15'));
       const [actionFontSize, setActionFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ACTION') || '1.20'));
       const [alarmFontSize, setAlarmFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ALARM') || '1.15'));
@@ -465,7 +463,6 @@
       const [isDragging, setIsDragging] = useState(false);
       const [inputHeightPx, setInputHeightPx] = useState(85);
       
-      // 🌟 [핵심] 탐색 차수(Round) 상태 관리: 답변할 때마다 1 -> 2 -> 3 -> 4로 계속 진화
       const [socraticRound, setSocraticRound] = useState(() => parseInt(localStorage.getItem('AG_SOCRATIC_ROUND') || '1', 10));
       const [activeQuestions, setActiveQuestions] = useState(() => generateChainedSocraticQuestions("월 100만 원 부업 수익 만들기", 1));
       const [selectedQuestion, setSelectedQuestion] = useState(() => activeQuestions[0]);
@@ -480,6 +477,11 @@
       const [buildStep, setBuildStep] = useState(() => parseInt(localStorage.getItem('AG_BUILD_STEP') || '2', 10));
       const [buildProgressPercent, setBuildProgressPercent] = useState(() => parseInt(localStorage.getItem('AG_BUILD_PROGRESS') || '72', 10));
       const [dialogueCount, setDialogueCount] = useState(() => parseInt(localStorage.getItem('AG_DIALOGUE_COUNT') || '3', 10));
+
+      // 🌟 [핵심] 백업로그 수정 모드 상태
+      const [editingLogId, setEditingLogId] = useState(null);
+      const [editQuestionText, setEditQuestionText] = useState("");
+      const [editAnswerText, setEditAnswerText] = useState("");
 
       const [socialAlarmSettings, setSocialAlarmSettings] = useState(() => {
         const saved = localStorage.getItem('AG_SOCIAL_ALARM_SETTINGS_V1');
@@ -821,7 +823,48 @@
         }
       };
 
-      // 🌟 [핵심 개선] 답변 전송 시 4대 성공시스템에 즉시 동기화하고, 그 답변을 바탕으로 다음 차수(Round)의 새로운 4대 심층 질문을 연쇄 생성!
+      // 🌟 [핵심] 백업로그 개별 항목 삭제
+      const handleDeleteBackupLog = (id) => {
+        if (!confirm("이 대화&답변 로그를 삭제하시겠습니까?")) return;
+        setQaBackupLogs(prev => prev.filter(item => item.id !== id));
+        playSound('pop');
+      };
+
+      // 🌟 [핵심] 백업로그 개별 항목 수정 시작
+      const handleStartEditBackupLog = (log) => {
+        setEditingLogId(log.id);
+        setEditQuestionText(log.question);
+        setEditAnswerText(log.answer);
+        playSound('pop');
+      };
+
+      // 🌟 [핵심] 백업로그 개별 항목 수정 저장
+      const handleSaveEditBackupLog = (id) => {
+        if (!editAnswerText.trim()) {
+          alert("답변 내용을 입력해 주세요.");
+          return;
+        }
+        setQaBackupLogs(prev => prev.map(item => {
+          if (item.id === id) {
+            return {
+              ...item,
+              question: editQuestionText.trim(),
+              answer: editAnswerText.trim()
+            };
+          }
+          return item;
+        }));
+        setEditingLogId(null);
+        playSound('cheer');
+      };
+
+      // 🌟 [핵심] 백업로그 수정 취소
+      const handleCancelEditBackupLog = () => {
+        setEditingLogId(null);
+        playSound('pop');
+      };
+
+      // 답변 전송 시 4대 성공시스템에 즉시 동기화하고, 그 답변을 바탕으로 다음 차수(Round)의 새로운 4대 심층 질문을 연쇄 생성!
       const executeSend = (rawText) => {
         let text = (rawText || inputMsg).trim();
         if (!text || isThinking) return;
@@ -829,7 +872,6 @@
         let targetQ = selectedQuestion || activeQuestions[0];
         let finalAnswerText = text;
 
-        // 패턴 A: '1.' 또는 '2.' 또는 '3.' 또는 '4.' 또는 '1', '2', '3', '4' 만 단독 입력된 경우
         const singleNumMatch = text.match(/^([1-4])[\.\s\)\/\:]*$/);
         if (singleNumMatch) {
           const numIdx = parseInt(singleNumMatch[1], 10) - 1;
@@ -839,9 +881,7 @@
             targetQ = activeQuestions[numIdx];
             finalAnswerText = targetQ.options[0] || targetQ.text;
           }
-        } 
-        // 패턴 B: '1. 나의 답변' 또는 '2. 두번째 내용'
-        else {
+        } else {
           const prefixMatch = text.match(/^([1-4])[\.\s\)\/\:]\s*(.+)$/s);
           if (prefixMatch) {
             const qIdx = parseInt(prefixMatch[1], 10) - 1;
@@ -863,7 +903,6 @@
 
         const qObj = targetQ;
 
-        // 백업 로그 누적
         setQaBackupLogs(prev => [
           ...prev,
           {
@@ -875,7 +914,6 @@
           }
         ]);
 
-        // 4대 계층 시스템 실시간 업데이트
         setFiveMastersData(prev => {
           const next = { ...prev };
           if (qObj.slot === 'endState') {
@@ -908,11 +946,10 @@
         playSound('cheer');
         setIsThinking(true);
 
-        // 🌟 [핵심] 방금 입력한 답변(finalAnswerText)을 인제스트하여 다음 라운드 심층 질문 4개 및 추천옵션 생성!
         setTimeout(() => {
           const nextQuestions = generateChainedSocraticQuestions(finalAnswerText, nextRound);
           setActiveQuestions(nextQuestions);
-          setSelectedQuestion(nextQuestions[0]); // 다음 라운드의 1번 질문으로 자동 포커스
+          setSelectedQuestion(nextQuestions[0]);
 
           setLatestCoachFeedback(
             `✨ [Round ${socraticRound} 답변 반영 완료!]\n"${finalAnswerText.substring(0, 30)}..." 내용을 토대로 [Round ${nextRound} 심화 질문 4개]가 새롭게 생성되었습니다. 이어서 답하며 시스템을 더 날카롭게 다듬어보세요!`
@@ -954,7 +991,7 @@
       const inputBoxPx = Math.max(14, 16 * inputBoxFontSize);
       const tierSystemPx = Math.max(14, 15.5 * tierSystemFontSize);
 
-      const backupPx = Math.max(13, 14.5 * backupFontSize);
+      const backupPx = Math.max(13, 15 * backupFontSize);
       const analysisPx = Math.max(14, 15.5 * analysisFontSize);
       const actionPx = Math.max(16, 17.5 * actionFontSize);
       const alarmPx = Math.max(15, 16.5 * alarmFontSize);
@@ -1129,7 +1166,7 @@
                     </div>
                   </div>
 
-                  {/* 🌟 4대 전문 방향성 질문 카드 바 (Round별 연쇄 심화 질문 스트림) */}
+                  {/* 4대 전문 방향성 질문 카드 바 (Round별 연쇄 심화 질문 스트림) */}
                   <div className="flex-1 px-4 py-3 bg-space-900/40 overflow-y-auto space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -1247,7 +1284,6 @@
                             <span>{isRecording ? "녹음 중지" : "🎙️ 30분 음성"}</span>
                           </button>
 
-                          {/* 1./2./3./4. 원터치 단축 버튼 */}
                           <div className="flex items-center gap-1 bg-space-800 border border-slate-700 rounded-xl p-0.5">
                             <span className="text-[10px] text-gold-300 font-bold px-1">연동:</span>
                             {[1, 2, 3, 4].map(num => (
@@ -1480,9 +1516,10 @@
               </div>
             )}
 
-            {/* 🌟 2. [대화&답변 백업로그] 탭 */}
+            {/* 🌟 2. [대화&답변 백업로그] 탭 - 개별 삭제 / 수정 / 글씨크기 조절 완비 */}
             {mainNavTab === 'BACKUP_LOGS' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-6xl mx-auto" style={{ fontSize: `${backupPx}px` }}>
+                
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
                   <div>
                     <div className="flex items-center gap-2">
@@ -1490,16 +1527,17 @@
                         📒 실시간 대화 & 답변 백업로그 볼트 (Backup Vault)
                       </h2>
                       <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold">
-                        총 {qaBackupLogs.length}건 기록
+                        총 {qaBackupLogs.length}건 보존 중
                       </span>
                     </div>
                     <p className="text-xs md:text-sm text-slate-300 mt-1">
-                      내가 작성한 모든 발화와 1./2. 질의 답변이 영구 보존되며, 1클릭 다운로드가 가능합니다.
+                      모든 대화 및 답변의 <strong>수정(Edit)</strong>과 <strong>삭제(Delete)</strong>가 가능하며, 마크다운 파일로 언제든 백업할 수 있습니다.
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <FontController label="백업 글씨:" value={backupFontSize} onChange={setBackupFontSize} />
+                    
                     <button
                       onClick={() => {
                         const content = `# 📒 [Anti-Gravity 대화 & 답변 전체 백업로그]\n\n` +
@@ -1515,24 +1553,99 @@
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  {qaBackupLogs.map((log, idx) => (
-                    <div key={log.id} className="glass-box-active rounded-2xl p-5 border border-slate-750 hover:border-emerald-400 transition space-y-2 shadow-md">
-                      <div className="flex flex-wrap justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold font-mono text-xs">
-                            LOG #{idx + 1}
-                          </span>
-                          <strong className="text-cyan-300 text-sm font-bold">{log.question}</strong>
+                {/* 로그 리스트 */}
+                {qaBackupLogs.length === 0 ? (
+                  <div className="p-12 text-center glass-box rounded-3xl border border-slate-800 space-y-3">
+                    <span className="text-4xl">📭</span>
+                    <h3 className="text-lg font-bold text-white">저장된 대화 백업로그가 없습니다.</h3>
+                    <p className="text-xs text-slate-400">대화 워크스페이스에서 질문에 답변하면 자동으로 이곳에 기록됩니다.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3.5">
+                    {qaBackupLogs.map((log, idx) => {
+                      const isEditing = editingLogId === log.id;
+
+                      return (
+                        <div key={log.id} className="glass-box-active rounded-2xl p-5 border border-slate-750 hover:border-emerald-400/80 transition space-y-3 shadow-md">
+                          
+                          {/* 헤더 바: 번호, 질문, 시간, 수정/삭제 버튼 */}
+                          <div className="flex flex-wrap justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2.5 gap-2">
+                            <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                              <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold font-mono text-xs shrink-0">
+                                LOG #{idx + 1}
+                              </span>
+                              
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  value={editQuestionText}
+                                  onChange={(e) => setEditQuestionText(e.target.value)}
+                                  className="w-full bg-space-950 border border-cyan-400 rounded-lg px-2.5 py-1 text-cyan-300 font-bold text-xs focus:outline-none"
+                                />
+                              ) : (
+                                <strong className="text-cyan-300 text-xs md:text-sm font-bold truncate">{log.question}</strong>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="font-mono text-slate-500 text-[11px]">{log.time}</span>
+
+                              {isEditing ? (
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => handleSaveEditBackupLog(log.id)}
+                                    className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs flex items-center gap-1 shadow-sm">
+                                    <span>💾 저장</span>
+                                  </button>
+                                  <button
+                                    onClick={handleCancelEditBackupLog}
+                                    className="px-2.5 py-1 rounded-lg bg-space-800 hover:bg-space-700 text-slate-300 font-bold text-xs border border-slate-700">
+                                    <span>취소</span>
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => handleStartEditBackupLog(log)}
+                                    className="px-2.5 py-1 rounded-lg bg-space-800 hover:bg-cyan-500/20 text-cyan-300 hover:text-cyan-200 font-bold text-xs border border-slate-700 hover:border-cyan-400/60 transition flex items-center gap-1">
+                                    <span>✏️ 수정</span>
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteBackupLog(log.id)}
+                                    className="px-2.5 py-1 rounded-lg bg-space-800 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 font-bold text-xs border border-slate-700 hover:border-rose-500/60 transition flex items-center gap-1">
+                                    <span>🗑️ 삭제</span>
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 본문 (답변 내용) - 수정 모드 또는 텍스트 뷰 */}
+                          {isEditing ? (
+                            <div className="space-y-1.5">
+                              <textarea
+                                value={editAnswerText}
+                                onChange={(e) => setEditAnswerText(e.target.value)}
+                                rows={4}
+                                className="w-full bg-space-950 border border-emerald-400 focus:border-cyan-400 rounded-xl p-3.5 text-white font-medium focus:outline-none leading-relaxed resize-y"
+                                style={{ fontSize: `${backupPx}px` }}
+                              />
+                              <span className="text-[11px] text-slate-400 block font-mono">
+                                💡 내용 수정 후 상단 [💾 저장] 버튼을 누르면 즉시 백업로그와 영구 저장소에 반영됩니다.
+                              </span>
+                            </div>
+                          ) : (
+                            <p className="text-white font-medium whitespace-pre-line leading-relaxed pl-2 bg-space-950/60 p-3.5 rounded-xl border border-slate-850">
+                              {log.answer}
+                            </p>
+                          )}
+
                         </div>
-                        <span className="font-mono text-slate-500">{log.time}</span>
-                      </div>
-                      <p className="text-white font-medium whitespace-pre-line leading-relaxed pl-2 bg-space-950/60 p-3 rounded-xl border border-slate-850">
-                        {log.answer}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
+
               </div>
             )}
 
