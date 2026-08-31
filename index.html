@@ -565,6 +565,70 @@
         playSound('cheer');
       };
 
+      // 🎙️ 세트 2 Web Speech API 음성 인식 (STT) 핸들러
+      const toggleVoiceRecording = () => {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) {
+          alert("현재 브라우저에서 마이크 음성 인식을 지원하지 않습니다. Chrome 또는 Edge 브라우저를 이용해 주세요.");
+          return;
+        }
+
+        if (isRecording) {
+          if (recognitionRef.current) {
+            recognitionRef.current.stop();
+          }
+          setIsRecording(false);
+          if (recordTimerRef.current) clearInterval(recordTimerRef.current);
+          playSound('pop');
+        } else {
+          try {
+            const recognition = new SpeechRec();
+            recognition.lang = 'ko-KR';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            recognition.onstart = () => {
+              setIsRecording(true);
+              setRecordDuration(0);
+              playSound('pop');
+              recordTimerRef.current = setInterval(() => {
+                setRecordDuration(d => d + 1);
+              }, 1000);
+            };
+
+            recognition.onresult = (event) => {
+              let currentText = "";
+              for (let i = event.resultIndex; i < event.results.length; i++) {
+                currentText += event.results[i][0].transcript;
+              }
+              if (currentText.trim()) {
+                setInputMsg(prev => {
+                  const cleaned = prev ? prev.trim() + " " + currentText.trim() : currentText.trim();
+                  return cleaned;
+                });
+              }
+            };
+
+            recognition.onerror = (event) => {
+              console.error("Speech recognition error:", event.error);
+              setIsRecording(false);
+              if (recordTimerRef.current) clearInterval(recordTimerRef.current);
+            };
+
+            recognition.onend = () => {
+              setIsRecording(false);
+              if (recordTimerRef.current) clearInterval(recordTimerRef.current);
+            };
+
+            recognitionRef.current = recognition;
+            recognition.start();
+          } catch(e) {
+            console.error("STT start error:", e);
+            setIsRecording(false);
+          }
+        }
+      };
+
       const executeSend = (rawText) => {
         let text = (rawText || inputMsg).trim();
         if (!text || isThinking) return;
@@ -987,9 +1051,22 @@
                             [세트 2] AI 실시간 꼬꼬무 자아탐색 & 행동 처방
                           </span>
                         </div>
-                        {!set2Collapsed && (
-                          <FontController label="세트2 글씨:" value={set2FontSize} onChange={setSet2FontSize} />
-                        )}
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={toggleVoiceRecording}
+                            type="button"
+                            className={`px-2.5 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md ${
+                              isRecording 
+                                ? 'bg-rose-500 text-white mic-pulse border border-rose-300 font-black animate-pulse' 
+                                : 'bg-space-800 hover:bg-rose-500/20 text-rose-300 border border-slate-700 hover:border-rose-400'
+                            }`}>
+                            <span>🎙️</span>
+                            <span>{isRecording ? `음성 듣는 중... (${recordDuration}초)` : '음성 입력'}</span>
+                          </button>
+                          {!set2Collapsed && (
+                            <FontController label="세트2 글씨:" value={set2FontSize} onChange={setSet2FontSize} />
+                          )}
+                        </div>
                       </div>
 
                       {!set2Collapsed && (
@@ -1017,19 +1094,42 @@
                     </div>
 
                     <form onSubmit={(e) => { e.preventDefault(); executeSend(inputMsg); }} className="flex flex-col gap-2">
-                      <textarea
-                        style={{ height: `${inputHeightPx}px`, fontSize: `${inputBoxPx}px` }}
-                        value={inputMsg}
-                        onChange={(e) => setInputMsg(e.target.value)}
-                        placeholder="위 꼬리 질문에 대해 솔직한 생각이나 목표를 이야기해 보세요..."
-                        className="w-full bg-space-950 border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none resize-y min-h-[50px]"
-                      />
-                      <button
-                        type="submit"
-                        disabled={!inputMsg.trim() || isThinking}
-                        className="w-full py-2 bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-black rounded-xl text-xs md:text-sm">
-                        🚀 꼬꼬무 탐색 & AI 처방 전송
-                      </button>
+                      <div className="relative">
+                        <textarea
+                          style={{ height: `${inputHeightPx}px`, fontSize: `${inputBoxPx}px` }}
+                          value={inputMsg}
+                          onChange={(e) => setInputMsg(e.target.value)}
+                          placeholder={isRecording ? "🎙️ 음성을 듣고 실시간으로 작성 중입니다..." : "위 꼬리 질문에 대해 솔직한 생각이나 목표를 이야기해 보세요... (음성 입력 버튼 또는 타이핑)"}
+                          className={`w-full bg-space-950 border rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none resize-y min-h-[50px] transition ${
+                            isRecording ? 'border-rose-400 ring-2 ring-rose-500/40 bg-space-900' : 'border-slate-700 focus:border-cyan-400'
+                          }`}
+                        />
+                        {isRecording && (
+                          <div className="absolute right-3 bottom-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-rose-500 text-white text-[11px] font-bold shadow-md">
+                            <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                            <span>녹음 중 {recordDuration}s</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={toggleVoiceRecording}
+                          type="button"
+                          className={`px-4 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center justify-center gap-1.5 shrink-0 ${
+                            isRecording 
+                              ? 'bg-rose-600 text-white border border-rose-300 font-black' 
+                              : 'bg-space-800 hover:bg-space-700 text-rose-300 border border-slate-700'
+                          }`}>
+                          <span>🎙️</span>
+                          <span>{isRecording ? '녹음 중지' : '음성 입력'}</span>
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={!inputMsg.trim() || isThinking}
+                          className="flex-1 py-2 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:scale-[1.01] transition text-white font-black rounded-xl text-xs md:text-sm shadow-md shadow-cyan-500/30">
+                          🚀 꼬꼬무 탐색 & AI 처방 전송
+                        </button>
+                      </div>
                     </form>
                   </div>
                 </section>
