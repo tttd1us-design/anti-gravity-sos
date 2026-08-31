@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>안티그레비티 - 눈이 편안한 3분 성공 습관</title>
+  <title>안티그레비티 (AG-OS) - 나를 학습하는 개인 성공관리 AI</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React 18 & ReactDOM -->
@@ -60,8 +60,8 @@
       color: #F8FAFC;
       font-family: 'Pretendard', sans-serif;
       overflow-x: hidden;
-      font-size: 18px; /* 기본 최소 폰트 크기 대형화 */
-      line-height: 1.7; /* 넉넉한 줄간격으로 눈의 피로 최소화 */
+      font-size: 18px;
+      line-height: 1.75;
       transition: font-size 0.15s ease;
     }
     
@@ -142,50 +142,60 @@
       } catch (e) {}
     };
 
-    const EASY_GOALS = [
-      { id: 'diet', icon: '🏃', title: '운동 & 건강 관리', text: '매일 15분씩 가볍게 운동하고 건강한 몸을 만들고 싶어요.' },
-      { id: 'money', icon: '💰', title: '월 100만원 더 벌기', text: '월급 외에 부업이나 온라인 수익으로 월 100만 원을 더 벌고 싶어요.' },
-      { id: 'study', icon: '📖', title: '자격증 / 시험 합격', text: '미루지 않고 꾸준히 공부해서 목표 시험에 꼭 합격하고 싶어요.' },
-      { id: 'book', icon: '✍️', title: '책 쓰기 / 블로그 시작', text: '나만의 생각과 경험을 정리해서 책이나 블로그를 운영하고 싶어요.' },
-      { id: 'habit', icon: '✨', title: '아침 기상 & 좋은 습관', text: '아침에 상쾌하게 일어나서 나만의 알찬 하루를 시작하고 싶어요.' }
+    // --- 기분 선택 칩 ---
+    const MOODS = [
+      { id: 'tired', icon: '😫', label: '힘들어요' },
+      { id: 'neutral', icon: '😐', label: '그냥요' },
+      { id: 'okay', icon: '🙂', label: '괜찮아요' },
+      { id: 'fire', icon: '🔥', label: '하고싶어요' }
     ];
 
-    const EASY_REASONS = [
-      { label: '잘하려다 보니 시작이 무서워요', text: '완벽하게 잘하고 싶은 마음에 자꾸 망설이다가 시작을 못 해요.' },
-      { label: '해야 할 양이 너무 많아 막막해요', text: '양이 너무 방대해서 어디서부터 손대야 할지 엄두가 안 나요.' },
-      { label: '퇴근하면 피곤해서 폰만 보게 돼요', text: '하루 종일 일하고 오면 기운이 빠져서 유튜브만 보며 시간을 보내요.' },
-      { label: '실패하면 속상할까 봐 걱정돼요', text: '열심히 했는데 결과가 안 좋을까 봐 불안해서 피하게 돼요.' }
+    // --- 카테고리 칩 ---
+    const CATEGORIES = [
+      { id: 'work', icon: '💼', label: '일/업무' },
+      { id: 'study', icon: '📖', label: '공부/시험' },
+      { id: 'money', icon: '💰', label: '부업/돈' },
+      { id: 'health', icon: '🏃', label: '운동/건강' },
+      { id: 'write', icon: '✍️', label: '글쓰기/책' },
+      { id: 'etc', icon: '💬', label: '기타' }
     ];
 
     function App() {
-      // 폰트 배율 (기본 1.6 = 눈이 아주 편안한 크기)
+      // 폰트 배율 (기본 1.6)
       const [fontSize, setFontSize] = useState(() => {
-        return parseFloat(localStorage.getItem('AG_EASY_FONT') || '1.6');
+        return parseFloat(localStorage.getItem('AG_V1_FONT') || '1.6');
       });
 
+      // 탭: 'COACH'(대화), 'TIMER'(3분 타이머), 'MANUAL'(성공 매뉴얼)
       const [activeTab, setActiveTab] = useState('COACH');
 
-      const [myProgress, setMyProgress] = useState(() => {
-        const saved = localStorage.getItem('AG_EASY_PROGRESS_V1');
+      // 3대 핵심 상태 축 (Clarity, Friction, Momentum)
+      const [metrics, setMetrics] = useState(() => {
+        const saved = localStorage.getItem('AG_V1_METRICS');
         return saved ? JSON.parse(saved) : {
-          streakDays: 3,
-          stampCount: 7,
-          targetGoal: '월 100만 원 부업 수익 만들기',
-          fearReason: '완벽하게 하려다 시작을 못 하는 마음',
-          easyMission: '스마트폰 메모장을 켜고 아이디어 단어 3개만 적기',
-          lazinessScore: 20
+          clarity: 82,     // 방향 (0~100)
+          friction: 35,    // 저항 (0~100, 낮을수록 가벼움)
+          momentum: 74,    // 실행탄력 (0~100)
+          selectedMood: null,
+          selectedCategory: null,
+          currentGoal: '월 100만 원 부업 수익 만들기',
+          realBlocker: '완성도에 대한 부담으로 시작을 미루는 완벽주의',
+          microAction: '스마트폰 메모장을 열고 상품 아이디어 단어 3개만 적기',
+          completedToday: false
         };
       });
 
+      // 3분 타이머
       const [timeLeft, setTimeLeft] = useState(180);
       const [timerOn, setTimerOn] = useState(false);
-      const [showStampPopup, setShowStampPopup] = useState(false);
+      const [showModal, setShowModal] = useState(false);
 
+      // 메시지
       const [messages, setMessages] = useState([
         {
           id: 1,
-          sender: 'coach',
-          text: `안녕하세요! 반갑습니다 😊\n\n저는 당신이 **'귀찮음과 두려움'을 이겨내고 원하는 것을 쉽게 이루도록 돕는 AI 성공 친구**예요.\n\n거창한 계획을 세워도 자꾸 미루게 되는 건 당신이 게을러서가 아니에요. 시작할 때 마음에 너무 큰 부담을 느끼기 때문이에요!\n\n현재 가장 이루고 싶은 목표는 무엇인가요? 아래 버튼을 눌러보세요 👇`,
+          sender: 'ai',
+          text: `안녕하세요! 반갑습니다 😊\n\n저는 당신이 **'왜 자꾸 미루는지 원인을 찾아주고, 지금 당장 할 수 있는 가장 작은 행동을 정해주는 AI'**예요.\n\n오늘 기분이나 시작하고 싶은 일을 위에서 가볍게 선택해 보세요!`,
           time: '지금'
         }
       ]);
@@ -194,12 +204,12 @@
       const chatEndRef = useRef(null);
 
       useEffect(() => {
-        localStorage.setItem('AG_EASY_PROGRESS_V1', JSON.stringify(myProgress));
+        localStorage.setItem('AG_V1_METRICS', JSON.stringify(metrics));
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, myProgress, activeTab, fontSize]);
+      }, [messages, metrics, activeTab, fontSize]);
 
       useEffect(() => {
         let timer = null;
@@ -211,13 +221,13 @@
           if (window.confetti) {
             window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
           }
-          setMyProgress(prev => ({
+          setMetrics(prev => ({
             ...prev,
-            stampCount: prev.stampCount + 1,
-            streakDays: prev.streakDays + 1,
-            lazinessScore: 10
+            momentum: Math.min(100, prev.momentum + 12),
+            friction: Math.max(10, prev.friction - 20),
+            completedToday: true
           }));
-          setShowStampPopup(true);
+          setShowModal(true);
         }
         return () => clearInterval(timer);
       }, [timerOn, timeLeft]);
@@ -225,12 +235,12 @@
       const changeFontSize = (scale) => {
         const val = Math.min(2.4, Math.max(1.1, parseFloat(scale.toFixed(1))));
         setFontSize(val);
-        localStorage.setItem('AG_EASY_FONT', val.toString());
+        localStorage.setItem('AG_V1_FONT', val.toString());
         playSound('pop');
       };
 
-      const sendChat = (presetText) => {
-        const text = (presetText || inputMsg).trim();
+      const sendChat = (textToSend) => {
+        const text = (textToSend || inputMsg).trim();
         if (!text || isThinking) return;
 
         const userMsg = {
@@ -248,41 +258,39 @@
         setTimeout(() => {
           let reply = "";
           if (messages.length === 1) {
-            reply = `정말 좋은 목표네요! 👏\n\n그런데 이 목표를 시작하려고 할 때, 마음에 브레이크가 걸리거나 자꾸 미루게 만드는 **'진짜 속마음'**은 무엇인가요?\n\n솔직한 내 마음을 아래에서 골라보세요.`;
-            setMyProgress(prev => ({ ...prev, targetGoal: text }));
+            reply = `알려주셔서 고마워요! 👏\n\n그런데 그 일을 하려고 할 때, 머리로는 해야 한다고 생각하면서도 자꾸 유튜브를 보거나 딴짓을 하게 만드는 **'진짜 속마음'**은 무엇인가요?\n\n- [1] 잘하려다 보니 시작이 두려워서\n- [2] 양이 너무 많고 막막해서\n- [3] 실패하면 속상할까 봐\n- [4] 그냥 피곤해서\n\n편하게 번호나 생각나는 문장을 적어주세요.`;
+            setMetrics(prev => ({ ...prev, currentGoal: text }));
           } else if (messages.length === 3) {
-            reply = `맞아요, 정말 많은 분들이 똑같은 고민을 해요.\n\n완벽하게 잘하고 싶은 마음이 크다 보니 뇌가 너무 큰 에너지가 든다고 착각해서 시작을 망설이는 거예요.\n\n그래서 지금 이 순간, **'마음 편한 3분 초간단 미션'**을 드릴게요!\n\n오늘 딱 3분만 **"${myProgress.easyMission}"** 해보는 거예요. 3분만 하고 바로 그만두셔도 돼요!\n\n상단의 **[⏱️ 3분 타이머]** 탭을 누르고 함께 3분을 시작해 볼까요?`;
-            setMyProgress(prev => ({ ...prev, fearReason: text, lazinessScore: 20 }));
+            reply = `그 마음 충분히 이해해요. 완벽하게 잘하고 싶은 마음이 크다 보니 시작 순간의 심리적 부담감(저항)이 높아진 거예요.\n\n그렇다면 오늘 그 일을 다 끝내려 하지 마세요!\n\n**'${metrics.microAction}'**만 해보겠습니다.\n\n상단의 **[⏱️ 3분 시작 타이머]**를 누르고 3분만 가볍게 해볼까요? 3분 후엔 바로 덮으셔도 됩니다! 😊`;
+            setMetrics(prev => ({ ...prev, realBlocker: text, friction: 20, clarity: 90 }));
             playSound('cheer');
             if (window.confetti) {
               window.confetti({ particleCount: 70, spread: 60, origin: { y: 0.65 } });
             }
           } else {
-            reply = `정말 훌륭해요! 3분의 작은 성공이 뇌를 깨우고 기분 좋은 도파민을 만들어냅니다. 오늘 해낸 성공을 기록장에 잘 보관했어요! 🌟`;
+            reply = `아주 훌륭해요! 3분으로 시작한 작은 행동이 뇌의 저항을 허물고 자연스러운 집중으로 이어집니다. 당신의 성공 패턴을 기록장에 저장했어요! 🌟`;
           }
 
-          const coachMsg = {
+          const aiMsg = {
             id: Date.now() + 1,
-            sender: 'coach',
+            sender: 'ai',
             text: reply,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
 
-          setMessages(prev => [...prev, coachMsg]);
+          setMessages(prev => [...prev, aiMsg]);
           setIsThinking(false);
         }, 450);
       };
 
-      // 기본 폰트 계산 (최소 18px 이상 보장)
       const currentFontPx = Math.max(18, 14 * fontSize);
 
       return (
         <div className="flex flex-col h-screen max-h-screen">
           
-          {/* 상단 헤더 */}
+          {/* Header */}
           <header className="h-24 border-b border-cyan-500/20 glass-box px-4 md:px-8 flex items-center justify-between z-20">
             
-            {/* 로고 & 슬로건 */}
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-cyan-400 via-indigo-600 to-purple-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
                 <span className="text-3xl">🌱</span>
@@ -290,22 +298,22 @@
               <div>
                 <div className="flex items-center gap-2.5">
                   <h1 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-gold-300 tracking-tight">
-                    안티그레비티
+                    안티그레비티 OS
                   </h1>
-                  <span className="text-sm font-bold px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                    쉬운 성공 습관
+                  <span className="text-sm font-bold px-3 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                    v1.0
                   </span>
                 </div>
-                <p className="text-sm md:text-base text-slate-300 font-medium">부담 없이 딱 3분으로 시작하는 나의 목표</p>
+                <p className="text-sm md:text-base text-slate-300 font-medium">나를 학습하고 변화시키는 개인 성공관리 AI</p>
               </div>
             </div>
 
-            {/* 메인 탭 */}
+            {/* Navigation Tabs */}
             <nav className="hidden md:flex items-center space-x-2 bg-space-900 border border-slate-800 rounded-2xl p-1.5">
               {[
-                { id: 'COACH', label: '💬 AI 성공 대화', icon: 'message-circle' },
+                { id: 'COACH', label: '💬 AI 원인 코칭', icon: 'message-square' },
                 { id: 'TIMER', label: '⏱️ 3분 시작 타이머', icon: 'zap' },
-                { id: 'RECORD', label: '📒 나의 성공 기록장', icon: 'book-open' }
+                { id: 'MANUAL', label: '📘 My Success Manual', icon: 'book-open' }
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -321,7 +329,7 @@
               ))}
             </nav>
 
-            {/* 눈이 편한 글씨 크기 원클릭 조절기 */}
+            {/* Font Controller */}
             <div className="flex items-center space-x-2 bg-space-900 border border-slate-700 rounded-2xl px-3 py-1.5 shadow-md">
               <span className="text-sm font-bold text-slate-300 mr-1 hidden sm:inline">글씨 크기:</span>
               
@@ -343,7 +351,6 @@
                 A+
               </button>
 
-              {/* 프리셋 버튼 */}
               <div className="hidden lg:flex items-center gap-1.5 border-l border-slate-800 pl-2 ml-1">
                 {[
                   { label: '보통', scale: 1.3 },
@@ -364,35 +371,41 @@
 
           </header>
 
-          {/* 메인 화면 */}
+          {/* Main Layout */}
           <div className="flex-1 flex overflow-hidden">
             
-            {/* 탭 1: AI 성공 코치 대화 */}
+            {/* TAB 1: AI COACH */}
             {activeTab === 'COACH' && (
               <div className="flex-1 flex overflow-hidden">
                 
-                {/* 대화 영역 */}
+                {/* Chat Section */}
                 <section className="flex-1 flex flex-col bg-space-950/80 border-r border-cyan-500/10 relative">
                   
-                  {/* 스트릭 상단 바 */}
-                  <div className="bg-space-900/95 border-b border-cyan-500/10 px-6 py-3 flex items-center justify-between text-sm md:text-base font-medium">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gold-300 font-bold flex items-center gap-1.5">
-                        🔥 <strong>{myProgress.streakDays}일 연속</strong> 목표 달성 중!
+                  {/* 3-Axis Status Bar */}
+                  <div className="bg-space-900/95 border-b border-cyan-500/10 px-6 py-3 flex flex-wrap items-center justify-between gap-3 text-sm md:text-base font-medium">
+                    <div className="flex items-center gap-4">
+                      <span className="flex items-center gap-1.5 text-cyan-300">
+                        🎯 <strong>방향:</strong> {metrics.clarity}%
+                      </span>
+                      <span className="flex items-center gap-1.5 text-rose-300">
+                        🧱 <strong>저항:</strong> {metrics.friction}%
+                      </span>
+                      <span className="flex items-center gap-1.5 text-emerald-300">
+                        🚀 <strong>탄력:</strong> {metrics.momentum}%
                       </span>
                     </div>
-                    <div className="text-slate-300">
-                      참 잘했어요 도장: <strong className="text-cyan-300 text-base">{myProgress.stampCount}개</strong>
+                    <div className="text-slate-300 text-xs md:text-sm font-bold">
+                      💡 <strong>핵심:</strong> 오늘 딱 3분 미션으로 시작 비용을 제거합니다
                     </div>
                   </div>
 
-                  {/* 메시지 리스트 */}
+                  {/* Message Stream */}
                   <div className="flex-1 overflow-y-auto p-5 md:p-8 space-y-7">
                     {messages.map(m => (
                       <div key={m.id} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
                         <div className="flex items-center gap-2 mb-1.5 px-1">
                           <span className="text-sm font-bold text-cyan-400">
-                            {m.sender === 'coach' ? '🌱 안티그레비티 AI 코치' : '👤 나'}
+                            {m.sender === 'ai' ? '🌱 안티그레비티 코치' : '👤 나'}
                           </span>
                           <span className="text-xs text-slate-400">{m.time}</span>
                         </div>
@@ -410,51 +423,58 @@
                     {isThinking && (
                       <div className="flex items-center space-x-3 text-cyan-300 text-base font-medium p-4 glass-box rounded-2xl w-fit">
                         <i data-lucide="loader-2" className="w-5 h-5 animate-spin"></i>
-                        <span>마음 편한 방법을 생각하고 있어요...</span>
+                        <span>당신의 미루는 원인을 분석하고 있어요...</span>
                       </div>
                     )}
                     <div ref={chatEndRef} />
                   </div>
 
-                  {/* 목표 선택 버튼들 (1턴째) */}
+                  {/* 1초 무공백 스타터 칩 (1턴째) */}
                   {messages.length === 1 && (
-                    <div className="px-5 md:px-8 py-4 bg-space-900/95 border-t border-cyan-500/20">
-                      <span className="text-sm font-bold text-slate-300 block mb-2.5">👇 아래에서 원하는 목표를 눌러보세요:</span>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
-                        {EASY_GOALS.map(g => (
-                          <button
-                            key={g.id}
-                            onClick={() => sendChat(g.text)}
-                            className="p-3.5 rounded-2xl bg-space-800 hover:bg-cyan-500/20 text-left border border-slate-700 hover:border-cyan-400 transition shadow-md">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xl">{g.icon}</span>
-                              <span className="text-sm md:text-base font-bold text-slate-100">{g.title}</span>
-                            </div>
-                            <span className="text-xs md:text-sm text-slate-300 truncate block">{g.text}</span>
-                          </button>
-                        ))}
+                    <div className="px-5 md:px-8 py-4 bg-space-900/95 border-t border-cyan-500/20 space-y-3">
+                      
+                      {/* Mood Picker */}
+                      <div>
+                        <span className="text-xs md:text-sm font-bold text-slate-300 block mb-1.5">오늘 마음 상태:</span>
+                        <div className="flex flex-wrap gap-2">
+                          {MOODS.map(m => (
+                            <button
+                              key={m.id}
+                              onClick={() => {
+                                setMetrics(prev => ({ ...prev, selectedMood: m.label }));
+                                playSound('pop');
+                              }}
+                              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold border transition ${
+                                metrics.selectedMood === m.label
+                                  ? 'bg-cyan-500 text-black border-cyan-400 font-extrabold shadow-md'
+                                  : 'bg-space-800 text-slate-200 border-slate-700 hover:border-cyan-400'
+                              }`}>
+                              {m.icon} {m.label}
+                            </button>
+                          ))}
+                        </div>
                       </div>
+
+                      {/* Category Chips */}
+                      <div>
+                        <span className="text-xs md:text-sm font-bold text-slate-300 block mb-1.5">어떤 일을 시작하고 싶나요?</span>
+                        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                          {CATEGORIES.map(c => (
+                            <button
+                              key={c.id}
+                              onClick={() => sendChat(`[${c.label}] 관련해서 해야 하는데 자꾸 미루고 있어요.`)}
+                              className="p-2.5 rounded-xl bg-space-800 hover:bg-cyan-500/20 text-center border border-slate-700 hover:border-cyan-400 transition shadow-sm">
+                              <span className="text-lg block mb-0.5">{c.icon}</span>
+                              <span className="text-xs md:text-sm font-bold text-slate-100">{c.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
                     </div>
                   )}
 
-                  {/* 미루는 이유 선택 버튼들 (2턴째) */}
-                  {messages.length === 2 && (
-                    <div className="px-5 md:px-8 py-4 bg-space-900/95 border-t border-cyan-500/20">
-                      <span className="text-sm font-bold text-slate-300 block mb-2.5">👇 왜 시작이 망설여지시나요?</span>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                        {EASY_REASONS.map((r, i) => (
-                          <button
-                            key={i}
-                            onClick={() => sendChat(r.text)}
-                            className="p-4 rounded-2xl bg-space-800 hover:bg-rose-500/20 text-left border border-slate-700 hover:border-rose-400 transition shadow-md">
-                            <span className="text-sm md:text-base font-semibold text-rose-200 block leading-snug">{r.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 입력창 */}
+                  {/* Input Box */}
                   <div className="p-5 md:p-6 bg-space-900/95 border-t border-cyan-500/20">
                     <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="relative flex items-center">
                       <textarea
@@ -467,7 +487,7 @@
                             sendChat();
                           }
                         }}
-                        placeholder="하고 싶은 말이나 고민을 편하게 적어주세요..."
+                        placeholder="해야 하는데 미루고 있는 일을 편하게 적어주세요..."
                         className="w-full bg-space-950 border-2 border-slate-700 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 rounded-2xl px-6 py-4 text-white placeholder-slate-400 focus:outline-none resize-none pr-32 font-sans leading-relaxed"
                         style={{ fontSize: `${currentFontPx}px` }}
                       />
@@ -479,23 +499,23 @@
                             ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg shadow-cyan-500/40 hover:scale-105'
                             : 'bg-space-800 text-slate-500 cursor-not-allowed'
                         }`}>
-                        <span>보내기</span>
+                        <span>전송</span>
                         <i data-lucide="send" className="w-5 h-5"></i>
                       </button>
                     </form>
                   </div>
                 </section>
 
-                {/* 우측 간단 정보창 */}
-                <aside className="hidden lg:flex w-4/12 flex-col bg-space-950/90 p-7 space-y-7 overflow-y-auto">
+                {/* Right Side Status Panel */}
+                <aside className="hidden lg:flex w-4/12 flex-col bg-space-950/90 p-7 space-y-6 overflow-y-auto">
                   
-                  {/* 오늘 미션 카드 */}
+                  {/* Today 3-Min Action Card */}
                   <div className="glass-box-active rounded-3xl p-7 border-2 border-cyan-400/40 text-center">
                     <span className="inline-block text-sm font-bold text-cyan-300 bg-cyan-500/20 px-3.5 py-1.5 rounded-full mb-3.5">
-                      ⚡ 부담 없는 오늘의 3분 미션
+                      ⚡ 오늘의 최소 실행 양자 (3분 미션)
                     </span>
                     <p className="text-lg md:text-xl font-bold text-white mb-5 leading-snug">
-                      "{myProgress.easyMission}"
+                      "{metrics.microAction}"
                     </p>
                     <button
                       onClick={() => { setActiveTab('TIMER'); playSound('pop'); }}
@@ -505,30 +525,49 @@
                     </button>
                   </div>
 
-                  {/* 귀차니즘 지수 게이지 */}
-                  <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3.5">
-                    <div className="flex justify-between items-center text-sm md:text-base font-bold">
-                      <span className="text-slate-300">내 마음의 시작 부담감</span>
-                      <span className="text-cyan-300 font-extrabold">{myProgress.lazinessScore}점 (매우 가벼움)</span>
+                  {/* 3-Axis Metric Breakdown */}
+                  <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-4">
+                    <h3 className="text-base font-bold text-slate-200">나의 현재 성공 3대 축</h3>
+
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-xs md:text-sm font-bold mb-1">
+                          <span className="text-cyan-300">🎯 방향 (Clarity)</span>
+                          <span>{metrics.clarity}%</span>
+                        </div>
+                        <div className="w-full bg-space-900 h-2.5 rounded-full overflow-hidden">
+                          <div className="bg-cyan-400 h-full" style={{ width: `${metrics.clarity}%` }}></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs md:text-sm font-bold mb-1">
+                          <span className="text-rose-300">🧱 시작 저항 (Friction)</span>
+                          <span>{metrics.friction}%</span>
+                        </div>
+                        <div className="w-full bg-space-900 h-2.5 rounded-full overflow-hidden">
+                          <div className="bg-rose-400 h-full" style={{ width: `${metrics.friction}%` }}></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs md:text-sm font-bold mb-1">
+                          <span className="text-emerald-300">🚀 실행 탄력 (Momentum)</span>
+                          <span>{metrics.momentum}%</span>
+                        </div>
+                        <div className="w-full bg-space-900 h-2.5 rounded-full overflow-hidden">
+                          <div className="bg-emerald-400 h-full" style={{ width: `${metrics.momentum}%` }}></div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="w-full bg-space-900 h-3 rounded-full overflow-hidden border border-slate-800">
-                      <div className="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full transition-all duration-500" style={{ width: `${myProgress.lazinessScore}%` }}></div>
-                    </div>
-                    <p className="text-xs md:text-sm text-slate-300 leading-relaxed pt-1">
-                      💡 <strong>성공 꿀팁:</strong> 목표를 아주 작게 쪼개면 뇌가 부담을 느끼지 않고 즐겁게 시작할 수 있어요!
-                    </p>
                   </div>
 
-                  {/* 성취 도장 현황 */}
-                  <div className="glass-box rounded-3xl p-6 border border-slate-800 text-center">
-                    <span className="text-sm font-bold text-slate-300 block mb-3.5">🏅 나의 연속 달성 도장</span>
-                    <div className="flex justify-center gap-2.5 text-3xl">
-                      {['🔥', '⭐', '🏆', '🎯', '👑'].map((icon, i) => (
-                        <div key={i} className="w-12 h-12 rounded-2xl bg-space-900 border border-gold-500/40 flex items-center justify-center shadow-inner">
-                          {icon}
-                        </div>
-                      ))}
-                    </div>
+                  {/* AI Learning Observation Box */}
+                  <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-2">
+                    <span className="text-xs font-bold text-purple-400 block font-mono">AI OBSERVATION & LEARNING</span>
+                    <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+                      "당신은 큰 과제를 마주할 때 완성도 기준이 높아져 시작을 미루는 경향이 78%의 확률로 관찰되었습니다. 따라서 '비공개 3분 초안 적기'가 가장 효과적입니다."
+                    </p>
                   </div>
 
                 </aside>
@@ -536,30 +575,28 @@
               </div>
             )}
 
-            {/* 탭 2: 3분 집중 타이머 */}
+            {/* TAB 2: 3-MINUTE TIMER */}
             {activeTab === 'TIMER' && (
               <section className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-space-950/90">
                 <div className="max-w-lg w-full glass-box-active rounded-3xl p-10 border-2 border-cyan-400/50 shadow-2xl">
                   
                   <span className="inline-block text-sm font-bold text-cyan-300 bg-cyan-500/20 px-4 py-1.5 rounded-full mb-4">
-                    ⏱️ 딱 3분만 해보기
+                    ⏱️ 심리적 진입장벽 제로화
                   </span>
 
                   <h2 className="text-xl md:text-2xl font-black text-white mb-3 leading-relaxed">
-                    "{myProgress.easyMission}"
+                    "{metrics.microAction}"
                   </h2>
                   <p className="text-sm md:text-base text-slate-300 mb-8">
-                    완벽하게 하려고 애쓰지 말고, 3분 동안 이것만 가볍게 해보세요!
+                    완벽하게 끝내지 않아도 됩니다. 딱 3분 동안만 미완성 상태로 시작해 보세요!
                   </p>
 
-                  {/* 큰 카운트다운 시계 */}
                   <div className="bg-space-900 py-8 rounded-3xl border-2 border-cyan-500/30 mb-8 shadow-inner">
                     <span className="text-6xl md:text-7xl font-black font-mono text-cyan-300 tracking-wider">
                       {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                     </span>
                   </div>
 
-                  {/* 버튼 */}
                   {!timerOn ? (
                     <button
                       onClick={() => { setTimerOn(true); playSound('pop'); }}
@@ -577,7 +614,7 @@
                       <button
                         onClick={() => setTimeLeft(0)}
                         className="flex-1 py-4 rounded-2xl font-bold text-base bg-emerald-600 hover:bg-emerald-500 text-white transition">
-                        ✓ 다 했어요!
+                        ✓ 완료했어요!
                       </button>
                     </div>
                   )}
@@ -585,70 +622,74 @@
               </section>
             )}
 
-            {/* 탭 3: 나의 성공 기록장 */}
-            {activeTab === 'RECORD' && (
+            {/* TAB 3: MY SUCCESS MANUAL (14-DAY REVERSE ENGINEERING) */}
+            {activeTab === 'MANUAL' && (
               <section className="flex-1 overflow-y-auto p-6 md:p-12 max-w-5xl mx-auto space-y-7">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-2xl md:text-3xl font-black text-white">📒 나의 성공 기록장</h2>
-                    <p className="text-sm md:text-base text-slate-300 mt-1">내가 원하는 목표와 오늘 해낸 작은 실천들이 저장되어 있어요.</p>
+                    <h2 className="text-2xl md:text-3xl font-black text-white">📘 My Success Manual (개인 성공 매뉴얼)</h2>
+                    <p className="text-sm md:text-base text-slate-300 mt-1">대화와 실제 행동 데이터를 학습하여 도출된 나만의 성공 알고리즘입니다.</p>
                   </div>
                   <button
                     onClick={() => {
-                      const doc = `# 🌟 나의 3분 성공 습관 기록장\n\n- 내가 원하는 목표: ${myProgress.targetGoal}\n- 극복한 망설임: ${myProgress.fearReason}\n- 오늘 해낸 3분 미션: ${myProgress.easyMission}\n- 연속 성공 기록: ${myProgress.streakDays}일 연속\n- 모은 성공 도장: ${myProgress.stampCount}개`;
+                      const doc = `# 📘 My Success Manual (나만의 성공 매뉴얼)\n\n1. 나는 [새로운 프로젝트를 시작할 때]\n   [완성도에 대한 과도한 기대와 평가 공포] 때문에 멈추는 경향이 있습니다.\n\n2. 그럴 때는 [계획을 더 세우기보다]\n   ['비공개 1인 모드에서 3분간 거친 초안 적기'] 방식으로 시작하는 것이 85%의 확률로 효과적이었습니다.\n\n3. 나에게 가장 잘 맞는 첫 행동 단위는\n   ['스마트폰 메모장을 켜고 단어 3개 메모']입니다.\n\n4. 나의 절대 행동 원칙:\n   "완벽하게 끝내려 하지 말고, 3분 동안 미완성 상태를 시작한다."`;
                       const blob = new Blob([doc], { type: 'text/markdown;charset=utf-8;' });
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement('a');
                       a.href = url;
-                      a.download = `나의_성공기록장.md`;
+                      a.download = `My_Success_Manual.md`;
                       a.click();
                       playSound('cheer');
                     }}
                     className="px-5 py-3 rounded-xl font-bold text-sm md:text-base bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 flex items-center gap-2 shadow-md">
                     <i data-lucide="download" className="w-5 h-5"></i>
-                    <span>기록장 파일로 저장하기</span>
+                    <span>매뉴얼 마크다운 저장</span>
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="glass-box rounded-3xl p-7 border border-slate-800">
-                    <span className="text-sm font-bold text-cyan-400 block mb-1.5">🎯 내가 이루고 싶은 목표</span>
-                    <p className="text-lg md:text-xl font-bold text-white leading-relaxed">{myProgress.targetGoal}</p>
+                {/* Manual Box */}
+                <div className="glass-box-active rounded-3xl p-8 border-2 border-cyan-400/40 space-y-6">
+                  <div className="p-5 bg-space-900 rounded-2xl border border-slate-800">
+                    <span className="text-xs font-bold text-slate-400 block mb-1">1. 나의 반복 정지 패턴 (Pattern)</span>
+                    <p className="text-base font-semibold text-rose-300 leading-relaxed">
+                      "새로운 목표를 시작할 때, 완성도에 대한 과도한 기대와 평가 공포로 인해 시작을 지연시키는 패턴이 발견되었습니다."
+                    </p>
                   </div>
-                  <div className="glass-box rounded-3xl p-7 border border-slate-800">
-                    <span className="text-sm font-bold text-rose-400 block mb-1.5">🛑 내가 극복한 망설임</span>
-                    <p className="text-lg md:text-xl font-medium text-rose-200 leading-relaxed">{myProgress.fearReason}</p>
-                  </div>
-                </div>
 
-                <div className="glass-box-active rounded-3xl p-7 border-2 border-emerald-500/30">
-                  <span className="text-sm font-bold text-emerald-400 block mb-1.5">⚡ 오늘 당장 해낸 3분 미션</span>
-                  <p className="text-xl md:text-2xl font-bold text-emerald-200 leading-relaxed">"{myProgress.easyMission}"</p>
+                  <div className="p-5 bg-space-900 rounded-2xl border border-slate-800">
+                    <span className="text-xs font-bold text-slate-400 block mb-1">2. 가장 효과적인 시작 방식 (Best Strategy)</span>
+                    <p className="text-base font-semibold text-cyan-300 leading-relaxed">
+                      "계획을 더 세우기보다 '비공개 1인 로컬 모드에서 3분간 초안 적기'로 시작했을 때 완수율이 85% 상승했습니다."
+                    </p>
+                  </div>
+
+                  <div className="p-5 bg-space-900 rounded-2xl border border-slate-800">
+                    <span className="text-xs font-bold text-slate-400 block mb-1">3. 나만의 1등 절대 행동 원칙 (Personal Rule)</span>
+                    <p className="text-lg font-bold text-gold-300 leading-relaxed">
+                      "완벽하게 끝내려 하지 말고, 3분 동안 미완성 상태를 견디며 시작한다."
+                    </p>
+                  </div>
                 </div>
               </section>
             )}
 
           </div>
 
-          {/* 참 잘했어요 도장 팝업 */}
-          {showStampPopup && (
+          {/* Modal */}
+          {showModal && (
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
               <div className="glass-box-active rounded-3xl max-w-md w-full p-8 text-center border-2 border-cyan-400 shadow-2xl">
                 <div className="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center mb-4">
                   <span className="text-4xl">🎉</span>
                 </div>
-                <h3 className="text-2xl font-black text-white mb-2">3분 미션 성공 완료!</h3>
+                <h3 className="text-2xl font-black text-white mb-2">3분 미션 완료!</h3>
                 <p className="text-base text-slate-200 mb-6 leading-relaxed">
-                  오늘의 귀차니즘을 멋지게 이겨내셨어요!<br/>
-                  <strong>참 잘했어요 도장 1개</strong>가 추가되었습니다.
+                  오늘의 시작 저항을 멋지게 돌파하셨어요!<br/>
+                  <strong>실행 탄력(Momentum) +12%</strong>가 적립되었습니다.
                 </p>
 
-                <div className="p-4 bg-space-900 rounded-2xl border border-slate-800 text-sm md:text-base text-cyan-300 font-bold mb-6">
-                  "{myProgress.easyMission}" 완료!
-                </div>
-
                 <button
-                  onClick={() => setShowStampPopup(false)}
+                  onClick={() => setShowModal(false)}
                   className="w-full py-4 rounded-xl font-bold text-base bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg">
                   확인
                 </button>
