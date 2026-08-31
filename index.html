@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ANTI-GRAVITY SUCCESS MANAGEMENT SYSTEM (AG-SMS)</title>
+  <title>ANTI-GRAVITY OS (AG-OS) - Master Production Engine</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React 18 & ReactDOM -->
@@ -18,7 +18,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=JetBrains+Mono:wght@400;600;700&family=Pretendard:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=JetBrains+Mono:wght@400;600;700;800&family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -66,7 +66,7 @@
       color: #F1F5F9;
       font-family: 'Pretendard', sans-serif;
       overflow-x: hidden;
-      font-size: 18px; /* 기본 폰트 크기 2배급 대형화 */
+      font-size: 18px;
     }
     
     .bg-grid-pattern {
@@ -77,14 +77,14 @@
     }
     
     .glass-panel {
-      background: rgba(13, 20, 34, 0.82);
+      background: rgba(13, 20, 34, 0.85);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       border: 1px solid rgba(34, 211, 238, 0.2);
     }
 
     .glass-panel-glow {
-      background: rgba(13, 20, 34, 0.92);
+      background: rgba(13, 20, 34, 0.94);
       backdrop-filter: blur(22px);
       border: 1.5px solid rgba(0, 240, 255, 0.5);
       box-shadow: 0 0 35px rgba(0, 240, 255, 0.15);
@@ -137,18 +137,18 @@
           gain.connect(ctx.destination);
           osc.start();
           osc.stop(ctx.currentTime + 0.06);
-        } else if (type === 'stage') {
+        } else if (type === 'bypass') {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(320, ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(850, ctx.currentTime + 0.16);
-          gain.gain.setValueAtTime(0.07, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.25);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start();
-          osc.stop(ctx.currentTime + 0.22);
+          osc.stop(ctx.currentTime + 0.3);
         } else if (type === 'celebrate') {
           [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
             const osc = ctx.createOscillator();
@@ -166,165 +166,155 @@
       } catch (e) {}
     };
 
-    // --- PIPELINE STAGES ---
-    const PIPELINE_STAGES = [
-      { id: 'STAGE_1', name: '1. 소크라테스 탐색', desc: '무의식 욕망 & 저항 발굴', icon: 'search', color: 'text-purple-400' },
-      { id: 'STAGE_2', name: '2. 데이터 패턴화', desc: 'DCA 수렴 & 백데이터 정형화', icon: 'database', color: 'text-cyan-400' },
-      { id: 'STAGE_3', name: '3. 행동원칙 실행엔진', desc: 'GTD Runway & If-Then 알고리즘', icon: 'zap', color: 'text-gold-400' }
+    // --- 5-LAYER WHY LADDERING SPEC ---
+    const WHY_LAYERS = [
+      { layer: 1, name: 'Layer 1: Surface Want', desc: '표면적 목표 및 가시적 욕망', color: 'text-slate-300' },
+      { layer: 2, name: 'Layer 2: Strategic Outcome', desc: '결과적 기대 및 비즈니스 제국', color: 'text-cyan-400' },
+      { layer: 3, name: 'Layer 3: Emotional Driver', desc: '근원적 감정 및 절대적 자립', color: 'text-purple-400' },
+      { layer: 4, name: 'Layer 4: Shadow Probing', desc: '무의식적 회피 및 평가 공포', color: 'text-rose-400' },
+      { layer: 5, name: 'Layer 5: Core Driver & Anchor', desc: '실존적 동인 & 무마찰 앵커링', color: 'text-gold-400' }
     ];
 
-    // --- Knowledge Base State ---
-    const DEFAULT_BACKDATA = {
-      pipelineStage: 'STAGE_1',
-      dialogueDepth: 1,
-      fontSizeScale: 2.0, // 2x Large Font Mode
+    // --- DEFAULT PRD STATE ---
+    const DEFAULT_DATA = {
+      dialogueDepth: 1, // 1 to 5
+      currentLayer: 1,
+      fontSizeScale: 2.0,
       githubRepo: 'tttd1us-design/anti-gravity-sos',
+      
+      // Activation Energy Parameters (PRD Section 4.3)
+      physics: {
+        eBase: 8.0,      // Task Complexity (1~10)
+        cf: 8.5,         // Friction Coefficient (1.0~10.0)
+        momentum: 1.0,   // Momentum Index
+        eAct: 68.0,      // eBase * cf / (momentum + 0.00001)
+        originalTask: "도서 1장 1절 본문 A4 10장 집필 및 IR 사업계획서 완성",
+        bypassedTask: "Obsidian을 열고 '1장 1절' 제목 아래 가장 형편없는 문장 1줄 적기 (5분 타이머)",
+        isBypassed: false
+      },
+
+      // Subconscious Ontological Nodes & Edges (PRD Section 4.2)
       desires: [
-        { id: 1, label: '창조적 시스템 구축을 통한 완전한 자율성 확보', weight: 96, category: 'CORE_IDENTITY' },
-        { id: 2, label: '개인 및 비즈니스 성공의 확실한 통제권', weight: 90, category: 'CONTROL' },
-        { id: 3, label: '세상에 대체 불가능한 초격차 가치 증명', weight: 85, category: 'IMPACT' }
+        { id: 1, label: '도서 100권 집필 & 10조 비즈니스 제국 수립', weight: 98, layer: 2, category: 'STRATEGIC_OUTCOME' },
+        { id: 2, label: '누구도 나를 통제할 수 없는 절대적 자립과 지적 통제권', weight: 95, layer: 3, category: 'EMOTIONAL_DRIVER' },
+        { id: 3, label: '1인 지식 엔터프라이즈 자동화 파이프라인 완성', weight: 89, layer: 1, category: 'SURFACE_WANT' }
       ],
       gravityFrictions: [
-        { id: 1, label: '목표의 추상화로 인한 실행 지연 및 완벽주의적 타협', severity: 'HIGH' },
-        { id: 2, label: '불확실성에 대한 두려움으로 인한 회피성 딴짓', severity: 'MEDIUM' }
+        { id: 1, label: '지적 유능함이 시장에서 부정당할지도 모른다는 존재론적 공포', severity: 'CRITICAL', score: 8.5 },
+        { id: 2, label: '완벽하지 않은 초고 노출에 대한 완벽주의적 회피성 딴짓', severity: 'HIGH', score: 7.8 }
       ],
+
       dca: {
-        statement: '2027년 12월까지 안티그레비티 성공관리시스템을 통해 월 5,000만 원의 자동화 수익과 10만 명의 성장을 견인한다',
+        statement: '2027년 12월까지 AG-OS를 통해 100권 도서 출판과 10조 비즈니스 제국 기반 10만 고성과자 락인을 달성한다',
         deadline: '2027-12-31',
-        priceToPay: '수동적 유흥과 안주의 완전한 포기, 매일 아침 2시간의 딥워크 몰입',
-        keyStrategy: '소크라테스 산파술 기반 백데이터 시스템 구축 및 자동화 파이프라인 가동'
+        priceToPay: '단기적 유흥과 타협의 완전한 포기, 매일 아침 2시간의 딥워크 몰입',
+        keyStrategy: '소크라테스 인지 마이닝 ➔ Neo4j 지식 그래프 ➔ 무마찰 일일 마이크로 실행'
       },
-      paraRouting: [
-        { type: 'PROJECT', name: 'AG-SMS 개인 맞춤형 성공관리 OS 구축', count: 14 },
-        { type: 'AREA', name: '잠재의식 정렬 및 정서적 자기통제', count: 9 },
-        { type: 'RESOURCE', name: '소크라테스 & 레이 달리오 의사결정 모델', count: 18 },
-        { type: 'ARCHIVE', name: '2026 이전 시행착오 및 과거 대화 로그', count: 5 }
-      ],
-      horizons: {
-        alt50k: '타협 없는 규율과 아키텍처로 세상을 혁신하는 하이퍼 아키텍트',
-        alt40k: '글로벌 10만 고성과자들의 인지 및 성공 OS 표준화',
-        alt30k: '연간 자동화 시스템 파이프라인 3종 완성',
-        alt20k: '핵심 잠재의식-실행 동기화 루틴 확립',
-        alt10k: 'AG-SMS v1.0 런칭 및 GitHub 연동 완주',
-        runway: '오늘 23시까지 핵심 1순위 행동 착수 및 체크리스트 등록'
+
+      memoryTopology: {
+        working: '활성 대화 세션 버퍼 (Redis Active State: 14 Keys)',
+        episodic: '일일 회고 및 정서 변곡점 임베딩 (Qdrant Vector DB: 128 Points)',
+        semantic: '확정된 가치 체계 및 원칙 (PostgreSQL JSONB: 32 Records)',
+        subconscious: '욕망-공포-행동 상관망 (Neo4j AuraDB: 8 Nodes, 14 Edges)'
       },
-      runwayTasks: [
-        { id: 1, text: '내면의 가장 절박한 1순위 정량 목표(DCA) 1줄 작성', completed: true, timestamp: '16:40' },
-        { id: 2, text: '행동을 가로막는 보이지 않는 심리적 저항(Gravity) 2가지 기록', completed: true, timestamp: '16:42' },
-        { id: 3, text: '오늘 당장 10분 내 착수할 수 있는 최소 단위 실행 착수', completed: false, timestamp: '오늘 중' },
-        { id: 4, text: '레이 달리오 If-Then 의사결정 알고리즘 1개 이상 시스템 각인', completed: false, timestamp: '오늘 중' }
-      ],
+
       principles: [
         {
           id: 1,
-          condition: "목표가 '성공', '혁신' 등 추상적 단어로 흩어질 때",
-          rule: "타겟의 치명적 고통과 창작자의 본원적 보상으로 즉시 분해하여 10분 내 실행 단위로 격하한다",
-          tag: "DCA",
+          condition: "작업 직전 숨이 턱 막히고 유튜브나 단순 잡무로 도피하고 싶을 때",
+          rule: "의지력을 자책하지 않고 마찰 계수(Cf)를 즉시 측정하여 물리적 과제 난이도를 1/50로 다운사이징(Bypass)한다",
+          tag: "ANTI-FRICTION",
           date: "2026-08-31"
         },
         {
           id: 2,
-          condition: "피로와 잡념으로 실행이 주저되는 순간",
-          rule: "3초 카운트다운 후 환경을 즉시 물리적으로 전환하고 최소 2분 단위 액션으로 강제 진입한다",
-          tag: "EXECUTION",
-          date: "2026-08-31"
-        },
-        {
-          id: 3,
-          condition: "타인과의 비교나 불확실성으로 불안이 엄습할 때",
-          rule: "50,000피트 존재 이유를 복기하고 현재 활주로(Runway)의 1순위 태스크에만 시야를 좁힌다",
-          tag: "MINDSET",
+          condition: "시간이 부족하다는 자기합리화가 발생할 때",
+          rule: "시간 부족이 아닌 잠재의식의 '평가 공포'를 직면하고 절대 비공개 로컬 모드에서 5분 타이머를 가동한다",
+          tag: "NEUTRALIZER",
           date: "2026-08-31"
         }
       ]
     };
 
-    function processSocraticStep(userInput, currentData, messageHistory) {
+    // --- Socratic 5-Layer Why Engine ---
+    function processSocraticPRD(userInput, currentData, history) {
       const text = userInput.trim();
       let updated = JSON.parse(JSON.stringify(currentData));
       let reply = "";
 
-      if (updated.dialogueDepth === 1) {
+      // Cognitive Defense Detection (Rationalization Check)
+      const isExcuse = text.includes("시간") || text.includes("바빠") || text.includes("피곤") || text.includes("다음에") || text.includes("나중에");
+
+      if (isExcuse && updated.dialogueDepth <= 3) {
+        reply = `[인지 방어기제 무력화: Cognitive Defense Neutralizer]\n\n"시간이나 피로는 표면적 핑계일 뿐입니다. 시스템 로그상 당신은 피로한 상태에서도 본인이 통제권을 느끼는 게임이나 투자 분석에는 몇 시간씩 몰입할 수 있습니다.\n\n이 과제를 앞두고 당신의 무의식이 회피하고자 했던 진짜 불쾌한 감정이나 공포(Gravity)는 정확히 무엇입니까?"`;
+        updated.physics.cf = Math.min(10.0, updated.physics.cf + 0.5);
+      } else if (updated.dialogueDepth === 1) {
         updated.dialogueDepth = 2;
-        updated.pipelineStage = 'STAGE_1';
-        reply = `당신의 발화 속에서 감지된 핵심 열망은 **'스스로 설계한 시스템을 통해 현실의 불확실성을 통제하고 대체 불가능한 성취를 증명하는 것'**입니다.\n\n이것을 백데이터 1호 코어 욕망으로 등록했습니다.\n\n그렇다면 질문합니다. 이 목표를 현실로 만들었을 때 당신이 느끼게 될 **'가장 순수한 내면의 쾌감'**은 무엇이며, 반대로 지금껏 이것을 가로막아온 **'내부의 가장 익숙한 핑계나 두려움(Gravity)'**은 무엇입니까?`;
-        
+        updated.currentLayer = 2;
+        reply = `[Layer 1 ➔ Layer 2: Strategic Outcome 진입]\n\n당신의 표면적 욕망 뒤에 숨겨진 결과적 기대를 포착했습니다.\n\n이 목표가 실현되어 세상에 당신의 시스템이 자리 잡았을 때, 당신이 구축하게 될 **'10조 규모의 비즈니스 제국 혹은 지적 독점권'**의 구체적인 모습은 무엇입니까?`;
         updated.desires.unshift({
           id: Date.now(),
-          label: `발굴된 핵심 열망: "${text.slice(0, 35)}..." 기반 자기결정권`,
-          weight: 95,
-          category: 'DISCOVERED'
+          label: `발굴된 전략적 기대: "${text.slice(0, 30)}..."`,
+          weight: 94,
+          layer: 2,
+          category: 'STRATEGIC_OUTCOME'
         });
       } else if (updated.dialogueDepth === 2) {
         updated.dialogueDepth = 3;
-        updated.pipelineStage = 'STAGE_2';
-        reply = `당신의 무의식 속에 잠재되어 있던 **'내면의 저항(Gravity)'**이 데이터로 포착되었습니다. 저항을 직면하는 순간 그것은 더 이상 무의식적 장애물이 아닌 통제 가능한 변수가 됩니다.\n\n이제 [2단계: 데이터 축적 및 패턴화]로 진입하여 모호한 열망을 나폴레온 힐의 **명확한 중심 목표(DCA)** 공식으로 수렴시킵니다.\n\n당신이 정확히 몇 년 몇 월까지 달성할 **'측정 가능한 정량적 수치(자산, 매출, 출시, 유저 수)'**는 얼마이며, 이를 위해 기꺼이 포기할 **'기회비용(유흥, 안주, 나태)'**은 무엇입니까?`;
-        
-        updated.gravityFrictions.unshift({
-          id: Date.now(),
-          label: `포착된 저항 패턴: ${text.slice(0, 40)}...`,
-          severity: 'HIGH'
-        });
+        updated.currentLayer = 3;
+        reply = `[Layer 2 ➔ Layer 3: Emotional Driver 진입]\n\n그 거대한 비즈니스 제국을 완성했을 때 당신이 얻게 될 **'누구도 침범할 수 없는 절대적 자립과 자유'**라는 근원적 감정에 도달했습니다.\n\n그렇다면 반대로 질문합니다. 이것을 시도했다가 세상의 냉소나 실패를 마주했을 때, 당신이 감당하기 가장 두려운 **'무의식적 수치심이나 손실(Shadow Probing)'**은 무엇입니까?`;
       } else if (updated.dialogueDepth === 3) {
         updated.dialogueDepth = 4;
-        updated.pipelineStage = 'STAGE_3';
-        reply = `명확한 중심 목표(DCA)가 백데이터 엔진에 수식화되어 저장되었습니다.\n\n이제 [3단계: 행동 원칙 및 실행 엔진]을 가동합니다. 50,000피트의 거대한 목표를 오늘의 물리적 'Runway(활주로)'로 수직 정렬합니다.\n\n오늘 당신이 당장 10분 이내에 물리적으로 착수하여 끝낼 수 있는 **'단 하나의 1순위 최소 단위 행동(Runway Next Action)'**을 선언하십시오.`;
-        
-        updated.dca.statement = text.length > 15 ? text : updated.dca.statement;
-        updated.horizons.runway = `오늘 즉시 착수할 1순위 행동: ${text.slice(0, 35)}`;
-        updated.runwayTasks.push({
+        updated.currentLayer = 4;
+        reply = `[Layer 3 ➔ Layer 4: Shadow Probing 저항 해체]\n\n당신의 뇌가 브레이크를 밟았던 진짜 원인인 **'평가 공포와 완벽주의적 저항(Gravity Score: 8.5)'**이 데이터로 규명되었습니다. 당신이 게으른 것이 아니라, 무의식이 당신의 자존감을 보호하기 위해 회피를 선택했던 것입니다.\n\n지금 이 순간 **'절대 비공개 1인 로컬 모드'**를 발동합니다.\n\n누구에게도 보여주지 않을, 가장 거칠고 엉망인 핵심 키워드 3개를 지금 적어보십시오.`;
+        updated.gravityFrictions.unshift({
           id: Date.now(),
-          text: `[선언된 Runway 액션] ${text.slice(0, 45)}`,
-          completed: false,
-          timestamp: '오늘 즉시'
+          label: `규명된 실존적 공포: ${text.slice(0, 35)}...`,
+          severity: 'CRITICAL',
+          score: 8.5
         });
       } else {
         updated.dialogueDepth = 5;
-        updated.pipelineStage = 'STAGE_3';
-        reply = `훌륭합니다! 소크라테스식 탐색 ➔ 백데이터 구조화 ➔ 실행 엔진 정렬의 3단계 파이프라인 1회차 루프가 성공적으로 완료되었습니다.\n\n성공은 기분이 아니라 **'If-Then 의사결정 알고리즘'**의 누적으로 완성됩니다. 방금 도출된 원칙을 시스템 원칙집에 영구 기록했습니다.\n\n우측 대시보드에서 백데이터 맵을 확인하시고, 지금 즉시 활주로(Runway)의 1순위 행동을 실행하십시오!`;
-        
-        updated.principles.unshift({
-          id: Date.now(),
-          condition: `[트리거 상황] 실행이 지연되거나 불확실성을 마주할 때`,
-          rule: `타협하지 않고 사전에 정의된 DCA와 Runway 2분 행동으로 즉각 돌입한다 (${text.slice(0, 30)})`,
-          tag: 'ALGORITHM',
-          date: new Date().toISOString().split('T')[0]
-        });
+        updated.currentLayer = 5;
+        updated.physics.momentum = 1.4;
+        updated.physics.cf = 2.1;
+        updated.physics.eAct = (0.1 * 2.1) / (1.4 + 0.00001);
+        reply = `[Layer 5: Core Driver & Anchor 무마찰 가속 진입]\n\n마찰이 해제되었습니다! 모멘텀 지수(M)가 1.4로 급상승하고 인지 활성화 에너지(E_act)가 0.15로 극소화되었습니다.\n\n방금 추출된 인지 디버깅 규칙이 **Obsidian 로컬 볼트** 및 **Ray Dalio 의사결정 원칙집**에 영구 각인되었습니다. 지금 즉시 다음 7분 딥워크로 진입하십시오!`;
       }
 
+      // Recalculate physics
+      updated.physics.eAct = parseFloat(((updated.physics.eBase * updated.physics.cf) / (updated.physics.momentum + 0.00001)).toFixed(2));
       return { reply, updated };
     }
 
     function App() {
-      const [backdata, setBackdata] = useState(() => {
-        const saved = localStorage.getItem('AG_SMS_BACKDATA_V2');
-        return saved ? JSON.parse(saved) : DEFAULT_BACKDATA;
+      const [data, setData] = useState(() => {
+        const saved = localStorage.getItem('AG_OS_PRD_MASTER_V1');
+        return saved ? JSON.parse(saved) : DEFAULT_DATA;
       });
 
       const [messages, setMessages] = useState([
         {
           id: 'init-1',
           sender: 'system',
-          text: `안티그레비티 성공관리시스템(AG-SMS) 코어 엔진에 접속하셨습니다.\n\n이 시스템은 3단계 파이프라인('소크라테스식 탐색' ➔ '백데이터 축적/패턴화' ➔ '행동원칙 실행엔진')으로 작동합니다.\n\n당신이 현재 가장 강렬하게 원하지만, 아직 명확한 숫자로 정의하지 못했거나 직면을 미루고 있는 **'가장 중요한 목표 1가지'**는 무엇입니까?`,
+          text: `[ANTI-GRAVITY OS: 인지 역설계 엔진 가동]\n\n이 시스템은 5-Layer Why Laddering을 통해 잠재의식의 공포와 마찰력(Gravity)을 해체하고 무마찰 실행 알고리즘으로 전환합니다.\n\n당신이 머리로는 간절히 원하지만, 실행 직전 자꾸만 딴짓을 하거나 미루게 되는 **'가장 중요한 단 하나의 과제나 목표'**는 무엇입니까?`,
           timestamp: new Date().toLocaleTimeString()
         }
       ]);
 
       const [inputText, setInputText] = useState("");
-      const [activeTab, setActiveTab] = useState('pipeline');
+      const [activeTab, setActiveTab] = useState('physics'); // physics, why, ontology, asset, tier
       const [isThinking, setIsThinking] = useState(false);
-      const [fontSizeScale, setFontSizeScale] = useState(backdata.fontSizeScale || 2.0);
-      const [showGitHubModal, setShowGitHubModal] = useState(false);
+      const [fontSizeScale, setFontSizeScale] = useState(data.fontSizeScale || 2.0);
       const chatScrollRef = useRef(null);
 
       useEffect(() => {
-        const updated = { ...backdata, fontSizeScale };
-        localStorage.setItem('AG_SMS_BACKDATA_V2', JSON.stringify(updated));
+        localStorage.setItem('AG_OS_PRD_MASTER_V1', JSON.stringify({ ...data, fontSizeScale }));
         chatScrollRef.current?.scrollIntoView({ behavior: 'smooth' });
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, backdata, activeTab, fontSizeScale]);
+      }, [messages, data, activeTab, fontSizeScale]);
 
       const handleSendMessage = (e) => {
         e.preventDefault();
@@ -338,23 +328,23 @@
         };
 
         setMessages(prev => [...prev, userMsg]);
-        const currentInput = inputText.trim();
+        const curInput = inputText.trim();
         setInputText("");
         playAudio('tick');
         setIsThinking(true);
 
         setTimeout(() => {
-          const { reply, updated } = processSocraticStep(currentInput, backdata, messages);
-          setBackdata(updated);
+          const { reply, updated } = processSocraticPRD(curInput, data, messages);
+          setData(updated);
 
-          const systemMsg = {
+          const sysMsg = {
             id: `s-${Date.now()}`,
             sender: 'system',
             text: reply,
             timestamp: new Date().toLocaleTimeString()
           };
 
-          setMessages(prev => [...prev, systemMsg]);
+          setMessages(prev => [...prev, sysMsg]);
           setIsThinking(false);
 
           if (updated.dialogueDepth >= 4) {
@@ -362,73 +352,86 @@
             if (window.confetti) {
               window.confetti({ particleCount: 80, spread: 70, origin: { y: 0.65 } });
             }
-          } else {
-            playAudio('stage');
           }
         }, 500);
       };
 
-      const toggleRunwayTask = (id) => {
-        setBackdata(prev => ({
-          ...prev,
-          runwayTasks: prev.runwayTasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t)
-        }));
-        playAudio('tick');
+      // PRD Section 4.3: Dynamic Task Downsizing (Bypass Logic)
+      const triggerBypassLogic = () => {
+        playAudio('bypass');
+        setData(prev => {
+          const newEbase = 0.1;
+          const newCf = prev.physics.cf * 0.4;
+          const newMomentum = prev.physics.momentum + 0.3;
+          const newEact = parseFloat(((newEbase * newCf) / (newMomentum + 0.00001)).toFixed(2));
+          return {
+            ...prev,
+            physics: {
+              ...prev.physics,
+              eBase: newEbase,
+              cf: parseFloat(newCf.toFixed(1)),
+              momentum: parseFloat(newMomentum.toFixed(1)),
+              eAct: newEact,
+              isBypassed: true
+            }
+          };
+        });
+        if (window.confetti) {
+          window.confetti({ particleCount: 50, spread: 50, origin: { y: 0.7 } });
+        }
       };
 
-      const exportSuccessReport = () => {
-        const doc = `# 🚀 ANTI-GRAVITY 개인 맞춤형 성공관리시스템 (AG-SMS) 백데이터 보고서
-생성 시각: ${new Date().toLocaleString()}
-GitHub 저장소: https://github.com/${backdata.githubRepo}
+      const exportAssetEngine = (type) => {
+        let content = "";
+        let filename = "";
 
-## [1단계: 소크라테스식 탐색 - 잠재의식 발굴 맵]
-### 1. 핵심 본원적 열망 (Core Desires)
-${backdata.desires.map((d, i) => `${i + 1}. [가중치: ${d.weight}%] ${d.label} (${d.category})`).join('\n')}
+        if (type === 'blueprint') {
+          content = `# 🛡️ THE ANTI-GRAVITY BLUEPRINT (개인 인지 설계도)
+문서 식별 번호: AG-BLUEPRINT-2026-PRO
+발행 일시: ${new Date().toLocaleString()}
 
-### 2. 내면의 저항 및 중력 요인 (Gravity Friction)
-${backdata.gravityFrictions.map((g, i) => `${i + 1}. [심각도: ${g.severity}] ${g.label}`).join('\n')}
+## 1. 존재론적 정체성 및 50,000ft 존재 이유
+- **정체성 선언**: ${data.dca.statement}
+- **목표 마감 시한**: ${data.dca.deadline}
+- **지불할 기회비용**: ${data.dca.priceToPay}
 
----
+## 2. 5-Layer Why 심층 욕망 & 저항 온톨로지
+${data.desires.map(d => `- [Layer ${d.layer}] ${d.label} (가중치: ${d.weight}%)`).join('\n')}
 
-## [2단계: 데이터 축적 및 패턴화 - 북극성 목표 & 지식 구조]
-### 1. 명확한 중심 목표 (Definite Chief Aim)
-- **DCA 공식 선언문**: ${backdata.dca.statement}
-- **목표 마감일**: ${backdata.dca.deadline}
-- **기꺼이 지불할 대가**: ${backdata.dca.priceToPay}
-- **핵심 전략**: ${backdata.dca.keyStrategy}
+### 무의식적 중력 저항 (Gravity Frictions):
+${data.gravityFrictions.map(g => `- [${g.severity}] ${g.label} (마찰점수: ${g.score})`).join('\n')}
 
-### 2. PARA 지식 분류 매핑
-${backdata.paraRouting.map(p => `- [${p.type}] ${p.name} (누적 항목: ${p.count}개)`).join('\n')}
-
----
-
-## [3단계: 행동 원칙 및 실행 엔진 - GTD & Dalio Principles]
-### 1. GTD 6-Horizons 수직 정렬
-- **50,000ft (존재 이유/정체성)**: ${backdata.horizons.alt50k}
-- **40,000ft (3년 비전)**: ${backdata.horizons.alt40k}
-- **30,000ft (1년 목표)**: ${backdata.horizons.alt30k}
-- **20,000ft (핵심 책임 영역)**: ${backdata.horizons.alt20k}
-- **10,000ft (현재 프로젝트)**: ${backdata.horizons.alt10k}
-- **Runway (오늘 즉시 1순위 행동)**: ${backdata.horizons.runway}
-
-### 2. 레이 달리오 If-Then 의사결정 원칙집
-${backdata.principles.map((p, idx) => `${idx + 1}. [상황(IF): ${p.condition}] ➔ [원칙(THEN): ${p.rule}] (태그: ${p.tag}, 일자: ${p.date})`).join('\n')}
+## 3. 물리적 인지 활성화 상태
+- 과제 복잡도 (E_base): ${data.physics.eBase}
+- 심리적 마찰 계수 (C_f): ${data.physics.cf}
+- 축적된 모멘텀 (M): ${data.physics.momentum}
+- 인지 활성화 에너지 (E_act): ${data.physics.eAct}
 `;
-        const blob = new Blob([doc], { type: 'text/markdown;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `AG_SMS_Success_Report_${new Date().toISOString().slice(0, 10)}.md`;
-        a.click();
-        playAudio('tick');
-      };
+          filename = `Anti_Gravity_Blueprint_${new Date().toISOString().slice(0,10)}.md`;
+        } else {
+          content = `# 📚 AUTOMATED BOOK MANUSCRIPT & IR FRAMEWORK
+프로덕트: Anti-Gravity 100권 도서 & 10조 비즈니스 컴파일러
+생성 일시: ${new Date().toLocaleString()}
 
-      const exportJSONData = () => {
-        const blob = new Blob([JSON.stringify(backdata, null, 2)], { type: 'application/json' });
+## [Ch.1] 인지 역설계와 무의식의 마찰력 해체
+1.1. 인간 의지력의 한계와 잠재의식 공포의 상관관계
+1.2. 마찰 계수(Cf)를 극소화하는 수학적 실행 알고리즘 (E_act 공식)
+
+## [Ch.2] 1인 지식 엔터프라이즈와 초격차 자산화
+2.1. 대화 데이터를 도서 원고로 자동 컴파일하는 메커니즘
+2.2. 10조 비즈니스 제국을 위한 자본 배치 및 M&A 프레임워크
+
+### 실제 세션 기반 추출 원칙 (Dalio Principles):
+${data.principles.map((p, idx) => `${idx + 1}. [IF: ${p.condition}] -> [THEN: ${p.rule}]`).join('\n')}
+`;
+          filename = `AG_Book_IR_Compiler_${new Date().toISOString().slice(0,10)}.md`;
+        }
+
+        const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `AG_SMS_DataMoat_${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = filename;
         a.click();
         playAudio('tick');
       };
@@ -440,24 +443,28 @@ ${backdata.principles.map((p, idx) => `${idx + 1}. [상황(IF): ${p.condition}] 
           <header className="h-20 border-b border-cyan-500/20 glass-panel px-6 flex items-center justify-between z-20">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 via-indigo-600 to-purple-600 flex items-center justify-center neon-border-cyan shadow-lg">
-                <i data-lucide="compass" className="w-7 h-7 text-white animate-spin" style={{ animationDuration: '20s' }}></i>
+                <i data-lucide="orbit" className="w-7 h-7 text-white animate-spin" style={{ animationDuration: '20s' }}></i>
               </div>
               <div>
-                <h1 className="text-xl md:text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-gold-400 font-serif">
-                  ANTI-GRAVITY SUCCESS OS
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl md:text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-gold-400 font-serif">
+                    ANTI-GRAVITY OS
+                  </h1>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                    MASTER PRD V1
+                  </span>
+                </div>
                 <p className="text-sm text-slate-300 font-mono flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
-                  <span className="text-cyan-300 font-bold">PIPELINE: {backdata.pipelineStage}</span>
+                  <span className="text-cyan-300 font-bold">5-LAYER WHY: Lv.{data.currentLayer}/5</span>
                   <span className="text-slate-500">|</span>
-                  <span className="text-purple-300 font-bold">심층 Lv.{backdata.dialogueDepth}</span>
+                  <span className="text-purple-300 font-bold">E_act: {data.physics.eAct}</span>
                 </p>
               </div>
             </div>
 
-            {/* Font Size & GitHub Controls */}
+            {/* Font & Export Controls */}
             <div className="flex items-center space-x-3">
-              {/* Font Size Toggle Button */}
               <div className="bg-space-900 border border-cyan-500/30 rounded-xl p-1 flex items-center gap-1">
                 <button 
                   onClick={() => { setFontSizeScale(1.4); playAudio('tick'); }}
@@ -467,36 +474,27 @@ ${backdata.principles.map((p, idx) => `${idx + 1}. [상황(IF): ${p.condition}] 
                 <button 
                   onClick={() => { setFontSizeScale(2.0); playAudio('tick'); }}
                   className={`px-3 py-1 text-sm font-mono font-bold rounded-lg transition ${fontSizeScale === 2.0 ? 'bg-cyan-500 text-black shadow-lg' : 'text-slate-400 hover:text-white'}`}>
-                  2.0x (기본)
+                  2.0x (대형)
                 </button>
                 <button 
                   onClick={() => { setFontSizeScale(2.5); playAudio('tick'); }}
                   className={`px-2.5 py-1 text-xs font-mono font-bold rounded-lg transition ${fontSizeScale === 2.5 ? 'bg-cyan-500 text-black' : 'text-slate-400 hover:text-white'}`}>
-                  2.5x 대형
+                  2.5x
                 </button>
               </div>
 
-              {/* GitHub Sync Button */}
               <button 
-                onClick={() => setShowGitHubModal(true)}
-                className="px-3.5 py-2 text-sm font-mono font-bold bg-space-800 hover:bg-space-700 text-slate-200 hover:text-white border border-slate-700 rounded-xl flex items-center gap-2 transition shadow-md">
-                <i data-lucide="github" className="w-4 h-4 text-white"></i>
-                <span className="hidden sm:inline">GitHub 연동</span>
-                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              </button>
-
-              {/* Export Buttons */}
-              <button 
-                onClick={exportSuccessReport}
+                onClick={() => exportAssetEngine('blueprint')}
                 className="px-3.5 py-2 text-sm font-mono font-bold bg-space-800 hover:bg-space-700 text-cyan-300 hover:text-white border border-cyan-500/40 rounded-xl flex items-center gap-2 transition shadow-md">
-                <i data-lucide="file-text" className="w-4 h-4"></i>
-                <span className="hidden md:inline">MD 리포트</span>
+                <i data-lucide="file-check" className="w-4 h-4"></i>
+                <span className="hidden md:inline">청사진 PDF/MD</span>
               </button>
+              
               <button 
-                onClick={exportJSONData}
+                onClick={() => exportAssetEngine('book')}
                 className="px-3.5 py-2 text-sm font-mono font-bold bg-space-800 hover:bg-space-700 text-gold-300 hover:text-white border border-gold-500/40 rounded-xl flex items-center gap-2 transition shadow-md">
-                <i data-lucide="database" className="w-4 h-4"></i>
-                <span className="hidden md:inline">JSON</span>
+                <i data-lucide="book-marked" className="w-4 h-4"></i>
+                <span className="hidden md:inline">도서/IR 컴파일러</span>
               </button>
             </div>
           </header>
@@ -504,23 +502,25 @@ ${backdata.principles.map((p, idx) => `${idx + 1}. [상황(IF): ${p.condition}] 
           {/* Main 2-Column Split Workspace */}
           <div className="flex-1 flex overflow-hidden">
             
-            {/* LEFT: Socratic Dialogue Stream (50%) */}
+            {/* LEFT: Socratic 5-Layer Why Dialogue Stream (50%) */}
             <section className="w-full md:w-1/2 lg:w-6/12 flex flex-col border-r border-cyan-500/10 bg-space-950/75 relative">
               <div className="bg-space-900/90 border-b border-cyan-500/10 px-5 py-3 flex items-center justify-between text-sm text-slate-300">
                 <div className="flex items-center gap-2">
-                  <i data-lucide="sparkles" className="w-4 h-4 text-cyan-400"></i>
-                  <span className="font-bold">소크라테스 산파술 ➔ 백데이터 자동 축적 엔진</span>
+                  <i data-lucide="shield-check" className="w-4 h-4 text-cyan-400"></i>
+                  <span className="font-bold">소크라테스 산파술 + 방어기제 무력화 엔진</span>
                 </div>
-                <span className="font-mono text-purple-400 font-bold text-sm">심층 질문 레벨 {backdata.dialogueDepth}/5</span>
+                <span className="font-mono text-purple-400 font-bold text-sm">
+                  {WHY_LAYERS[data.currentLayer - 1]?.name || "Layer 5"}
+                </span>
               </div>
 
-              {/* Chat Stream (Large 2X Font Scale) */}
+              {/* Chat Stream (Large 2X Scale) */}
               <div className="flex-1 overflow-y-auto p-5 md:p-7 space-y-7">
                 {messages.map((m) => (
                   <div key={m.id} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
                     <div className="flex items-center gap-2 mb-1.5 px-1">
                       <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold">
-                        {m.sender === 'system' ? '🛡️ ANTI-GRAVITY ARCHITECT' : '👤 HIGH PERFORMER (YOU)'}
+                        {m.sender === 'system' ? '🛡️ ANTI-GRAVITY CSO' : '👤 HIGH PERFORMER (YOU)'}
                       </span>
                       <span className="text-xs text-slate-500 font-mono">{m.timestamp}</span>
                     </div>
@@ -538,13 +538,13 @@ ${backdata.principles.map((p, idx) => `${idx + 1}. [상황(IF): ${p.condition}] 
                 {isThinking && (
                   <div className="flex items-center space-x-3 text-cyan-400 text-base font-mono p-4 glass-panel rounded-2xl w-fit">
                     <i data-lucide="loader-2" className="w-5 h-5 animate-spin"></i>
-                    <span>잠재의식 인지 패턴 분석 및 백데이터 지식 그래프 갱신 중...</span>
+                    <span>잠재의식 인지 역설계 및 마찰 계수(Cf) 산출 중...</span>
                   </div>
                 )}
                 <div ref={chatScrollRef} />
               </div>
 
-              {/* Message Input Box (Large 2X Scale) */}
+              {/* Input Bar */}
               <div className="p-5 bg-space-900/95 border-t border-cyan-500/20">
                 <form onSubmit={handleSendMessage} className="relative flex items-center">
                   <textarea
@@ -557,7 +557,7 @@ ${backdata.principles.map((p, idx) => `${idx + 1}. [상황(IF): ${p.condition}] 
                         handleSendMessage(e);
                       }
                     }}
-                    placeholder="당신의 진짜 욕망, 직면한 두려움, 혹은 구체적 목표를 솔직하게 답변하십시오..."
+                    placeholder="당신의 진짜 욕망, 직면한 두려움, 혹은 회피하려 했던 감정을 솔직하게 입력하십시오..."
                     className="w-full bg-space-950 border-2 border-slate-700 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 rounded-2xl px-5 py-4 text-white placeholder-slate-500 focus:outline-none resize-none pr-28 font-sans leading-relaxed"
                     style={{ fontSize: `${fontSizeScale * 9.5}px` }}
                   />
@@ -569,32 +569,32 @@ ${backdata.principles.map((p, idx) => `${idx + 1}. [상황(IF): ${p.condition}] 
                         ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-xl shadow-cyan-500/40 hover:scale-105'
                         : 'bg-space-800 text-slate-600 cursor-not-allowed'
                     }`}>
-                    <span>전송</span>
+                    <span>기록</span>
                     <i data-lucide="send" className="w-4 h-4"></i>
                   </button>
                 </form>
                 <div className="flex items-center justify-between mt-2.5 px-2 text-xs text-slate-400 font-mono">
                   <span>Enter 전송 | Shift + Enter 줄바꿈</span>
-                  <span className="text-cyan-400 font-semibold">대화할수록 개인 맞춤형 성공관리 백데이터가 누적됩니다</span>
+                  <span className="text-cyan-400 font-semibold">무의식의 마찰력을 0으로 만들어 행동을 가속화합니다</span>
                 </div>
               </div>
             </section>
 
-            {/* RIGHT: Success Management System Dashboard (50%) */}
+            {/* RIGHT: PRD Master Intelligence Engine (50%) */}
             <aside className="hidden md:flex md:w-1/2 lg:w-6/12 flex-col bg-space-950/95 overflow-y-auto">
               
-              {/* Dashboard Navigation Tabs */}
+              {/* Tabs */}
               <div className="flex border-b border-cyan-500/15 bg-space-900/80 p-2.5 gap-2">
                 {[
-                  { id: 'pipeline', label: '1. 잠재의식 맵', icon: 'radar' },
-                  { id: 'dca', label: '2. DCA 북극성', icon: 'compass' },
-                  { id: 'runway', label: '3. 실행 활주로', icon: 'layers' },
-                  { id: 'principles', label: '4. 달리오 원칙집', icon: 'book-open' }
+                  { id: 'physics', label: '1. 활성화 에너지 공식', icon: 'zap' },
+                  { id: 'why', label: '2. 5-Layer 래더링', icon: 'git-merge' },
+                  { id: 'ontology', label: '3. 4계층 메모리', icon: 'database' },
+                  { id: 'asset', label: '4. 도서/IR 컴파일러', icon: 'book-open' }
                 ].map(tab => (
                   <button
                     key={tab.id}
                     onClick={() => { setActiveTab(tab.id); playAudio('tick'); }}
-                    className={`flex-1 py-3 px-3 rounded-xl text-sm font-bold font-mono flex items-center justify-center gap-2 transition ${
+                    className={`flex-1 py-3 px-2.5 rounded-xl text-sm font-bold font-mono flex items-center justify-center gap-2 transition ${
                       activeTab === tab.id
                         ? 'bg-cyan-500/25 text-cyan-300 border-2 border-cyan-400 shadow-md'
                         : 'text-slate-400 hover:text-slate-200 hover:bg-space-800'
@@ -605,295 +605,199 @@ ${backdata.principles.map((p, idx) => `${idx + 1}. [상황(IF): ${p.condition}] 
                 ))}
               </div>
 
-              {/* TAB 1: Subconscious Radar & Friction Map */}
-              {activeTab === 'pipeline' && (
+              {/* TAB 1: Activation Energy Physics & Bypass Logic (PRD Section 4.3) */}
+              {activeTab === 'physics' && (
                 <div className="p-6 space-y-6">
-                  <div className="glass-panel-glow rounded-3xl p-6 border-2 border-purple-500/40">
+                  
+                  {/* Physics Dashboard Card */}
+                  <div className="glass-panel-glow rounded-3xl p-6 border-2 border-cyan-400/50">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2.5">
-                        <i data-lucide="brain" className="w-6 h-6 text-purple-400"></i>
-                        <h3 className="text-base font-bold font-mono tracking-wider text-purple-300 uppercase">
-                          SUBCONSCIOUS DESIRE VAULT (핵심 열망 백데이터)
+                        <i data-lucide="gauge" className="w-6 h-6 text-cyan-400"></i>
+                        <h3 className="text-base font-bold font-mono tracking-wider text-cyan-300 uppercase">
+                          ACTIVATION ENERGY ENGINE (E_act)
                         </h3>
                       </div>
-                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                        {backdata.desires.length}개 누적
+                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
+                        수학적 마찰 해소 공식
                       </span>
                     </div>
 
-                    <div className="space-y-3">
-                      {backdata.desires.map(d => (
-                        <div key={d.id} className="bg-space-900/90 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
-                          <div className="flex-1 pr-4">
-                            <span className="text-xs font-mono text-purple-400 font-bold block mb-1">{d.category}</span>
-                            <p className="text-base font-semibold text-slate-100 leading-snug">{d.label}</p>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-base font-mono font-extrabold text-cyan-400">{d.weight}%</span>
-                            <div className="w-16 bg-space-800 h-2 rounded-full mt-1.5 overflow-hidden">
-                              <div className="bg-gradient-to-r from-cyan-500 to-purple-500 h-full" style={{ width: `${d.weight}%` }}></div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="glass-panel rounded-3xl p-6 border-2 border-gravity-red/40 bg-gradient-to-br from-gravity-red/10 to-transparent">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2.5">
-                        <i data-lucide="shield-alert" className="w-6 h-6 text-gravity-red"></i>
-                        <h3 className="text-base font-bold font-mono tracking-wider text-rose-300 uppercase">
-                          GRAVITY FRICTION RADAR (내면의 중력 저항 패턴)
-                        </h3>
-                      </div>
-                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-rose-500/20 text-rose-300">
-                        저항 감지기
-                      </span>
+                    {/* Formula Display */}
+                    <div className="bg-space-900/95 p-4 rounded-2xl border border-cyan-500/30 font-mono text-center mb-4">
+                      <p className="text-xs text-slate-400 mb-1">인지 활성화 에너지 공식 (E_act)</p>
+                      <p className="text-lg font-black text-cyan-300 tracking-wider">
+                        E_act = ( E_base × C_f ) / ( M + ε )
+                      </p>
                     </div>
 
-                    <div className="space-y-3">
-                      {backdata.gravityFrictions.map(g => (
-                        <div key={g.id} className="bg-space-900/90 p-4 rounded-2xl border border-rose-500/30 flex items-center justify-between">
-                          <p className="text-base text-rose-200 font-semibold leading-relaxed">{g.label}</p>
-                          <span className="text-xs font-mono px-3 py-1 rounded-lg bg-rose-950 text-rose-400 border border-rose-800 font-bold">
-                            {g.severity}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="glass-panel rounded-3xl p-5 border border-slate-800">
-                    <span className="text-sm font-mono text-slate-300 block mb-3 font-bold">PARA 지식 분류 체계</span>
-                    <div className="grid grid-cols-2 gap-3 text-sm font-mono">
-                      {backdata.paraRouting.map(p => (
-                        <div key={p.type} className="bg-space-900 p-3.5 rounded-xl border border-slate-800">
-                          <span className="text-xs text-cyan-400 block font-bold mb-1">{p.type}</span>
-                          <span className="text-slate-200 text-sm font-medium truncate block">{p.name}</span>
-                          <span className="text-xs text-slate-500 mt-1.5 block">{p.count}개 로그 연동</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 2: Definite Chief Aim (DCA) Builder */}
-              {activeTab === 'dca' && (
-                <div className="p-6 space-y-6">
-                  <div className="glass-panel-glow rounded-3xl p-6 border-2 border-gold-400/40 relative overflow-hidden">
-                    <div className="flex items-center justify-between mb-5">
-                      <div className="flex items-center gap-2.5">
-                        <i data-lucide="compass" className="w-6 h-6 text-gold-400"></i>
-                        <h3 className="text-base font-bold font-mono tracking-wider text-gold-300 uppercase">
-                          DEFINITE CHIEF AIM (DCA 북극성 목표)
-                        </h3>
+                    {/* Physics Parameters Grid */}
+                    <div className="grid grid-cols-3 gap-3 text-center font-mono mb-4">
+                      <div className="bg-space-900 p-3.5 rounded-2xl border border-slate-800">
+                        <span className="text-xs text-slate-500 block mb-1 font-bold">E_base (복잡도)</span>
+                        <span className="text-lg font-extrabold text-white">{data.physics.eBase}</span>
                       </div>
-                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-gold-400/20 text-gold-300 border border-gold-400/30 font-bold">
-                        NAPOLEON HILL
-                      </span>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="bg-space-900/95 p-5 rounded-2xl border border-gold-500/40">
-                        <span className="text-xs font-mono text-slate-400 block mb-1.5 font-bold">단 하나의 중심 목표 진술문</span>
-                        <p className="text-lg font-bold text-gold-300 leading-relaxed">
-                          "{backdata.dca.statement}"
-                        </p>
+                      <div className="bg-space-900 p-3.5 rounded-2xl border border-slate-800">
+                        <span className="text-xs text-rose-400 block mb-1 font-bold">C_f (마찰계수)</span>
+                        <span className="text-lg font-extrabold text-rose-400">{data.physics.cf}</span>
                       </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 font-mono">
-                        <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
-                          <span className="text-xs text-slate-500 block mb-1 font-bold">목표 기한 (DEADLINE)</span>
-                          <span className="text-cyan-400 font-extrabold text-base">{backdata.dca.deadline}</span>
-                        </div>
-                        <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
-                          <span className="text-xs text-slate-500 block mb-1 font-bold">핵심 실행 전략</span>
-                          <span className="text-emerald-400 font-bold text-sm">{backdata.dca.keyStrategy}</span>
-                        </div>
-                      </div>
-
-                      <div className="bg-space-900 p-4.5 rounded-2xl border border-rose-500/30">
-                        <span className="text-xs font-mono text-rose-400 block mb-1.5 font-bold">기꺼이 지불할 대가 및 포기할 기회비용 (PRICE TO PAY)</span>
-                        <p className="text-sm text-rose-200 leading-relaxed font-semibold">
-                          {backdata.dca.priceToPay}
-                        </p>
+                      <div className="bg-space-900 p-3.5 rounded-2xl border border-slate-800">
+                        <span className="text-xs text-emerald-400 block mb-1 font-bold">M (모멘텀)</span>
+                        <span className="text-lg font-extrabold text-emerald-400">{data.physics.momentum}</span>
                       </div>
                     </div>
-                  </div>
-                </div>
-              )}
 
-              {/* TAB 3: GTD 6-Horizons & Runway Action Engine */}
-              {activeTab === 'runway' && (
-                <div className="p-6 space-y-6">
-                  <div className="glass-panel rounded-3xl p-5 border border-cyan-500/30">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <i data-lucide="layers" className="w-5 h-5 text-cyan-400"></i>
-                        <h3 className="text-sm font-bold font-mono tracking-wider text-cyan-300 uppercase">
-                          GTD 6-HORIZONS VERTICAL ALIGNMENT
-                        </h3>
-                      </div>
-                      <span className="text-xs font-mono px-3 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">
-                        DAVID ALLEN
-                      </span>
-                    </div>
-
-                    <div className="space-y-3 text-sm">
-                      <div className="flex items-start gap-3 bg-space-900/90 p-3.5 rounded-xl border border-slate-800">
-                        <span className="font-mono text-purple-400 font-extrabold text-sm whitespace-nowrap">50k ft</span>
-                        <span className="text-slate-200 leading-snug font-medium">{backdata.horizons.alt50k}</span>
-                      </div>
-                      <div className="flex items-start gap-3 bg-space-900/90 p-3.5 rounded-xl border border-slate-800">
-                        <span className="font-mono text-cyan-400 font-extrabold text-sm whitespace-nowrap">10k ft</span>
-                        <span className="text-slate-200 leading-snug font-medium">{backdata.horizons.alt10k}</span>
-                      </div>
-                      <div className="flex items-start gap-3 bg-gradient-to-r from-cyan-950/80 to-emerald-950/80 p-4 rounded-xl border-2 border-emerald-500/50">
-                        <span className="font-mono text-emerald-400 font-extrabold text-sm whitespace-nowrap">Runway</span>
-                        <span className="text-emerald-200 font-bold leading-snug text-base">{backdata.horizons.runway}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Interactive Runway Task Queue */}
-                  <div className="glass-panel-glow rounded-3xl p-6 border-2 border-emerald-500/30">
-                    <div className="flex items-center justify-between mb-4">
+                    {/* Total E_act Result Indicator */}
+                    <div className={`p-4 rounded-2xl border flex items-center justify-between ${
+                      data.physics.eAct > 30 
+                        ? 'bg-rose-950/40 border-rose-500/40 text-rose-300' 
+                        : 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                    }`}>
                       <div>
-                        <h4 className="text-base font-bold font-mono text-emerald-300">DAILY RUNWAY EXECUTION QUEUE</h4>
-                        <p className="text-xs text-slate-400 font-mono">2분 내 착수 가능한 일일 물리적 행동 목록</p>
+                        <span className="text-xs font-mono block font-bold">현재 인지 활성화 에너지 (E_act)</span>
+                        <span className="text-2xl font-black font-mono">{data.physics.eAct}</span>
                       </div>
-                      <button 
-                        onClick={() => {
-                          const action = prompt("새로운 활주로(Runway) 실행 과제를 입력하십시오");
-                          if (action) {
-                            setBackdata(prev => ({
-                              ...prev,
-                              runwayTasks: [...prev.runwayTasks, { id: Date.now(), text: action, completed: false, timestamp: '방금' }]
-                            }));
-                            playAudio('tick');
-                          }
-                        }}
-                        className="px-3.5 py-1.5 text-xs font-mono font-bold bg-emerald-500/25 text-emerald-300 border border-emerald-500/50 rounded-xl hover:bg-emerald-500/40">
-                        + 행동 추가
+                      <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-black/40 border border-current">
+                        {data.physics.eAct > 30 ? "⚠️ 행동 마비 위험 (High Resistance)" : "⚡ 즉각 무마찰 실행 (Flow State)"}
+                      </span>
+                    </div>
+
+                    {/* Dynamic Task Downsizing (Bypass Logic Button) */}
+                    <div className="mt-5 pt-4 border-t border-slate-800">
+                      <div className="mb-3">
+                        <span className="text-xs font-mono text-slate-400 block mb-1 font-bold">현재 직면한 과제:</span>
+                        <p className="text-sm text-slate-200 font-medium">
+                          {data.physics.isBypassed ? data.physics.bypassedTask : data.physics.originalTask}
+                        </p>
+                      </div>
+
+                      {!data.physics.isBypassed ? (
+                        <button
+                          onClick={triggerBypassLogic}
+                          className="w-full py-3.5 rounded-2xl font-black text-sm font-mono bg-gradient-to-r from-rose-500 via-purple-600 to-cyan-500 text-white shadow-xl shadow-cyan-500/30 hover:scale-[1.02] transition flex items-center justify-center gap-2">
+                          <i data-lucide="zap" className="w-5 h-5"></i>
+                          <span>마찰 우회 발동 (Dynamic Task Downsizing: 5분 마이크로 변환)</span>
+                        </button>
+                      ) : (
+                        <div className="p-3.5 rounded-2xl bg-emerald-950/50 border border-emerald-500/40 text-emerald-300 text-xs font-mono text-center font-bold">
+                          ✓ 마찰 우회 완료! (E_base: 0.1 ➔ 도파민 회로 활성화)
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+
+                </div>
+              )}
+
+              {/* TAB 2: 5-Layer Why Laddering (PRD Section 4.1) */}
+              {activeTab === 'why' && (
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-base font-bold font-mono text-cyan-300">5-LAYER WHY LADDERING ARCHITECTURE</h3>
+                    <span className="text-xs font-mono text-slate-400">심층 산파술 계층</span>
+                  </div>
+
+                  <div className="space-y-3">
+                    {WHY_LAYERS.map(l => {
+                      const isCurrent = data.currentLayer === l.layer;
+                      const isPassed = data.currentLayer >= l.layer;
+                      return (
+                        <div key={l.layer} className={`p-4 rounded-2xl border transition ${
+                          isCurrent 
+                            ? 'glass-panel-glow border-2 border-cyan-400 shadow-lg' 
+                            : isPassed 
+                            ? 'bg-space-900/90 border-slate-800 text-slate-300' 
+                            : 'bg-space-950/50 border-slate-900 text-slate-600'
+                        }`}>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className={`text-xs font-mono font-bold ${l.color}`}>
+                              {l.name}
+                            </span>
+                            {isCurrent && <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-400 text-black font-bold animate-pulse">ACTIVE PROBING</span>}
+                            {isPassed && !isCurrent && <i data-lucide="check" className="w-4 h-4 text-emerald-400"></i>}
+                          </div>
+                          <p className="text-sm font-medium text-slate-200">{l.desc}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: 4-Tier Memory Topology (PRD Section 4.2) */}
+              {activeTab === 'ontology' && (
+                <div className="p-6 space-y-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-base font-bold font-mono text-cyan-300">4-TIER COGNITIVE MEMORY TOPOLOGY</h3>
+                    <span className="text-xs font-mono text-purple-400 font-bold">Neo4j & Vector Vault</span>
+                  </div>
+
+                  <div className="space-y-3 font-mono text-sm">
+                    <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
+                      <span className="text-xs text-cyan-400 block mb-1 font-bold">1. Working Memory (Redis Buffer)</span>
+                      <p className="text-slate-200 text-xs">{data.memoryTopology.working}</p>
+                    </div>
+
+                    <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
+                      <span className="text-xs text-purple-400 block mb-1 font-bold">2. Episodic Memory (Qdrant Vector DB)</span>
+                      <p className="text-slate-200 text-xs">{data.memoryTopology.episodic}</p>
+                    </div>
+
+                    <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
+                      <span className="text-xs text-gold-400 block mb-1 font-bold">3. Semantic Memory (PostgreSQL JSONB)</span>
+                      <p className="text-slate-200 text-xs">{data.memoryTopology.semantic}</p>
+                    </div>
+
+                    <div className="bg-space-900 p-4 rounded-2xl border border-emerald-500/30">
+                      <span className="text-xs text-emerald-400 block mb-1 font-bold">4. Subconscious Ontology (Neo4j Graph DB)</span>
+                      <p className="text-slate-200 text-xs">{data.memoryTopology.subconscious}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: Asset Engine & Compiler (PRD Section 6) */}
+              {activeTab === 'asset' && (
+                <div className="p-6 space-y-5">
+                  <div className="glass-panel-glow rounded-3xl p-6 border-2 border-gold-400/40">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2.5">
+                        <i data-lucide="book-open-check" className="w-6 h-6 text-gold-400"></i>
+                        <h3 className="text-base font-bold font-mono tracking-wider text-gold-300 uppercase">
+                          AUTOMATED ASSET & IR COMPILER
+                        </h3>
+                      </div>
+                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-gold-400/20 text-gold-300 font-bold border border-gold-400/30">
+                        10조 비즈니스 자산화
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-slate-300 leading-relaxed mb-4">
+                      세션에서 진행된 소크라테스 산파술 대화와 인지 디버깅 원칙은 **100권 도서 출판 원고** 및 **10조 비즈니스 IR 프레임워크**로 실시간 자동 컴파일됩니다.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <button
+                        onClick={() => exportAssetEngine('blueprint')}
+                        className="p-4 rounded-2xl bg-space-900 border border-cyan-500/40 hover:bg-space-800 text-left transition">
+                        <span className="text-cyan-400 font-bold font-mono text-sm block mb-1">📄 The Blueprint</span>
+                        <span className="text-xs text-slate-400">20페이지 개인 인지 청사진 MD/PDF</span>
+                      </button>
+
+                      <button
+                        onClick={() => exportAssetEngine('book')}
+                        className="p-4 rounded-2xl bg-space-900 border border-gold-500/40 hover:bg-space-800 text-left transition">
+                        <span className="text-gold-400 font-bold font-mono text-sm block mb-1">📚 Book & IR Draft</span>
+                        <span className="text-xs text-slate-400">도서 초고 및 M&A 프레임워크</span>
                       </button>
                     </div>
-
-                    <div className="space-y-2.5">
-                      {backdata.runwayTasks.map(t => (
-                        <div
-                          key={t.id}
-                          onClick={() => toggleRunwayTask(t.id)}
-                          className={`p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition ${
-                            t.completed 
-                              ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400 line-through' 
-                              : 'bg-space-900 border-slate-800 text-slate-100 hover:border-cyan-500/50 shadow-md'
-                          }`}>
-                          <div className="flex items-center gap-3">
-                            <i data-lucide={t.completed ? "check-circle-2" : "circle"} className={`w-5 h-5 ${t.completed ? 'text-emerald-400' : 'text-slate-500'}`}></i>
-                            <span className="font-sans font-semibold text-base">{t.text}</span>
-                          </div>
-                          <span className="text-xs text-slate-500 font-mono">{t.timestamp}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 4: Ray Dalio If-Then Principles Ledger */}
-              {activeTab === 'principles' && (
-                <div className="p-6 space-y-5">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-base font-bold font-mono text-cyan-300">RAY DALIO IF-THEN PRINCIPLES</h3>
-                      <p className="text-xs text-slate-400 font-mono">누적 {backdata.principles.length}개의 의사결정 알고리즘 백데이터</p>
-                    </div>
-                    <button 
-                      onClick={() => {
-                        const condition = prompt("원칙의 발생 상황(IF)을 입력하십시오 (예: 피로로 인해 집중이 흐트러질 때)");
-                        const rule = condition ? prompt("이에 대응할 실행 규칙(THEN)을 입력하십시오 (예: 2분 딥워크 루틴으로 강제 진입한다)") : null;
-                        if (condition && rule) {
-                          setBackdata(prev => ({
-                            ...prev,
-                            principles: [{ id: Date.now(), condition, rule, tag: 'CUSTOM', date: new Date().toISOString().split('T')[0] }, ...prev.principles]
-                          }));
-                          playAudio('tick');
-                        }
-                      }}
-                      className="px-3.5 py-1.5 text-xs font-mono font-bold bg-cyan-500/25 text-cyan-300 border border-cyan-500/50 rounded-xl hover:bg-cyan-500/40">
-                      + 신규 원칙
-                    </button>
-                  </div>
-
-                  <div className="space-y-4">
-                    {backdata.principles.map((p, idx) => (
-                      <div key={p.id || idx} className="glass-panel p-5 rounded-2xl border border-slate-800 hover:border-cyan-500/40 transition">
-                        <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2.5">
-                          <span className="px-2.5 py-0.5 rounded-md bg-space-900 text-cyan-400 font-bold">ALGORITHM #{idx + 1}</span>
-                          <span>[{p.tag}] {p.date}</span>
-                        </div>
-                        <div className="space-y-2.5">
-                          <div className="bg-space-900/90 p-3.5 rounded-xl border border-slate-800">
-                            <span className="text-slate-500 font-mono block text-xs mb-1 font-bold">IF (트리거 상황 / 감정)</span>
-                            <span className="text-rose-300 font-medium text-base">{p.condition}</span>
-                          </div>
-                          <div className="bg-space-900/90 p-3.5 rounded-xl border border-cyan-500/30">
-                            <span className="text-cyan-400 font-mono block text-xs mb-1 font-bold">THEN (기계적 실행 알고리즘)</span>
-                            <span className="text-cyan-100 font-bold leading-relaxed text-base">{p.rule}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
                   </div>
                 </div>
               )}
 
             </aside>
           </div>
-
-          {/* GitHub Sync Modal */}
-          {showGitHubModal && (
-            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="glass-panel-glow rounded-3xl max-w-lg w-full p-6 border-2 border-cyan-500/50 shadow-2xl">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2.5">
-                    <i data-lucide="github" className="w-6 h-6 text-white"></i>
-                    <h3 className="text-lg font-bold font-mono text-white">GitHub 저장소 연동 상태</h3>
-                  </div>
-                  <button onClick={() => setShowGitHubModal(false)} className="text-slate-400 hover:text-white">
-                    <i data-lucide="x" className="w-5 h-5"></i>
-                  </button>
-                </div>
-
-                <div className="space-y-4 text-sm font-mono">
-                  <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
-                    <span className="text-xs text-slate-500 block mb-1">연동된 원격 저장소 (Remote URL)</span>
-                    <a href={`https://github.com/${backdata.githubRepo}`} target="_blank" rel="noreferrer" className="text-cyan-400 font-bold hover:underline break-all">
-                      https://github.com/{backdata.githubRepo}
-                    </a>
-                  </div>
-
-                  <div className="bg-space-900 p-4 rounded-2xl border border-slate-800">
-                    <span className="text-xs text-slate-500 block mb-1">로컬 Git 상태</span>
-                    <p className="text-emerald-400 font-bold">✓ Git 초기화 및 커밋 완료 (Branch: main)</p>
-                    <p className="text-slate-400 text-xs mt-1">소크라테스 대화 데이터와 백데이터가 GitHub에 영구 동기화됩니다.</p>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      exportSuccessReport();
-                      setShowGitHubModal(false);
-                      alert("GitHub에 동기화할 최신 성공 보고서 Markdown이 다운로드되었습니다.");
-                    }}
-                    className="w-full py-3 rounded-xl font-bold bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg shadow-cyan-500/30 hover:opacity-90">
-                    최신 보고서 MD 내보내기 & 확인
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
 
         </div>
       );
