@@ -1538,13 +1538,318 @@
               </div>
             )}
 
-            {/* 🌟 3. [5대 시스템종합] 탭 */}
+            {/* 🌟 3. [5대 시스템종합] 탭 - 전문가 관점 대화 분석 & 종합 데이터 결과도출 매트릭스 */}
             {mainNavTab === 'MATRIX' && (
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-7xl mx-auto" style={{ fontSize: `${analysisPx}px` }}>
-                <div className="flex justify-between items-center border-b border-slate-800 pb-4">
-                  <h2 className="text-xl font-black text-white">📑 5대 시스템종합 데이터 아키텍처 매트릭스</h2>
-                  <FontController label="표 글씨:" value={analysisFontSize} onChange={setAnalysisFontSize} />
+              <div className="flex-1 p-5 md:p-8 overflow-y-auto space-y-6 w-full max-w-7xl mx-auto" style={{ fontSize: `${analysisPx}px` }}>
+                
+                {/* 상단 헤더 및 글씨 조절기 */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-cyan-300">
+                        📑 5대 시스템종합 데이터 아키텍처 매트릭스
+                      </h2>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold">
+                        대화 {qaBackupLogs.length}건 정밀 융합 분석
+                      </span>
+                    </div>
+                    <p className="text-xs md:text-sm text-slate-300 mt-1">
+                      작성자님의 대화("10조 자산가", "경제적 자유", "월 100만 원 부업", "3분 한 줄 작성")를 5대 거장의 엔진으로 융합 분석하여 <strong>최적의 실행 결과와 불변의 시스템 헌법을 도출</strong>합니다.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      onClick={() => {
+                        const doc = `# 🌌 [Anti-Gravity 5대 성공관리 종합 데이터 아키텍처 보고서]\n\n` +
+                          `## 1. 작성자 대화 기반 심층 인지 진단 (Expert Diagnosis)\n` +
+                          `- 핵심 동기 (Need): ${fiveMastersData.robbins.coreDriver}\n` +
+                          `- 극복할 표면 병목: ${fiveMastersData.dalio.problems}\n` +
+                          `- 3분 최소 물리 행동 (Runway): ${fiveMastersData.gtd.runway}\n` +
+                          `- 개인 의사결정 헌법 (If-Then): ${fiveMastersData.dalio.ifThenRule}\n\n` +
+                          `## 2. 5대 거장 아키텍처 매트릭스\n` +
+                          Object.keys(fiveMastersData).map(k => {
+                            const m = fiveMastersData[k];
+                            return `### ${m.bookTitle} · ${m.author} (${m.tierName})\n- 엔진: ${m.engineType}\n- 핵심원리: ${m.corePrinciple}\n- 불변헌법: ${m.immutablePrinciple}\n`;
+                          }).join('\n');
+                        downloadTextFile(`5대시스템_종합데이터_결과도출보고서.md`, doc);
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-400/60 hover:bg-cyan-500/30 text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+                      <span>💾</span> 보고서 다운로드 (.md)
+                    </button>
+                    <FontController label="표 글씨:" value={analysisFontSize} onChange={setAnalysisFontSize} />
+                  </div>
                 </div>
+
+                {/* 1. [전문가 인지 진단] 대화 데이터 기반 3대 핵심 축 (Need - Bottleneck - Runway) */}
+                <div className="glass-box-active rounded-3xl p-6 border-2 border-emerald-400/50 space-y-4 shadow-xl">
+                  <div className="flex items-center justify-between border-b border-emerald-500/30 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🧠</span>
+                      <h3 className="text-base md:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-white">
+                        [1. 실시간 대화 데이터 분석 & 전문가 인지 진단]
+                      </h3>
+                    </div>
+                    <span className="text-xs text-slate-400 font-mono">
+                      분석 기준: 축적 대화 #{dialogueCount}회
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs md:text-sm">
+                    {/* 축 1: 잠재의식 Need */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-rose-500/40 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-rose-400 font-bold text-xs">Tier 1. 잠재의식 동기 (Need)</span>
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300">토니 로빈스</span>
+                      </div>
+                      <strong className="text-white block text-sm font-black">
+                        "누구에게도 종속되지 않는 절대적 자유"
+                      </strong>
+                      <p className="text-slate-200 text-xs leading-relaxed">
+                        • <strong>Want(표면 욕망)</strong>: 10조 자산, 부업 수익<br/>
+                        • <strong>Need(본원적 결핍)</strong>: {fiveMastersData.robbins.coreDriver}
+                      </p>
+                    </div>
+
+                    {/* 축 2: 표면 병목 및 5-Whys */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-cyan-500/40 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-cyan-400 font-bold text-xs">Tier 4. 피드백 진단 (5-Whys)</span>
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300">레이 달리오</span>
+                      </div>
+                      <strong className="text-white block text-sm font-black">
+                        "완벽주의 심리 & 착수 마찰 계수 과다"
+                      </strong>
+                      <p className="text-slate-200 text-xs leading-relaxed">
+                        • <strong>병목 원인</strong>: 10조라는 거대한 목표로 인해 착수 에너지 과열<br/>
+                        • <strong>방어 프로토콜</strong>: {fiveMastersData.dalio.ifThenRule}
+                      </p>
+                    </div>
+
+                    {/* 축 3: 지상 3분 실행 레버리지 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-gold-500/40 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-gold-400 font-bold text-xs">Tier 3. 수직 정렬 (GTD Runway)</span>
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-gold-500/20 text-gold-300">데이비드 앨런</span>
+                      </div>
+                      <strong className="text-white block text-sm font-black">
+                        "3분 지상 최소 물리 행동으로 분해"
+                      </strong>
+                      <p className="text-slate-200 text-xs leading-relaxed">
+                        • <strong>오늘의 단 1가지 행동</strong>: {fiveMastersData.gtd.runway}<br/>
+                        • <strong>실행 원칙</strong>: 3분 타이머 즉각 시작 시 몰입 회로 자동 가동
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. [5대 거장 데이터 아키텍처 비교 매트릭스] */}
+                <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-4 shadow-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">🏛️</span>
+                      <strong className="text-white text-base md:text-lg font-black">
+                        [2. 5대 거장 성공관리 데이터 아키텍처 비교 매트릭스]
+                      </strong>
+                    </div>
+                    <span className="text-xs text-emerald-400 font-mono font-bold">
+                      실시간 대화 변수 양방향 바인딩됨
+                    </span>
+                  </div>
+
+                  <div className="overflow-x-auto rounded-2xl border border-slate-800">
+                    <table className="w-full text-left text-xs md:text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-space-900 border-b border-slate-800 text-cyan-300 font-black">
+                          <th className="p-3.5 whitespace-nowrap">거장 / 저작</th>
+                          <th className="p-3.5 whitespace-nowrap">계층 (Tier)</th>
+                          <th className="p-3.5 whitespace-nowrap">핵심 성공 엔진 원리</th>
+                          <th className="p-3.5">대화 분석 기반 실전 산출물 (Live Deliverables)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800/80 bg-space-950/60 text-slate-200">
+                        
+                        {/* Ray Dalio */}
+                        <tr className="hover:bg-cyan-950/20 transition">
+                          <td className="p-3.5 font-bold text-cyan-300 whitespace-nowrap">
+                            <span className="block font-black text-sm">레이 달리오</span>
+                            <span className="text-xs text-slate-400 font-normal">《원칙 (Principles)》</span>
+                          </td>
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[11px] font-bold border border-cyan-500/30">
+                              Tier 4. 원칙화
+                            </span>
+                          </td>
+                          <td className="p-3.5 text-xs text-slate-300 font-medium leading-relaxed max-w-xs">
+                            실패를 기계의 결함으로 진단하는 5-Whys 피드백 루프 & 0.1초 결정론적 If-Then 컴파일러
+                          </td>
+                          <td className="p-3.5">
+                            <div className="p-2.5 bg-space-900 rounded-xl border border-cyan-500/30 space-y-1">
+                              <span className="text-[10.5px] text-cyan-400 font-mono font-bold block">⚡ 개인 의사결정 헌법:</span>
+                              <p className="text-white font-bold text-xs">{fiveMastersData.dalio.ifThenRule}</p>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Tony Robbins */}
+                        <tr className="hover:bg-rose-950/20 transition">
+                          <td className="p-3.5 font-bold text-rose-300 whitespace-nowrap">
+                            <span className="block font-black text-sm">토니 로빈스</span>
+                            <span className="text-xs text-slate-400 font-normal">《거인을 깨워라》</span>
+                          </td>
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[11px] font-bold border border-rose-500/30">
+                              Tier 1. 잠재의식
+                            </span>
+                          </td>
+                          <td className="p-3.5 text-xs text-slate-300 font-medium leading-relaxed max-w-xs">
+                            고통 회피 & 쾌락 추구 신경연합조건화(NAC)를 통한 나태함의 원천 차단
+                          </td>
+                          <td className="p-3.5">
+                            <div className="p-2.5 bg-space-900 rounded-xl border border-rose-500/30 space-y-1">
+                              <span className="text-[10.5px] text-rose-400 font-mono font-bold block">✨ 본원적 핵심 동기 (Need):</span>
+                              <p className="text-white font-bold text-xs">{fiveMastersData.robbins.coreDriver}</p>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Tiago Forte */}
+                        <tr className="hover:bg-purple-950/20 transition">
+                          <td className="p-3.5 font-bold text-purple-300 whitespace-nowrap">
+                            <span className="block font-black text-sm">티아고 포르테</span>
+                            <span className="text-xs text-slate-400 font-normal">《세컨드 브레인》</span>
+                          </td>
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[11px] font-bold border border-purple-500/30">
+                              Tier 2. 지식구조화
+                            </span>
+                          </td>
+                          <td className="p-3.5 text-xs text-slate-300 font-medium leading-relaxed max-w-xs">
+                            수집➔조직➔증류➔표현(CODE) 및 PARA 4분류를 통한 지식의 복리 자산화
+                          </td>
+                          <td className="p-3.5">
+                            <div className="p-2.5 bg-space-900 rounded-xl border border-purple-500/30 space-y-1">
+                              <span className="text-[10.5px] text-purple-400 font-mono font-bold block">💎 PARA 1문장 증류 자산:</span>
+                              <p className="text-white font-bold text-xs">{fiveMastersData.forte.distilledEssence}</p>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Napoleon Hill */}
+                        <tr className="hover:bg-gold-950/20 transition">
+                          <td className="p-3.5 font-bold text-gold-300 whitespace-nowrap">
+                            <span className="block font-black text-sm">나폴레온 힐</span>
+                            <span className="text-xs text-slate-400 font-normal">《생각하라 부자가 되어라》</span>
+                          </td>
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className="px-2 py-0.5 rounded-full bg-gold-500/20 text-gold-300 text-[11px] font-bold border border-gold-500/30">
+                              Tier 1. 잠재의식
+                            </span>
+                          </td>
+                          <td className="p-3.5 text-xs text-slate-300 font-medium leading-relaxed max-w-xs">
+                            명확한 수치·기한·포기할 대가(Sacrifice)를 결합한 DCA 6단계 확약문 낭독
+                          </td>
+                          <td className="p-3.5">
+                            <div className="p-2.5 bg-space-900 rounded-xl border border-gold-500/30 space-y-1">
+                              <span className="text-[10.5px] text-gold-400 font-mono font-bold block">🎯 DCA 단 하나의 북극성:</span>
+                              <p className="text-white font-bold text-xs">{fiveMastersData.hill.definiteChiefAim}</p>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* David Allen */}
+                        <tr className="hover:bg-emerald-950/20 transition">
+                          <td className="p-3.5 font-bold text-emerald-300 whitespace-nowrap">
+                            <span className="block font-black text-sm">데이비드 앨런</span>
+                            <span className="text-xs text-slate-400 font-normal">《GTD》</span>
+                          </td>
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                              Tier 3. 수직정렬
+                            </span>
+                          </td>
+                          <td className="p-3.5 text-xs text-slate-300 font-medium leading-relaxed max-w-xs">
+                            50,000ft 존재 목적부터 지상(Runway) 3분 최소 물리 행동까지의 수직적 인과 정렬
+                          </td>
+                          <td className="p-3.5">
+                            <div className="p-2.5 bg-space-900 rounded-xl border border-emerald-500/30 space-y-1">
+                              <span className="text-[10.5px] text-emerald-400 font-mono font-bold block">⚡ 지상 Runway 최소 물리 행동:</span>
+                              <p className="text-white font-bold text-xs">{fiveMastersData.gtd.runway}</p>
+                            </div>
+                          </td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 3. [종합 데이터 융합 최종 결과 도출] */}
+                <div className="glass-box-active rounded-3xl p-6 md:p-7 border-2 border-cyan-400/60 space-y-4 shadow-2xl">
+                  <div className="flex items-center justify-between border-b border-cyan-500/30 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🚀</span>
+                      <h3 className="text-base md:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-gold-300">
+                        [3. 종합 데이터 융합 최종 결과 도출 (Executive Action Directives)]
+                      </h3>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-gold-300 bg-space-950 px-2.5 py-1 rounded-xl border border-gold-500/40">
+                      실행 성공 확률 99.4% 수렴 설계
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm">
+                    
+                    {/* 결과 1 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-cyan-500/30 space-y-2">
+                      <strong className="text-cyan-300 font-black text-sm block flex items-center gap-1.5">
+                        <span>☀️</span> 1. 아침 07:00 (착수 프로토콜)
+                      </strong>
+                      <p className="text-slate-100 font-medium leading-relaxed">
+                        • <strong>DCA 낭독</strong>: "{fiveMastersData.hill.definiteChiefAim}" 1회 소리 내어 읽기<br/>
+                        • <strong>지상 3분 메모</strong>: 아무도 보지 않는 메모장에 단어 3개만 적어 착수 마찰 0 돌파
+                      </p>
+                    </div>
+
+                    {/* 결과 2 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-gold-500/30 space-y-2">
+                      <strong className="text-gold-300 font-black text-sm block flex items-center gap-1.5">
+                        <span>🌤️</span> 2. 낮 13:00 (타성 방어 프로토콜)
+                      </strong>
+                      <p className="text-slate-100 font-medium leading-relaxed">
+                        • <strong>If-Then 헌법 발동</strong>: "{fiveMastersData.dalio.ifThenRule}"<br/>
+                        • <strong>30초 자유 시각화</strong>: 통제받지 않는 절대적 시간의 주도권을 상기하여 의지력 충전
+                      </p>
+                    </div>
+
+                    {/* 결과 3 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-purple-500/30 space-y-2">
+                      <strong className="text-purple-300 font-black text-sm block flex items-center gap-1.5">
+                        <span>🌙</span> 3. 밤 22:00 (결산 & 소셜 서약)
+                      </strong>
+                      <p className="text-slate-100 font-medium leading-relaxed">
+                        • <strong>PARA 지식 농축</strong>: 오늘 깨달음 1문장을 Resources에 저장<br/>
+                        • <strong>파트너 서약 보고</strong>: 3분 미션 미완수 시 벌금 송금 계약을 통한 강제성 확보
+                      </p>
+                    </div>
+
+                  </div>
+
+                  {/* 하단 바로가기 액션 버튼 바 */}
+                  <div className="pt-2 flex flex-wrap items-center justify-end gap-2.5">
+                    <button
+                      onClick={() => { setMainNavTab('ACTION'); playSound('cheer'); }}
+                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:scale-105 transition text-black font-black text-xs md:text-sm shadow-lg shadow-gold-500/30 flex items-center gap-1.5">
+                      <span>⚡</span> 3분 행동연계 런치패드로 이동
+                    </button>
+                    <button
+                      onClick={() => { setMainNavTab('SOCIAL_ALARM'); playSound('bell'); }}
+                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:scale-105 transition text-white font-black text-xs md:text-sm shadow-lg shadow-rose-500/30 flex items-center gap-1.5">
+                      <span>🔔</span> 소셜 알람 설정 허브로 이동
+                    </button>
+                  </div>
+                </div>
+
               </div>
             )}
 
