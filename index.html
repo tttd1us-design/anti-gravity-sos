@@ -976,21 +976,48 @@
         playSound('bell');
         let title = "";
         let actionMsg = "";
+        const targetMission = fiveMastersData.gtd.runway || '스마트폰 메모장에 아이디어 핵심 3단어 적기 (소요 3분)';
 
         if (timeType === 'morning') {
-          title = `☀️ [아침 07:00 행동 착수 지침]`;
-          actionMsg = `오늘 당장 3분 안에 실행할 미션: "${fiveMastersData.gtd.runway}"\n\n👉 레이 달리오 헌법: "${fiveMastersData.dalio.ifThenRule}"\n👉 START 지침: ${fiveMastersData.dalio.startDirectives}`;
+          title = `☀️ [아침 07:00 착수 지침] 5대 시스템 행동 변혁 발송`;
+          actionMsg = `【🧠 대화 분석 진단】 '초안 완벽주의'로 인한 시작 마찰 과열 상태 해체\n` +
+            `【⚡ 마찰 0 즉시 행동】 비공개 메모장에 3분 동안 단어 3개만 적어 뇌의 관성을 깹니다.\n\n` +
+            `🎯 [지상 Runway 미션]: "${targetMission}"\n` +
+            `📜 [레이 달리오 헌법]: "${fiveMastersData.dalio.ifThenRule}"\n` +
+            `🏆 [나폴레온 힐 DCA]: "${fiveMastersData.hill.definiteChiefAim}"\n` +
+            `👉 [START 지침]: ${fiveMastersData.dalio.startDirectives}`;
         } else if (timeType === 'midday') {
-          title = `🌤️ [낮 13:00 마찰 방어 지침]`;
-          actionMsg = `오후 집중 방어: "${fiveMastersData.robbins.coreDriver}"\n\n🛑 STOP 지침: ${fiveMastersData.dalio.stopDirectives}\n지금 즉시 3분 타이머를 누르고 착수하세요!`;
+          title = `🌤️ [낮 13:00 방어 지침] 타성 격파 & 신경학적 자유 시각화`;
+          actionMsg = `【🧠 대화 분석 진단】 오후 에너지 저하 및 숏폼/타성 유혹 구간 방어\n` +
+            `【⚡ 마찰 0 즉시 행동】 5년 뒤 나태함의 고통 vs 자유를 30초 상상하고 프로젝트를 1줄 전진시킵니다.\n\n` +
+            `🔥 [토니 로빈스 핵심 동기]: "${fiveMastersData.robbins.coreDriver}"\n` +
+            `⚡ [10,000ft 프로젝트 진척]: "${fiveMastersData.gtd.altitude10k}"\n` +
+            `🛑 [STOP 지침]: ${fiveMastersData.dalio.stopDirectives}\n` +
+            `지금 즉시 3분 타이머를 누르고 1줄을 작성하세요!`;
         } else {
-          title = `🌙 [밤 22:00 데일리 결산 및 파트너 서약]`;
-          actionMsg = `오늘 3분 미션을 완수하셨나요? 미완수 시 파트너 ${socialAlarmSettings.partnerName}님에게 ${socialAlarmSettings.penaltyPerMiss}원이 청구됩니다.\n\n서약 확인 링크: ${socialAlarmSettings.socialPledgeUrl}`;
+          title = `🌙 [밤 22:00 결산 지침] 1문장 PARA 증류 & 파트너 서약 청구`;
+          actionMsg = `【🧠 대화 분석 진단】 오늘 실행하지 않으면 내일 또다시 마찰 에너지가 치솟음\n` +
+            `【⚡ 마찰 0 즉시 행동】 오늘 겪은 시행착오 1문장 요약 및 파트너에게 완료 보고 전송\n\n` +
+            `💎 [티아고 포르테 본질 증류]: "${fiveMastersData.forte.distilledEssence}"\n` +
+            `🤝 [소셜 서약 현황]: 미완수 시 파트너 ${socialAlarmSettings.partnerName}님에게 ${socialAlarmSettings.penaltyPerMiss}원이 자동 청구됩니다.\n` +
+            `🔗 [서약 확인 링크]: ${socialAlarmSettings.socialPledgeUrl}`;
         }
 
-        const fullAlert = `[${channelName} 연동 발송 성공]\n${title}\n\n${actionMsg}`;
+        const fullAlert = `[${channelName} 채널 실시간 발송 완료]\n\n${title}\n\n${actionMsg}`;
         setAlarmSimulatedAlert(fullAlert);
-        setTimeout(() => setAlarmSimulatedAlert(null), 7000);
+        if (window.confetti) window.confetti({ particleCount: 40, spread: 60 });
+        setTimeout(() => setAlarmSimulatedAlert(null), 8000);
+      };
+
+      const triggerBroadcastAllChannels = (timeType) => {
+        const activeChannels = [];
+        if (socialAlarmSettings.enableEmail) activeChannels.push('📧 이메일');
+        if (socialAlarmSettings.enableKakao) activeChannels.push('💬 카카오톡');
+        if (socialAlarmSettings.enableTelegram) activeChannels.push('✈️ 텔레그램');
+        if (socialAlarmSettings.enableWebPush) activeChannels.push('🌐 웹푸시');
+        
+        const channelList = activeChannels.length > 0 ? activeChannels.join(', ') : '모든 채널';
+        triggerChannelActionAlarm(`🚀 [전 채널 동시 발송: ${channelList}]`, timeType);
       };
 
       const downloadTextFile = (filename, content) => {
@@ -1025,6 +1052,11 @@
       const actionBodyPx = Math.max(12, Math.round(14.5 * actionFontSize));
       const actionSmallPx = Math.max(10, Math.round(12 * actionFontSize));
       const alarmPx = Math.max(14, 15.5 * alarmFontSize);
+      const alarmH1Px = Math.max(17, Math.round(23 * alarmFontSize));
+      const alarmH2Px = Math.max(14, Math.round(18 * alarmFontSize));
+      const alarmTitlePx = Math.max(13, Math.round(16 * alarmFontSize));
+      const alarmBodyPx = Math.max(12, Math.round(14.5 * alarmFontSize));
+      const alarmSmallPx = Math.max(10, Math.round(12 * alarmFontSize));
 
       const FontController = ({ label, value, onChange }) => (
         <div className="flex items-center space-x-1 bg-space-900 border border-slate-700 rounded-xl px-2 py-0.5 shadow-sm">
@@ -2743,36 +2775,484 @@
               </div>
             )}
 
-            {/* 🌟 6. [소셜 알람] 탭 */}
+            {/* 🌟 6. [소셜 알람] 탭 - 대화창 분석 종합 데이터 기반 다채널 소셜 알람 & 행동 강제 관제 센터 */}
             {mainNavTab === 'SOCIAL_ALARM' && (
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${alarmPx}px` }}>
-                <h2 className="text-xl font-black text-rose-300">🔔 소셜 알람 & 다채널 행동 유도 관제 센터</h2>
-                <div className="glass-box p-6 rounded-3xl border border-slate-800 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="p-4 bg-space-900 rounded-2xl border border-cyan-400">
-                      <strong className="text-cyan-300 block mb-2">📧 이메일</strong>
-                      <button onClick={() => triggerChannelActionAlarm('📧 이메일', 'morning')} className="w-full py-1.5 bg-cyan-500/20 text-cyan-300 rounded-lg text-xs font-bold">
-                        테스트 발송
-                      </button>
+              <div className="flex-1 p-5 md:p-8 overflow-y-auto space-y-6 w-full max-w-6xl mx-auto" style={{ fontSize: `${alarmBodyPx}px` }}>
+                
+                {/* 상단 헤더 & 글씨 조절기 */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-rose-500/30 pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span style={{ fontSize: `${alarmH1Px}px` }}>🔔</span>
+                      <h2 style={{ fontSize: `${alarmH1Px}px` }} className="font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-300 via-pink-200 to-indigo-300">
+                        5대 시스템 다채널 소셜 알람 & 행동 강제 관제 센터
+                      </h2>
+                      <span style={{ fontSize: `${alarmSmallPx}px` }} className="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-mono font-bold">
+                        행동 변혁 소셜 강제 가동 중
+                      </span>
                     </div>
-                    <div className="p-4 bg-space-900 rounded-2xl border border-gold-400">
-                      <strong className="text-gold-300 block mb-2">💬 카카오톡</strong>
-                      <button onClick={() => triggerChannelActionAlarm('💬 카카오톡', 'morning')} className="w-full py-1.5 bg-gold-500/20 text-gold-300 rounded-lg text-xs font-bold">
-                        테스트 발송
-                      </button>
-                    </div>
-                    <div className="p-4 bg-space-900 rounded-2xl border border-purple-400">
-                      <strong className="text-purple-300 block mb-2">✈️ 텔레그램</strong>
-                      <button onClick={() => triggerChannelActionAlarm('✈️ 텔레그램', 'morning')} className="w-full py-1.5 bg-purple-500/20 text-purple-300 rounded-lg text-xs font-bold">
-                        테스트 발송
-                      </button>
-                    </div>
+                    <p style={{ fontSize: `${alarmBodyPx}px` }} className="text-slate-300 mt-1">
+                      대화창 분석 결과(<strong>행동 마찰의 인지적 원인</strong>)와 <strong>5대 거장 실천 지침</strong>을 이메일·카카오톡·텔레그램으로 자동 발송하여 나태함을 차단합니다.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      onClick={() => {
+                        const doc = `# 🔔 [Anti-Gravity 5대 시스템 다채널 소셜 알람 설정 & 발송 지침서]\n\n` +
+                          `## 1. 소셜 알람 연동 계정 현황\n` +
+                          `- 📧 이메일: ${socialAlarmSettings.userEmail} (활성화: ${socialAlarmSettings.enableEmail ? 'ON' : 'OFF'})\n` +
+                          `- 💬 카카오톡: ${socialAlarmSettings.userKakaoPhone} (활성화: ${socialAlarmSettings.enableKakao ? 'ON' : 'OFF'})\n` +
+                          `- ✈️ 텔레그램: ${socialAlarmSettings.telegramChatId} (활성화: ${socialAlarmSettings.enableTelegram ? 'ON' : 'OFF'})\n` +
+                          `- 🤝 성공 파트너: ${socialAlarmSettings.partnerName} (${socialAlarmSettings.partnerPhone})\n` +
+                          `- 💸 미완수 1회당 벌금: ${socialAlarmSettings.penaltyPerMiss}원\n` +
+                          `- 🔗 소셜 서약 링크: ${socialAlarmSettings.socialPledgeUrl}\n\n` +
+                          `## 2. 대화 데이터 기반 3대 골든 타임라인 발송 메시지\n\n` +
+                          `### ☀️ [아침 07:00 착수 지침]\n` +
+                          `- 지상 Runway 미션: "${fiveMastersData.gtd.runway}"\n` +
+                          `- 레이 달리오 헌법: "${fiveMastersData.dalio.ifThenRule}"\n` +
+                          `- 나폴레온 힐 DCA: "${fiveMastersData.hill.definiteChiefAim}"\n\n` +
+                          `### 🌤️ [낮 13:00 방어 지침]\n` +
+                          `- 토니 로빈스 핵심 동기: "${fiveMastersData.robbins.coreDriver}"\n` +
+                          `- 10,000ft 프로젝트 스프린트: "${fiveMastersData.gtd.altitude10k}"\n` +
+                          `- STOP 수칙: ${fiveMastersData.dalio.stopDirectives}\n\n` +
+                          `### 🌙 [밤 22:00 결산 및 벌금 서약]\n` +
+                          `- 티아고 포르테 본질 증류: "${fiveMastersData.forte.distilledEssence}"\n` +
+                          `- 서약 미완수 시 벌금 청구: ${socialAlarmSettings.partnerName}님에게 ${socialAlarmSettings.penaltyPerMiss}원 청구\n`;
+                        downloadTextFile(`5대시스템_소셜알람_발송지침서.md`, doc);
+                      }}
+                      style={{ fontSize: `${alarmSmallPx}px` }}
+                      className="px-3.5 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-400/60 hover:bg-rose-500/30 font-bold flex items-center gap-1.5 shadow-sm transition">
+                      <span>💾</span> 알람 지침서 다운로드 (.md)
+                    </button>
+                    <FontController label="글씨:" value={alarmFontSize} onChange={setAlarmFontSize} />
                   </div>
                 </div>
+
+                {/* 1. [다채널 전송 연동 설정 패널] */}
+                <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <strong style={{ fontSize: `${alarmTitlePx}px` }} className="text-white font-black flex items-center gap-2">
+                      <span>📱</span> [1. 다채널 전송 환경 설정 (Multi-Channel Integration)]
+                    </strong>
+                    <span style={{ fontSize: `${alarmSmallPx}px` }} className="text-slate-400 font-mono">Real-time Push Gateway</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    {/* 📧 이메일 채널 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-cyan-500/40 space-y-3 shadow-md">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">📧</span>
+                          <strong style={{ fontSize: `${alarmTitlePx}px` }} className="text-cyan-300 font-black">이메일 알람</strong>
+                        </div>
+                        <label className="flex items-center gap-1.5 cursor-pointer text-xs">
+                          <input
+                            type="checkbox"
+                            checked={socialAlarmSettings.enableEmail}
+                            onChange={(e) => {
+                              const updated = { ...socialAlarmSettings, enableEmail: e.target.checked };
+                              setSocialAlarmSettings(updated);
+                              localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                            }}
+                            className="w-4 h-4 accent-cyan-400 rounded cursor-pointer"
+                          />
+                          <span style={{ fontSize: `${alarmSmallPx}px` }} className={socialAlarmSettings.enableEmail ? "text-cyan-400 font-bold" : "text-slate-500"}>
+                            {socialAlarmSettings.enableEmail ? "활성화" : "비활성"}
+                          </span>
+                        </label>
+                      </div>
+                      <input
+                        type="email"
+                        value={socialAlarmSettings.userEmail}
+                        onChange={(e) => {
+                          const updated = { ...socialAlarmSettings, userEmail: e.target.value };
+                          setSocialAlarmSettings(updated);
+                          localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                        }}
+                        style={{ fontSize: `${alarmSmallPx}px` }}
+                        placeholder="이메일 주소 입력"
+                        className="w-full bg-space-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+                      />
+                      <div className="grid grid-cols-3 gap-1.5 pt-1">
+                        <button onClick={() => triggerChannelActionAlarm('📧 이메일', 'morning')} style={{ fontSize: `${alarmSmallPx - 1}px` }} className="py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 rounded-lg font-bold">
+                          ☀️ 아침
+                        </button>
+                        <button onClick={() => triggerChannelActionAlarm('📧 이메일', 'midday')} style={{ fontSize: `${alarmSmallPx - 1}px` }} className="py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg font-bold">
+                          🌤️ 낮
+                        </button>
+                        <button onClick={() => triggerChannelActionAlarm('📧 이메일', 'night')} style={{ fontSize: `${alarmSmallPx - 1}px` }} className="py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 rounded-lg font-bold">
+                          🌙 밤
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 💬 카카오톡 채널 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-amber-500/40 space-y-3 shadow-md">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">💬</span>
+                          <strong style={{ fontSize: `${alarmTitlePx}px` }} className="text-amber-300 font-black">카카오톡 알림톡</strong>
+                        </div>
+                        <label className="flex items-center gap-1.5 cursor-pointer text-xs">
+                          <input
+                            type="checkbox"
+                            checked={socialAlarmSettings.enableKakao}
+                            onChange={(e) => {
+                              const updated = { ...socialAlarmSettings, enableKakao: e.target.checked };
+                              setSocialAlarmSettings(updated);
+                              localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                            }}
+                            className="w-4 h-4 accent-amber-400 rounded cursor-pointer"
+                          />
+                          <span style={{ fontSize: `${alarmSmallPx}px` }} className={socialAlarmSettings.enableKakao ? "text-amber-400 font-bold" : "text-slate-500"}>
+                            {socialAlarmSettings.enableKakao ? "활성화" : "비활성"}
+                          </span>
+                        </label>
+                      </div>
+                      <input
+                        type="text"
+                        value={socialAlarmSettings.userKakaoPhone}
+                        onChange={(e) => {
+                          const updated = { ...socialAlarmSettings, userKakaoPhone: e.target.value };
+                          setSocialAlarmSettings(updated);
+                          localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                        }}
+                        style={{ fontSize: `${alarmSmallPx}px` }}
+                        placeholder="전화번호 입력 (010-XXXX-XXXX)"
+                        className="w-full bg-space-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                      />
+                      <div className="grid grid-cols-3 gap-1.5 pt-1">
+                        <button onClick={() => triggerChannelActionAlarm('💬 카카오톡', 'morning')} style={{ fontSize: `${alarmSmallPx - 1}px` }} className="py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 rounded-lg font-bold">
+                          ☀️ 아침
+                        </button>
+                        <button onClick={() => triggerChannelActionAlarm('💬 카카오톡', 'midday')} style={{ fontSize: `${alarmSmallPx - 1}px` }} className="py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg font-bold">
+                          🌤️ 낮
+                        </button>
+                        <button onClick={() => triggerChannelActionAlarm('💬 카카오톡', 'night')} style={{ fontSize: `${alarmSmallPx - 1}px` }} className="py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 rounded-lg font-bold">
+                          🌙 밤
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* ✈️ 텔레그램 채널 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-indigo-500/40 space-y-3 shadow-md">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">✈️</span>
+                          <strong style={{ fontSize: `${alarmTitlePx}px` }} className="text-indigo-300 font-black">텔레그램 봇</strong>
+                        </div>
+                        <label className="flex items-center gap-1.5 cursor-pointer text-xs">
+                          <input
+                            type="checkbox"
+                            checked={socialAlarmSettings.enableTelegram}
+                            onChange={(e) => {
+                              const updated = { ...socialAlarmSettings, enableTelegram: e.target.checked };
+                              setSocialAlarmSettings(updated);
+                              localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                            }}
+                            className="w-4 h-4 accent-indigo-400 rounded cursor-pointer"
+                          />
+                          <span style={{ fontSize: `${alarmSmallPx}px` }} className={socialAlarmSettings.enableTelegram ? "text-indigo-400 font-bold" : "text-slate-500"}>
+                            {socialAlarmSettings.enableTelegram ? "활성화" : "비활성"}
+                          </span>
+                        </label>
+                      </div>
+                      <input
+                        type="text"
+                        value={socialAlarmSettings.telegramChatId}
+                        onChange={(e) => {
+                          const updated = { ...socialAlarmSettings, telegramChatId: e.target.value };
+                          setSocialAlarmSettings(updated);
+                          localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                        }}
+                        style={{ fontSize: `${alarmSmallPx}px` }}
+                        placeholder="챗봇 ID 또는 @채널명 입력"
+                        className="w-full bg-space-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400"
+                      />
+                      <div className="grid grid-cols-3 gap-1.5 pt-1">
+                        <button onClick={() => triggerChannelActionAlarm('✈️ 텔레그램', 'morning')} style={{ fontSize: `${alarmSmallPx - 1}px` }} className="py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 rounded-lg font-bold">
+                          ☀️ 아침
+                        </button>
+                        <button onClick={() => triggerChannelActionAlarm('✈️ 텔레그램', 'midday')} style={{ fontSize: `${alarmSmallPx - 1}px` }} className="py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg font-bold">
+                          🌤️ 낮
+                        </button>
+                        <button onClick={() => triggerChannelActionAlarm('✈️ 텔레그램', 'night')} style={{ fontSize: `${alarmSmallPx - 1}px` }} className="py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 rounded-lg font-bold">
+                          🌙 밤
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* 2. [대화 데이터 기반 3대 골든 타임라인 발송 메시지 실시간 미리보기 & 즉시 동시 발송] */}
+                <div className="glass-box-active rounded-3xl p-6 border-2 border-rose-500/40 space-y-5 shadow-2xl bg-gradient-to-br from-space-950 via-rose-950/20 to-space-950">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-rose-500/30 pb-3">
+                    <div>
+                      <strong style={{ fontSize: `${alarmTitlePx + 2}px` }} className="text-white font-black flex items-center gap-2">
+                        <span>🧠</span> [2. 대화 분석 기반 3대 골든 타임라인 실시간 발송 메시지 전문]
+                      </strong>
+                      <p style={{ fontSize: `${alarmSmallPx}px` }} className="text-slate-300 mt-0.5">
+                        대화창에서 분석된 마찰 원인과 극복 헌법이 실시간으로 메시지 본문에 바인딩되어 발송됩니다.
+                      </p>
+                    </div>
+                    <span style={{ fontSize: `${alarmSmallPx}px` }} className="text-rose-300 font-mono">Expert Cause-Action Dispatch</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    {/* 메시지 1: 아침 07:00 착수 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-cyan-400/50 space-y-3 flex flex-col justify-between shadow-lg">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between border-b border-cyan-500/30 pb-1.5">
+                          <span style={{ fontSize: `${alarmSmallPx}px` }} className="font-mono text-cyan-400 font-bold">☀️ 07:00 Phase 1 착수</span>
+                          <span style={{ fontSize: `${alarmSmallPx - 1}px` }} className="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300">DCA & 마찰0</span>
+                        </div>
+                        <div className="p-3 bg-space-900/90 rounded-xl font-mono text-slate-200 space-y-1.5 border border-slate-800" style={{ fontSize: `${alarmSmallPx}px` }}>
+                          <p className="text-rose-300 font-bold">【원인】 완벽주의 착각 ➔ 시작 마찰 과열 해체</p>
+                          <p className="text-emerald-300 font-bold">【지침】 비공개 메모장 3분 단어 3개 착수</p>
+                          <div className="border-t border-slate-700/60 pt-1.5 text-slate-300">
+                            <p className="text-white font-bold">🎯 미션: "{fiveMastersData.gtd.runway || '3분 단어 3개 적기'}"</p>
+                            <p className="text-slate-400">📜 헌법: "{fiveMastersData.dalio.ifThenRule}"</p>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => triggerBroadcastAllChannels('morning')}
+                        style={{ fontSize: `${alarmSmallPx}px` }}
+                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 text-black font-black hover:scale-102 transition shadow-md flex items-center justify-center gap-1.5">
+                        <span>🚀</span> 아침 지침 전 채널 동시 발송
+                      </button>
+                    </div>
+
+                    {/* 메시지 2: 낮 13:00 방어 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-amber-400/50 space-y-3 flex flex-col justify-between shadow-lg">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between border-b border-amber-500/30 pb-1.5">
+                          <span style={{ fontSize: `${alarmSmallPx}px` }} className="font-mono text-amber-400 font-bold">🌤️ 13:00 Phase 2 방어</span>
+                          <span style={{ fontSize: `${alarmSmallPx - 1}px` }} className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300">신경학적 자유</span>
+                        </div>
+                        <div className="p-3 bg-space-900/90 rounded-xl font-mono text-slate-200 space-y-1.5 border border-slate-800" style={{ fontSize: `${alarmSmallPx}px` }}>
+                          <p className="text-amber-300 font-bold">【원인】 오후 에너지 저하 및 숏폼/타성 유혹</p>
+                          <p className="text-emerald-300 font-bold">【지침】 5년 뒤 고통 vs 자유 30초 시각화</p>
+                          <div className="border-t border-slate-700/60 pt-1.5 text-slate-300">
+                            <p className="text-white font-bold">🔥 동기: "{fiveMastersData.robbins.coreDriver}"</p>
+                            <p className="text-slate-400">🛑 STOP: {fiveMastersData.dalio.stopDirectives}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => triggerBroadcastAllChannels('midday')}
+                        style={{ fontSize: `${alarmSmallPx}px` }}
+                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 text-black font-black hover:scale-102 transition shadow-md flex items-center justify-center gap-1.5">
+                        <span>🚀</span> 낮 지침 전 채널 동시 발송
+                      </button>
+                    </div>
+
+                    {/* 메시지 3: 밤 22:00 결산 & 서약 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-purple-400/50 space-y-3 flex flex-col justify-between shadow-lg">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between border-b border-purple-500/30 pb-1.5">
+                          <span style={{ fontSize: `${alarmSmallPx}px` }} className="font-mono text-purple-400 font-bold">🌙 22:00 Phase 3 결산</span>
+                          <span style={{ fontSize: `${alarmSmallPx - 1}px` }} className="px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300">지식증류 & 벌금</span>
+                        </div>
+                        <div className="p-3 bg-space-900/90 rounded-xl font-mono text-slate-200 space-y-1.5 border border-slate-800" style={{ fontSize: `${alarmSmallPx}px` }}>
+                          <p className="text-purple-300 font-bold">【원인】 미기록 시 하루의 지식 자산 휘발</p>
+                          <p className="text-emerald-300 font-bold">【지침】 시행착오 1문장 아카이빙 및 소셜 보고</p>
+                          <div className="border-t border-slate-700/60 pt-1.5 text-slate-300">
+                            <p className="text-white font-bold">💎 증류: "{fiveMastersData.forte.distilledEssence}"</p>
+                            <p className="text-rose-400 font-bold">💸 미완수 시 {socialAlarmSettings.partnerName}님에게 {socialAlarmSettings.penaltyPerMiss}원</p>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => triggerBroadcastAllChannels('night')}
+                        style={{ fontSize: `${alarmSmallPx}px` }}
+                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-black hover:scale-102 transition shadow-md flex items-center justify-center gap-1.5">
+                        <span>🚀</span> 밤 결산 전 채널 동시 발송
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* 3. [성공 파트너 소셜 계약 & 벌금 서약 시스템] */}
+                <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <strong style={{ fontSize: `${alarmTitlePx}px` }} className="text-white font-black flex items-center gap-2">
+                      <span>🤝</span> [3. 성공 파트너 소셜 계약 & 벌금 서약 시스템 (Social Accountability Contract)]
+                    </strong>
+                    <span style={{ fontSize: `${alarmSmallPx}px` }} className="text-slate-400 font-mono">Financial Skin-in-the-Game</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    {/* 파트너 정보 설정 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-slate-800 space-y-3">
+                      <strong style={{ fontSize: `${alarmBodyPx}px` }} className="text-indigo-300 block font-bold">👤 성공 파트너 정보</strong>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label style={{ fontSize: `${alarmSmallPx - 1}px` }} className="text-slate-400 block mb-1">파트너 이름</label>
+                          <input
+                            type="text"
+                            value={socialAlarmSettings.partnerName}
+                            onChange={(e) => {
+                              const updated = { ...socialAlarmSettings, partnerName: e.target.value };
+                              setSocialAlarmSettings(updated);
+                              localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                            }}
+                            style={{ fontSize: `${alarmSmallPx}px` }}
+                            className="w-full bg-space-900 border border-slate-700 rounded-xl px-3 py-1.5 text-white focus:outline-none focus:border-indigo-400"
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: `${alarmSmallPx - 1}px` }} className="text-slate-400 block mb-1">파트너 전화번호</label>
+                          <input
+                            type="text"
+                            value={socialAlarmSettings.partnerPhone}
+                            onChange={(e) => {
+                              const updated = { ...socialAlarmSettings, partnerPhone: e.target.value };
+                              setSocialAlarmSettings(updated);
+                              localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                            }}
+                            style={{ fontSize: `${alarmSmallPx}px` }}
+                            className="w-full bg-space-900 border border-slate-700 rounded-xl px-3 py-1.5 text-white focus:outline-none focus:border-indigo-400"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: `${alarmSmallPx - 1}px` }} className="text-slate-400 block mb-1">미완수 1회당 벌금 액수 (원)</label>
+                        <input
+                          type="text"
+                          value={socialAlarmSettings.penaltyPerMiss}
+                          onChange={(e) => {
+                            const updated = { ...socialAlarmSettings, penaltyPerMiss: e.target.value };
+                            setSocialAlarmSettings(updated);
+                            localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                          }}
+                          style={{ fontSize: `${alarmSmallPx}px` }}
+                          placeholder="예: 10,000"
+                          className="w-full bg-space-900 border border-rose-500/50 rounded-xl px-3 py-1.5 text-rose-300 font-mono font-bold focus:outline-none focus:border-rose-400"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 실시간 서약 공개 링크 & 비상 알람 */}
+                    <div className="p-4 bg-space-950 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                      <div>
+                        <strong style={{ fontSize: `${alarmBodyPx}px` }} className="text-gold-300 block font-bold">🔗 공개 서약 링크 & If-Then 비상 알람</strong>
+                        <p style={{ fontSize: `${alarmSmallPx}px` }} className="text-slate-300 mt-1">
+                          파트너에게 전달할 실시간 서약 및 진척도 공개 링크입니다.
+                        </p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <input
+                            type="text"
+                            readOnly
+                            value={socialAlarmSettings.socialPledgeUrl}
+                            style={{ fontSize: `${alarmSmallPx}px` }}
+                            className="flex-1 bg-space-900 border border-slate-700 rounded-xl px-3 py-1.5 text-slate-300 font-mono text-xs focus:outline-none"
+                          />
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(socialAlarmSettings.socialPledgeUrl);
+                              playSound('pop');
+                              alert('📋 소셜 서약 링크가 클립보드에 복사되었습니다! 파트너에게 카톡으로 공유하세요.');
+                            }}
+                            style={{ fontSize: `${alarmSmallPx}px` }}
+                            className="px-3 py-1.5 rounded-xl bg-gold-500/20 text-gold-300 border border-gold-400/50 hover:bg-gold-500/30 font-bold shrink-0">
+                            링크 복사
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
+                        <div>
+                          <span style={{ fontSize: `${alarmSmallPx}px` }} className="text-white font-bold block">🚨 If-Then 타성 감지 비상 SOS 발송</span>
+                          <span style={{ fontSize: `${alarmSmallPx - 1}px` }} className="text-slate-400">2일 연속 미실행 시 파트너에게 자동 비상 경고 전송</span>
+                        </div>
+                        <input
+                          type="checkbox"
+                          checked={socialAlarmSettings.ifThenEmergencyAlarm}
+                          onChange={(e) => {
+                            const updated = { ...socialAlarmSettings, ifThenEmergencyAlarm: e.target.checked };
+                            setSocialAlarmSettings(updated);
+                            localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V2', JSON.stringify(updated));
+                          }}
+                          className="w-5 h-5 accent-rose-500 rounded cursor-pointer"
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* 4. 하단 네비게이션 */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => { setMainNavTab('WORKSPACE'); playSound('pop'); }}
+                      style={{ fontSize: `${alarmSmallPx}px` }}
+                      className="px-4 py-2 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 border border-slate-700 font-bold transition flex items-center gap-1.5">
+                      <span>💬</span> 대화 워크스페이스
+                    </button>
+                    <button
+                      onClick={() => { setMainNavTab('ANALYSIS'); playSound('pop'); }}
+                      style={{ fontSize: `${alarmSmallPx}px` }}
+                      className="px-4 py-2 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 border border-slate-700 font-bold transition flex items-center gap-1.5">
+                      <span>📊</span> 5대 거장 분석 시스템
+                    </button>
+                    <button
+                      onClick={() => { setMainNavTab('ACTION'); playSound('pop'); }}
+                      style={{ fontSize: `${alarmSmallPx}px` }}
+                      className="px-4 py-2 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 border border-slate-700 font-bold transition flex items-center gap-1.5">
+                      <span>⚡</span> 행동연계 관제탑
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => triggerBroadcastAllChannels('morning')}
+                    style={{ fontSize: `${alarmSmallPx}px` }}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 hover:scale-105 transition text-black font-black shadow-lg flex items-center gap-2">
+                    <span>🚀</span> 지금 즉시 5대 시스템 아침 지침 전송
+                  </button>
+                </div>
+
               </div>
             )}
 
           </main>
+
+          {/* 🔔 소셜 알람 실시간 발송 완료 시뮬레이션 팝업 모달 */}
+          {alarmSimulatedAlert && (
+            <div className="fixed bottom-6 right-6 z-50 max-w-lg w-full p-4 animate-fade-in">
+              <div className="glass-box-active rounded-3xl p-6 border-2 border-rose-400 bg-space-950/95 shadow-2xl shadow-rose-500/30 space-y-3">
+                <div className="flex items-center justify-between border-b border-rose-500/30 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🔔</span>
+                    <strong className="text-rose-300 text-sm font-black">실시간 소셜 알람 발송 완료 브리핑</strong>
+                  </div>
+                  <button
+                    onClick={() => setAlarmSimulatedAlert(null)}
+                    className="w-6 h-6 rounded-full bg-space-800 text-slate-400 hover:text-white flex items-center justify-center text-xs font-bold">
+                    ✕
+                  </button>
+                </div>
+                <pre className="text-xs font-mono text-slate-200 whitespace-pre-wrap leading-relaxed max-h-72 overflow-y-auto bg-space-900/80 p-3.5 rounded-2xl border border-slate-800">
+                  {alarmSimulatedAlert}
+                </pre>
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[11px] text-slate-400 font-mono">📡 Multi-Channel Gateway Connected</span>
+                  <button
+                    onClick={() => setAlarmSimulatedAlert(null)}
+                    className="px-4 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-400/50 text-xs font-bold">
+                    확인 및 닫기
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 3-Minute Stamp Complete Modal */}
           {showStampPopup && (
