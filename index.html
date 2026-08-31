@@ -235,11 +235,15 @@
       const [inputHeightPx, setInputHeightPx] = useState(90);
       const [selectedQuestion, setSelectedQuestion] = useState(null);
 
-      // 🌟 5대 메인 탭: 'WORKSPACE' | 'MATRIX' | 'ANALYSIS' | 'ACTION' | 'SOCIAL_ALARM'
+      // 5대 메인 탭
       const [mainNavTab, setMainNavTab] = useState('WORKSPACE');
       const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
 
-      // 🌟 소셜 알람 설정 상태
+      // 시스템 구축 진행 단계 (1단계: 탐색, 2단계: 5대 거장 패턴화, 3단계: 행동엔진 합성)
+      const [buildStep, setBuildStep] = useState(() => parseInt(localStorage.getItem('AG_BUILD_STEP') || '2', 10));
+      const [buildProgressPercent, setBuildProgressPercent] = useState(() => parseInt(localStorage.getItem('AG_BUILD_PROGRESS') || '68', 10));
+
+      // 소셜 알람 설정 상태
       const [socialAlarmSettings, setSocialAlarmSettings] = useState(() => {
         const saved = localStorage.getItem('AG_SOCIAL_ALARM_SETTINGS_V1');
         return saved ? JSON.parse(saved) : {
@@ -359,7 +363,7 @@
         {
           id: 1,
           sender: 'coach',
-          text: `안녕하세요! 반갑습니다 😊\n\n상단 5대 탭 **[ 대화 워크스페이스 / 5대 시스템종합 / 분석 시스템 / 행동연계 / 🔔 소셜 알람 ]**을 통해 생각을 구조화하고 파트너 사회적 확약 및 자동 알람을 가동해 보세요! 👇`,
+          text: `안녕하세요! 반갑습니다 😊\n\n작성자님의 대화와 질문 답변을 실시간으로 분석하여, 우측에 **5대 거장의 프레임워크가 결합된 [AI 통합 성공관리시스템]이 구축되어 가는 과정**을 실시간 파이프라인으로 시각화해 드립니다! 👇`,
           time: '지금'
         }
       ]);
@@ -379,6 +383,8 @@
         localStorage.setItem('AG_FIVE_MASTERS_V4', JSON.stringify(fiveMastersData));
         localStorage.setItem('AG_QA_BACKUP_LOGS_V6', JSON.stringify(qaBackupLogs));
         localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V1', JSON.stringify(socialAlarmSettings));
+        localStorage.setItem('AG_BUILD_STEP', buildStep.toString());
+        localStorage.setItem('AG_BUILD_PROGRESS', buildProgressPercent.toString());
         localStorage.setItem('AG_SPLIT_PERCENT', leftWidthPercent.toString());
         localStorage.setItem('AG_FONT_CHAT', chatFontSize.toString());
         localStorage.setItem('AG_FONT_SYSTEM', systemFontSize.toString());
@@ -390,7 +396,7 @@
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, fiveMastersData, qaBackupLogs, socialAlarmSettings, leftWidthPercent, chatFontSize, systemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis]);
+      }, [messages, fiveMastersData, qaBackupLogs, socialAlarmSettings, buildStep, buildProgressPercent, leftWidthPercent, chatFontSize, systemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis]);
 
       useEffect(() => {
         let timer = null;
@@ -560,6 +566,10 @@
             return next;
           });
 
+          // 진행도 상승
+          setBuildStep(3);
+          setBuildProgressPercent(prev => Math.min(100, prev + 12));
+
           setInputMsg("");
           setSelectedQuestion(null);
           playSound('cheer');
@@ -569,7 +579,7 @@
             const coachMsg = {
               id: Date.now() + 1,
               sender: 'coach',
-              text: `✅ **"${qObj.title}"**에 대한 답변이 **분석 시스템** 및 **소셜 알람 엔진**에 실시간 반영되었습니다! 🌟`,
+              text: `✅ **"${qObj.title}"**에 대한 분석이 완료되어 우측의 **[AI 통합 성공관리시스템]**에 즉시 반영되었습니다! 🌟`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
             setMessages(prev => [...prev, coachMsg]);
@@ -598,6 +608,10 @@
             time: timeStr
           }
         ]);
+
+        // 진행도 업데이트
+        setBuildStep(2);
+        setBuildProgressPercent(prev => Math.min(95, Math.max(50, prev + 10)));
 
         setInputMsg("");
         playSound('pop');
@@ -636,7 +650,7 @@
           const coachMsg = {
             id: Date.now() + 1,
             sender: 'coach',
-            text: `말씀해 주신 내용에 맞추어 **4대 질문** 및 **5대 분석 시스템 / 소셜 알람**이 업데이트되었습니다! 👇`,
+            text: `작성해 주신 대화 내용을 바탕으로 우측의 **[AI 종합 성공관리시스템 구축 파이프라인]**이 진화되었습니다! 👇`,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
 
@@ -646,14 +660,13 @@
         }, 400);
       };
 
-      // 모의 알람 발송 트리거
       const triggerTestAlarm = (type) => {
         playSound('bell');
         let text = "";
         if (type === 'morning') {
           text = `[☀️ 아침 07:00 모닝 알람 발송 완료]\n수신자: ${socialAlarmSettings.partnerName} & 나\n미션: "${fiveMastersData.gtd.runway}" 3분 실행 착수!`;
         } else if (type === 'ifthen') {
-          text = `[⚡ If-Then 긴급 SOS 알람 발송 완료]\n"IF 기획을 앞두고 미루고 싶을 때, THEN 비공개 메모장에 3분간 단어 3개만 적는다."`;
+          text = `[⚡ If-Then 긴급 SOS 알람 발송 완료]\n"${fiveMastersData.dalio.ifThenRule}"`;
         } else {
           text = `[🌙 밤 22:00 데일리 결산 알람]\n파트너 서약 공유 링크: ${socialAlarmSettings.socialPledgeUrl}`;
         }
@@ -712,7 +725,7 @@
                     안티그레비티 (AG-SMS)
                   </h1>
                   <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                    성공관리 & 소셜 알람 시스템
+                    5대 거장 성공관리시스템
                   </span>
                 </div>
               </div>
@@ -735,11 +748,9 @@
             </button>
           </header>
 
-          {/* 🌟 5대 메인 내비게이션 탭 바 (소셜 알람 탭 추가) */}
+          {/* 5대 메인 내비게이션 탭 바 */}
           <nav className="bg-space-900/95 border-b border-cyan-500/20 px-4 py-2.5 flex items-center justify-between overflow-x-auto z-10">
             <div className="flex items-center gap-2 min-w-max">
-              
-              {/* 1. 대화 워크스페이스 */}
               <button
                 onClick={() => { setMainNavTab('WORKSPACE'); playSound('pop'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -750,7 +761,6 @@
                 <span>💬 대화 워크스페이스</span>
               </button>
 
-              {/* 2. 5대 시스템종합 */}
               <button
                 onClick={() => { setMainNavTab('MATRIX'); playSound('pop'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -761,7 +771,6 @@
                 <span>📑 5대 시스템종합</span>
               </button>
 
-              {/* 3. 분석 시스템 */}
               <button
                 onClick={() => { setMainNavTab('ANALYSIS'); playSound('pop'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -772,7 +781,6 @@
                 <span>📊 분석 시스템</span>
               </button>
 
-              {/* 4. 행동연계 */}
               <button
                 onClick={() => { setMainNavTab('ACTION'); playSound('pop'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -783,7 +791,6 @@
                 <span>⚡ 행동연계</span>
               </button>
 
-              {/* 🌟 5. [신규 추가] 소셜 알람 */}
               <button
                 onClick={() => { setMainNavTab('SOCIAL_ALARM'); playSound('bell'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -844,7 +851,7 @@
                     {isThinking && (
                       <div className="flex items-center space-x-2 text-cyan-300 text-xs font-medium p-2.5 glass-box rounded-xl w-fit">
                         <i data-lucide="loader-2" className="w-3.5 h-3.5 animate-spin"></i>
-                        <span>5대 거장 프레임워크로 실시간 분석하고 있어요...</span>
+                        <span>5대 거장 프레임워크로 실시간 종합 분석 중...</span>
                       </div>
                     )}
                     <div ref={chatEndRef} />
@@ -975,29 +982,102 @@
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-slate-600 rounded-full"></div>
                 </div>
 
-                {/* 우측 시스템 및 백업 영역 */}
+                {/* 🌟 우측 시스템 및 백업 영역 (AI 5대 종합 성공관리시스템 구축 파이프라인) */}
                 <aside className="flex-1 flex flex-col bg-space-950/95 overflow-hidden" style={{ width: `${100 - leftWidthPercent}%` }}>
                   
-                  {/* 우측 상단 시스템 */}
-                  <div className="h-[56%] border-b-2 border-slate-800 p-3.5 flex flex-col overflow-hidden space-y-2">
-                    <div className="flex items-center justify-between pb-1">
-                      <h2 className="text-xs font-black text-white flex items-center gap-1"><span>📊</span> 5대 성공관리 시스템</h2>
+                  {/* 🌟 우측 상단: AI 5대 거장 종합 분석 시스템 & 구축 파이프라인 */}
+                  <div className="h-[62%] border-b-2 border-slate-800 p-4 flex flex-col overflow-hidden space-y-3">
+                    
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <div>
+                        <h2 className="text-xs md:text-sm font-black text-white flex items-center gap-1.5">
+                          <span>⚙️</span> AI 종합 분석 성공관리시스템
+                        </h2>
+                        <span className="text-[10.5px] text-cyan-300">내 대화를 5대 거장 시스템으로 융합 분석한 결과</span>
+                      </div>
                       <FontController label="시스템:" value={systemFontSize} onChange={setSystemFontSize} />
                     </div>
 
-                    <div className="flex-1 overflow-y-auto space-y-2" style={{ fontSize: `${systemPx}px` }}>
-                      <div className="glass-box-active rounded-xl p-3 border border-cyan-400/40">
-                        <span className="text-cyan-300 block font-bold text-xs mb-0.5">⚡ Ray Dalio If-Then 의사결정 규칙</span>
-                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">{fiveMastersData.dalio.ifThenRule}</p>
+                    {/* 🌟 3단계 실시간 성공시스템 구축 파이프라인 바 */}
+                    <div className="bg-space-900/90 rounded-xl p-2.5 border border-cyan-500/30 space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold">
+                        <span className="text-slate-300">🏗️ 시스템 구축 파이프라인:</span>
+                        <span className="text-gold-300 font-mono font-black">{buildProgressPercent}% 구축 완료</span>
                       </div>
-                      <div className="glass-box rounded-xl p-3 border border-gold-400/40">
-                        <span className="text-gold-300 block font-bold text-xs mb-0.5">🧭 나폴레온 힐 중심 목표 (DCA)</span>
-                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">"{fiveMastersData.hill.definiteChiefAim}"</p>
+
+                      {/* 게이지 바 */}
+                      <div className="w-full h-2 bg-space-950 rounded-full overflow-hidden border border-slate-800">
+                        <div 
+                          className="h-full bg-gradient-to-r from-cyan-400 via-purple-400 to-gold-400 transition-all duration-500"
+                          style={{ width: `${buildProgressPercent}%` }}></div>
                       </div>
+
+                      {/* 3단계 인디케이터 */}
+                      <div className="grid grid-cols-3 gap-1 pt-1 text-[10px] text-center font-bold">
+                        <div className={`p-1 rounded ${buildStep >= 1 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-space-800 text-slate-500'}`}>
+                          ① 소크라테스 탐색 ✓
+                        </div>
+                        <div className={`p-1 rounded ${buildStep >= 2 ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'bg-space-800 text-slate-500'}`}>
+                          ② 5대 거장 패턴화 ✓
+                        </div>
+                        <div className={`p-1 rounded ${buildStep >= 3 ? 'bg-gold-500/20 text-gold-300 border border-gold-500/40' : 'bg-space-800 text-slate-500'}`}>
+                          ③ 행동엔진 구축 ⚡
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 🌟 5개 시스템이 AI에 의해 종합 분석된 카드 스트림 */}
+                    <div className="flex-1 overflow-y-auto space-y-2.5 pr-1" style={{ fontSize: `${systemPx}px` }}>
+                      
+                      {/* 1. 핵심 방향 및 중심 목표 (Hill DCA + Robbins NAC) */}
+                      <div className="glass-box-active rounded-xl p-3 border border-gold-400/50 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gold-300 font-bold text-xs flex items-center gap-1">
+                            <span>🧭</span> [목표 & 동기] DCA & NAC 융합
+                          </span>
+                          <span className="text-[10px] text-slate-400">힐 × 로빈스</span>
+                        </div>
+                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">
+                          "{fiveMastersData.hill.definiteChiefAim}"
+                        </p>
+                        <span className="text-[11px] text-slate-300 block pl-1">
+                          ↳ <strong>심층 동기:</strong> {fiveMastersData.robbins.coreDriver}
+                        </span>
+                      </div>
+
+                      {/* 2. 자동 의사결정 알고리즘 (Ray Dalio If-Then) */}
+                      <div className="glass-box rounded-xl p-3 border border-cyan-400/40 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-cyan-300 font-bold text-xs flex items-center gap-1">
+                            <span>⚡</span> [의사결정 OS] Ray Dalio If-Then 규칙
+                          </span>
+                          <span className="text-[10px] text-slate-400">달리오 5-Step</span>
+                        </div>
+                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">
+                          {fiveMastersData.dalio.ifThenRule}
+                        </p>
+                      </div>
+
+                      {/* 3. 즉시 3분 실행 착수 (David Allen GTD + Forte PARA) */}
+                      <div className="glass-box rounded-xl p-3 border border-emerald-400/40 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-emerald-300 font-bold text-xs flex items-center gap-1">
+                            <span>🚀</span> [실행 & 지식 엔진] GTD Runway & PARA
+                          </span>
+                          <span className="text-[10px] text-slate-400">앨런 × 포르테</span>
+                        </div>
+                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">
+                          {fiveMastersData.gtd.runway}
+                        </p>
+                        <span className="text-[11px] text-slate-300 block pl-1">
+                          ↳ <strong>핵심 프로젝트:</strong> {fiveMastersData.forte.projects}
+                        </span>
+                      </div>
+
                     </div>
                   </div>
 
-                  {/* 우측 하단 백업 */}
+                  {/* 우측 하단 백업 로그 */}
                   <div className="flex-1 p-3.5 overflow-y-auto space-y-2 bg-space-900/60 flex flex-col">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-1">
                       <h3 className="text-xs font-bold text-emerald-400 flex items-center gap-1"><span>📒</span> 대화 & 답변 백업 로그</h3>
@@ -1378,7 +1458,7 @@
               </div>
             )}
 
-            {/* 🌟 5. [신규 탭] 소셜 알람 (Social Alarm & Accountability Hub) */}
+            {/* 🌟 5. [소셜 알람] 탭 */}
             {mainNavTab === 'SOCIAL_ALARM' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${alarmPx}px` }}>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -1393,7 +1473,6 @@
                   <FontController label="알람 글씨:" value={alarmFontSize} onChange={setAlarmFontSize} />
                 </div>
 
-                {/* 모의 발송 시뮬레이션 알림 배너 */}
                 {alarmSimulatedAlert && (
                   <div className="p-4 bg-gradient-to-r from-rose-900/90 to-indigo-950 border-2 border-rose-400 rounded-2xl shadow-xl animate-fadeIn">
                     <div className="flex items-center justify-between">
@@ -1407,8 +1486,6 @@
                 )}
 
                 <div className="space-y-6">
-                  
-                  {/* 1. 파트너 사회적 확약 서약서 (Social Contract Card) */}
                   <div className="glass-box-active rounded-3xl p-7 border-2 border-rose-500/50 space-y-4 shadow-xl">
                     <div className="flex items-center justify-between">
                       <span className="text-rose-300 font-black text-base md:text-lg flex items-center gap-2">
@@ -1460,15 +1537,12 @@
                     </div>
                   </div>
 
-                  {/* 2. 3대 자동 알람 스케줄러 & 즉시 테스트 전송 */}
                   <div className="glass-box rounded-3xl p-7 border border-slate-800 space-y-5">
                     <h3 className="text-base md:text-lg font-black text-white flex items-center gap-2">
                       <span>⏰</span> 3대 정밀 알람 스케줄러 (Kakao / Push / Web)
                     </h3>
 
                     <div className="space-y-3.5">
-                      
-                      {/* 아침 7시 알람 */}
                       <div className="p-4 bg-space-900 rounded-2xl border-l-4 border-cyan-400 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                           <div className="flex items-center gap-2">
@@ -1486,7 +1560,6 @@
                         </button>
                       </div>
 
-                      {/* 낮 2시 If-Then 긴급 SOS 알람 */}
                       <div className="p-4 bg-space-900 rounded-2xl border-l-4 border-gold-400 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                           <div className="flex items-center gap-2">
@@ -1504,7 +1577,6 @@
                         </button>
                       </div>
 
-                      {/* 밤 10시 결산 회고 알람 */}
                       <div className="p-4 bg-space-900 rounded-2xl border-l-4 border-purple-400 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                           <div className="flex items-center gap-2">
@@ -1521,10 +1593,8 @@
                           🔔 모의 알람 테스트
                         </button>
                       </div>
-
                     </div>
                   </div>
-
                 </div>
               </div>
             )}
