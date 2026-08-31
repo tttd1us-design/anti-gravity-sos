@@ -1431,33 +1431,96 @@
               </div>
             )}
 
-            {/* 🌟 2. [대화&답변 백업로그] 탭 */}
+            {/* 🌟 2. [대화&답변 백업로그] 탭 - 컴팩트 줄간격 및 대화별 인라인 수정/삭제 완비 */}
             {mainNavTab === 'BACKUP_LOGS' && (
-              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-6xl mx-auto" style={{ fontSize: `${backupPx}px` }}>
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+              <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-3.5 w-full max-w-5xl mx-auto" style={{ fontSize: `${backupPx}px` }}>
+                
+                {/* 헤더 바 */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2.5 border-b border-slate-800 pb-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-emerald-300 to-cyan-300">
+                      <h2 className="text-lg md:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-emerald-300 to-cyan-300">
                         📒 실시간 대화 & 답변 백업로그 볼트 (Backup Vault)
                       </h2>
                       <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold">
                         총 {qaBackupLogs.length}건 보존 중
                       </span>
                     </div>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      각 대화 카드 우측 상단의 <strong>[✏️ 수정]</strong> 또는 <strong>[🗑️ 삭제]</strong> 버튼을 눌러 개별 대화를 제자리에서 즉시 편집하거나 정리할 수 있습니다.
+                    </p>
                   </div>
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
                     <FontController label="백업 글씨:" value={backupFontSize} onChange={setBackupFontSize} />
                   </div>
                 </div>
 
-                <div className="space-y-3.5">
+                {/* 백업 로그 리스트 (줄간격 축소 및 컴팩트 레이아웃) */}
+                <div className="space-y-2.5">
                   {qaBackupLogs.map((log, idx) => (
-                    <div key={log.id} className="glass-box-active rounded-2xl p-5 border border-slate-750 hover:border-emerald-400/80 transition space-y-3 shadow-md">
-                      <div className="flex justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2.5">
-                        <span className="font-bold text-cyan-300">{log.question}</span>
-                        <span className="font-mono text-slate-500">{log.time}</span>
+                    <div key={log.id} className="glass-box-active rounded-2xl p-3.5 border border-slate-750 hover:border-emerald-400/80 transition space-y-2 shadow-md">
+                      
+                      {/* 카드 상단: 질문 번호/내용 및 시간 + 제자리 수정/삭제 버튼 */}
+                      <div className="flex justify-between items-start gap-2 text-xs border-b border-slate-800/80 pb-2">
+                        <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                          <span className="w-5 h-5 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-mono font-bold text-[10.5px] border border-cyan-500/40 shrink-0">
+                            #{idx + 1}
+                          </span>
+                          <strong className="font-bold text-cyan-300 truncate">
+                            {log.question}
+                          </strong>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="font-mono text-[11px] text-slate-400">{log.time}</span>
+                          
+                          {editingLogId === log.id ? (
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => handleSaveEditBackupLog(log.id)}
+                                className="px-2.5 py-0.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs flex items-center gap-1 shadow-sm transition">
+                                <span>💾</span> 저장
+                              </button>
+                              <button
+                                onClick={handleCancelEditBackupLog}
+                                className="px-2 py-0.5 rounded-lg bg-space-800 hover:bg-space-700 text-slate-300 text-xs border border-slate-700 transition">
+                                취소
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => handleStartEditBackupLog(log)}
+                                className="px-2.5 py-0.5 rounded-lg bg-space-800 hover:bg-cyan-500/20 text-cyan-300 hover:text-cyan-200 border border-slate-700 hover:border-cyan-400 text-xs font-bold flex items-center gap-1 transition shadow-sm">
+                                <span>✏️</span> 수정
+                              </button>
+                              <button
+                                onClick={() => handleDeleteBackupLog(log.id)}
+                                className="px-2.5 py-0.5 rounded-lg bg-space-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 border border-slate-700 hover:border-rose-500/50 text-xs font-bold flex items-center gap-1 transition shadow-sm">
+                                <span>🗑️</span> 삭제
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-white font-medium pl-2 bg-space-950/60 p-3.5 rounded-xl">{log.answer}</p>
+
+                      {/* 카드 본문: 읽기 모드 / 인라인 편집 모드 */}
+                      {editingLogId === log.id ? (
+                        <div className="space-y-2 pt-1 animate-fadeIn">
+                          <textarea
+                            value={editAnswerText}
+                            onChange={(e) => setEditAnswerText(e.target.value)}
+                            rows={3}
+                            placeholder="답변 내용을 수정해 주세요..."
+                            className="w-full bg-space-950 border-2 border-emerald-400 rounded-xl p-2.5 text-white font-medium focus:outline-none leading-snug text-xs md:text-sm resize-y"
+                          />
+                        </div>
+                      ) : (
+                        <p className="text-slate-100 font-medium bg-space-950/70 p-2.5 rounded-xl text-xs md:text-sm leading-snug border border-slate-800/60">
+                          {log.answer}
+                        </p>
+                      )}
+
                     </div>
                   ))}
                 </div>
