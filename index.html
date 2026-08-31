@@ -1963,50 +1963,52 @@
               </div>
             )}
 
-            {/* 🌟 4. [분석 시스템] 탭 - 전문가 관점 5대 거장 심층 분석 & 대화 기반 처방 대시보드 */}
+            {/* 🌟 4. [분석 시스템] 탭 - 5대 거장별 완전히 특화된 분석체계 & 전용 결과도출 아티팩트 */}
             {mainNavTab === 'ANALYSIS' && (
               <div className="flex-1 flex w-full h-full overflow-hidden" style={{ fontSize: `${analysisPx}px` }}>
                 
-                {/* 좌측: 5대 거장 성공엔진 선택 패널 (30%) */}
-                <aside className="w-[30%] border-r border-cyan-500/20 bg-space-950/95 p-3.5 space-y-2.5 overflow-y-auto shrink-0">
+                {/* 좌측: 5대 거장 성공엔진 선택 패널 (28%) */}
+                <aside className="w-[28%] border-r border-cyan-500/20 bg-space-950/95 p-3.5 space-y-2 overflow-y-auto shrink-0">
                   <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-1">
                     <h3 className="text-sm font-black text-white flex items-center gap-1.5">
-                      <span>🏛️</span> 5대 거장 엔진 선택
+                      <span>🏛️</span> 5대 거장 엔진
                     </h3>
                     <FontController label="글씨:" value={analysisFontSize} onChange={setAnalysisFontSize} />
                   </div>
 
-                  {['DALIO', 'ROBBINS', 'FORTE', 'HILL', 'GTD'].map((mKey) => {
-                    const mObj = MASTER_SYSTEMS_CANONICAL[mKey.toLowerCase()];
-                    const isSelected = selectedMasterInAnalysis.toUpperCase() === mKey;
+                  {[
+                    { key: 'DALIO', icon: '🤖', title: '《원칙》 레이 달리오', sub: '기계론적 5단계 & If-Then 알고리즘', color: 'from-cyan-950 to-slate-900', border: 'border-cyan-400' },
+                    { key: 'ROBBINS', icon: '🔥', title: '《거인을 깨워라》 토니 로빈스', sub: '신경연합조건화(NAC) & 가치 계층', color: 'from-rose-950 to-slate-900', border: 'border-rose-400' },
+                    { key: 'FORTE', icon: '💎', title: '《세컨드 브레인》 티아고 포르테', sub: 'CODE 증류 & PARA 4대 바구니', color: 'from-purple-950 to-slate-900', border: 'border-purple-400' },
+                    { key: 'HILL', icon: '🏆', title: '《생각하라 부자》 나폴레온 힐', sub: '명확한 중심 목표(DCA) 6단계 확약', color: 'from-amber-950 to-slate-900', border: 'border-gold-400' },
+                    { key: 'GTD', icon: '⚡', title: '《GTD》 데이비드 앨런', sub: 'Horizons of Focus 6단계 수직 정렬', color: 'from-emerald-950 to-slate-900', border: 'border-emerald-400' },
+                  ].map((item) => {
+                    const isSelected = selectedMasterInAnalysis.toUpperCase() === item.key;
                     return (
                       <button
-                        key={mKey}
-                        onClick={() => { setSelectedMasterInAnalysis(mKey); playSound('pop'); }}
+                        key={item.key}
+                        onClick={() => { setSelectedMasterInAnalysis(item.key); playSound('pop'); }}
                         className={`w-full text-left p-3 rounded-2xl border transition shadow-md ${
                           isSelected
-                            ? 'bg-gradient-to-br from-indigo-950 via-space-900 to-cyan-950 border-cyan-300 ring-2 ring-cyan-400/50 shadow-cyan-500/20'
-                            : 'glass-box hover:border-cyan-500/40 opacity-80 hover:opacity-100'
+                            ? `bg-gradient-to-br ${item.color} ${item.border} ring-2 ring-cyan-400/50 shadow-cyan-500/20`
+                            : 'glass-box hover:border-cyan-500/40 opacity-75 hover:opacity-100'
                         }`}>
-                        <div className="flex items-center justify-between mb-1">
-                          <strong className="text-cyan-300 text-xs md:text-sm font-black">{mObj.bookTitle}</strong>
-                          <span className="text-[10px] px-2 py-0.2 rounded bg-space-900 text-cyan-400 font-mono border border-slate-800">
-                            {mObj.tierName.slice(0, 6)}
-                          </span>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-base">{item.icon}</span>
+                          <strong className="text-white text-xs md:text-sm font-black tracking-tight">{item.title}</strong>
                         </div>
-                        <span className="text-xs text-slate-300 font-bold block mb-1">{mObj.author}</span>
-                        <div className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
-                          {mObj.corePrinciple}
+                        <div className="text-[11px] text-slate-300 pl-6 leading-snug">
+                          {item.sub}
                         </div>
                       </button>
                     );
                   })}
                 </aside>
 
-                {/* 우측: 선택된 거장의 핵심원리, 절대기준, 상태해석, 3단계 행동처방전 초상세 뷰 (70%) */}
+                {/* 우측: 선택된 거장 전용 특화 분석 뷰 & 인터랙티브 아티팩트 (72%) */}
                 <section className="flex-1 p-5 md:p-7 overflow-y-auto space-y-4 bg-space-950/80">
                   
-                  {/* 상단 타이틀 & 서브 헤더 바 */}
+                  {/* 상단 공통 헤더 바 */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800 pb-3">
                     <div>
                       <div className="flex items-center gap-2">
@@ -2022,22 +2024,24 @@
                       </p>
                     </div>
 
-                    <button
-                      onClick={() => {
-                        const doc = `# 🌌 [Anti-Gravity ${curMaster.bookTitle} 심층 분석 보고서]\n\n` +
-                          `## 1. 핵심 원리 (Core Principle)\n${curMaster.corePrinciple}\n\n` +
-                          `## 2. 절대적 판단 기준 (Criteria)\n${(curMaster.evaluationCriteria || []).join('\n')}\n\n` +
-                          `## 3. 대화 분석 기반 인지 진단\n${curMaster.systemUnderstanding}\n\n` +
-                          `## 4. AI 행동 처방전\n- ${curMaster.stopDirectives}\n- ${curMaster.startDirectives}\n- ${curMaster.immutablePrinciple}\n`;
-                        downloadTextFile(`${curMaster.author}_심층분석보고서.md`, doc);
-                      }}
-                      className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 text-xs font-bold flex items-center gap-1.5 shrink-0 shadow-sm transition">
-                      <span>💾</span> 거장 보고서 다운로드 (.md)
-                    </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => {
+                          const doc = `# 🌌 [Anti-Gravity ${curMaster.bookTitle} 심층 분석 보고서]\n\n` +
+                            `## 1. 핵심 원리 (Core Principle)\n${curMaster.corePrinciple}\n\n` +
+                            `## 2. 절대적 판단 기준 (Criteria)\n${(curMaster.evaluationCriteria || []).join('\n')}\n\n` +
+                            `## 3. 대화 분석 기반 인지 진단\n${curMaster.systemUnderstanding}\n\n` +
+                            `## 4. AI 행동 처방전\n- ${curMaster.stopDirectives}\n- ${curMaster.startDirectives}\n- ${curMaster.immutablePrinciple}\n`;
+                          downloadTextFile(`${curMaster.author}_심층분석보고서.md`, doc);
+                        }}
+                        className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+                        <span>💾</span> 보고서 다운로드 (.md)
+                      </button>
+                    </div>
                   </div>
 
                   {/* 1. 핵심 원리 (Core Principle) */}
-                  <div className="glass-box-active rounded-2xl p-4 border border-cyan-400/40 space-y-2">
+                  <div className="glass-box-active rounded-2xl p-4 border border-cyan-400/40 space-y-1.5">
                     <strong className="text-cyan-300 font-black text-xs md:text-sm flex items-center gap-1.5">
                       <span>🏛️</span> 1. 핵심 성공 엔진 원리 (Core Engine Mechanics):
                     </strong>
@@ -2046,37 +2050,280 @@
                     </p>
                   </div>
 
-                  {/* 2. 절대적 판단 기준 (Evaluation Criteria) */}
-                  <div className="glass-box rounded-2xl p-4 border border-slate-800 space-y-2">
+                  {/* 2. 절대적 평가 기준 (Evaluation Criteria) */}
+                  <div className="glass-box rounded-2xl p-4 border border-slate-800 space-y-1.5">
                     <strong className="text-emerald-300 font-black text-xs md:text-sm flex items-center gap-1.5">
                       <span>⚖️</span> 2. 3대 절대적 평가 기준 (Evaluation Criteria):
                     </strong>
-                    <div className="space-y-1.5 pl-1">
-                      {(curMaster.evaluationCriteria || [
-                        "1. [명확한 인과성]: 목표와 일일 행동 사이의 인과관계가 명확히 연결되어 있는가?",
-                        "2. [마찰 계수 최소화]: 실행 착수 에너지가 3분 단위로 극소화되어 있는가?",
-                        "3. [시스템 신뢰도]: 두뇌의 기억에 의존하지 않고 외부 시스템에 100% 기록되어 있는가?"
-                      ]).map((crit, cIdx) => (
-                        <div key={cIdx} className="p-2.5 bg-space-900/90 rounded-xl border border-slate-800 text-xs md:text-sm font-medium text-slate-100 leading-snug">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 pl-1 pt-1">
+                      {(curMaster.evaluationCriteria || []).map((crit, cIdx) => (
+                        <div key={cIdx} className="p-2.5 bg-space-900 rounded-xl border border-slate-800 text-xs font-medium text-slate-200 leading-snug">
                           {crit}
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* 3. 대화 분석 기반 시스템 해석 및 인지 진단 */}
-                  <div className="glass-box-active rounded-2xl p-4 border border-indigo-400/40 space-y-2 bg-gradient-to-br from-space-950 via-indigo-950/30 to-space-950">
-                    <strong className="text-indigo-300 font-black text-xs md:text-sm flex items-center gap-1.5">
-                      <span>🧠</span> 3. 작성자 대화 분석 기반 인지 진단 & 시스템 해석:
-                    </strong>
-                    <p className="text-slate-100 font-medium text-xs md:text-sm leading-relaxed pl-1">
-                      {curMaster.systemUnderstanding}
-                    </p>
-                    <div className="p-3 bg-space-900/80 rounded-xl border border-indigo-500/30 text-xs text-slate-200 mt-2">
-                      <strong className="text-pink-300 block mb-0.5">🔍 인지적 근본 원인 분석 (Cognitive Diagnosis):</strong>
-                      <p className="leading-snug">{curMaster.cognitiveDiagnosis}</p>
+                  {/* 3. 거장별 완전히 특화된 분석 체계 & 전용 인터랙티브 아티팩트 */}
+                  
+                  {/* ① 레이 달리오: 기계론적 5단계 프로세스 & If-Then 컴파일러 */}
+                  {selectedMasterInAnalysis.toUpperCase() === 'DALIO' && (
+                    <div className="glass-box-active rounded-3xl p-5 border-2 border-cyan-400/50 space-y-4 bg-gradient-to-br from-space-950 via-cyan-950/20 to-space-950">
+                      <div className="flex items-center justify-between border-b border-cyan-500/30 pb-2">
+                        <strong className="text-cyan-300 font-black text-sm md:text-base flex items-center gap-2">
+                          <span>🤖</span> [레이 달리오 전용] 기계론적 5단계 피드백 루프 진단 & If-Then 의사결정 컴파일러
+                        </strong>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">Machine OS</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-5 gap-2 text-xs">
+                        <div className="p-3 bg-space-900/90 rounded-xl border border-cyan-500/40 space-y-1">
+                          <span className="font-mono text-cyan-400 font-bold block text-[10px]">1. Goals (목표)</span>
+                          <strong className="text-white block font-black">월 100만 원 부업 시스템</strong>
+                          <p className="text-slate-300 text-[11px]">10조 자산 비전의 1단계 정량 목표</p>
+                        </div>
+                        <div className="p-3 bg-space-900/90 rounded-xl border border-rose-500/40 space-y-1">
+                          <span className="font-mono text-rose-400 font-bold block text-[10px]">2. Problems (문제)</span>
+                          <strong className="text-white block font-black">완벽주의 착수 지연</strong>
+                          <p className="text-slate-300 text-[11px]">초안 실패 두려움으로 인한 시작 마찰</p>
+                        </div>
+                        <div className="p-3 bg-space-900/90 rounded-xl border border-amber-500/40 space-y-1">
+                          <span className="font-mono text-amber-400 font-bold block text-[10px]">3. Diagnosis (5-Whys)</span>
+                          <strong className="text-white block font-black">시작 에너지 과다</strong>
+                          <p className="text-slate-300 text-[11px]">평가 불안 ➔ 회피 본능 ➔ 뇌 과열</p>
+                        </div>
+                        <div className="p-3 bg-space-900/90 rounded-xl border border-indigo-500/40 space-y-1">
+                          <span className="font-mono text-indigo-400 font-bold block text-[10px]">4. Design (기계설계)</span>
+                          <strong className="text-white block font-black">비공개 3분 메모 루프</strong>
+                          <p className="text-slate-300 text-[11px]">마찰 계수를 0으로 낮추는 환경 설계</p>
+                        </div>
+                        <div className="p-3 bg-space-900/90 rounded-xl border border-emerald-500/40 space-y-1">
+                          <span className="font-mono text-emerald-400 font-bold block text-[10px]">5. Execution (실행)</span>
+                          <strong className="text-white block font-black">아침 7시 단어 3개</strong>
+                          <p className="text-slate-300 text-[11px]">결정론적 If-Then 알고리즘 즉시 발동</p>
+                        </div>
+                      </div>
+
+                      {/* If-Then 컴파일러 코드 박스 */}
+                      <div className="p-3.5 bg-space-950 rounded-2xl border border-cyan-400/80 space-y-1.5 font-mono">
+                        <span className="text-xs text-cyan-300 font-bold block">⚡ Ray Dalio 개인 의사결정 헌법 알고리즘 (If-Then Compiler):</span>
+                        <div className="p-2.5 bg-black/70 rounded-xl text-emerald-300 text-xs md:text-sm font-bold border border-cyan-500/30">
+                          {curMaster.ifThenRule || "IF 새로운 기획을 앞두고 미루고 싶을 때, THEN 비공개 메모장에 3분간 단어 3개만 적는다."}
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* ② 토니 로빈스: 신경연합조건화(NAC) & 가치 계층구조 & 파워 질문 */}
+                  {selectedMasterInAnalysis.toUpperCase() === 'ROBBINS' && (
+                    <div className="glass-box-active rounded-3xl p-5 border-2 border-rose-400/50 space-y-4 bg-gradient-to-br from-space-950 via-rose-950/20 to-space-950">
+                      <div className="flex items-center justify-between border-b border-rose-500/30 pb-2">
+                        <strong className="text-rose-300 font-black text-sm md:text-base flex items-center gap-2">
+                          <span>🔥</span> [토니 로빈스 전용] 신경연합조건화(NAC) & 무의식 가치 계층 맵
+                        </strong>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono">NAC Engine</span>
+                      </div>
+
+                      {/* 가치 계층구조 랭킹 */}
+                      <div className="p-3.5 bg-space-900 rounded-2xl border border-rose-500/30 space-y-2">
+                        <span className="text-xs text-rose-300 font-bold block">🎯 작성자 무의식 심층 가치 계층구조 (Value Hierarchy):</span>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                          <div className="p-2.5 bg-space-950 rounded-xl border border-rose-400/60 text-center">
+                            <span className="text-[10px] text-rose-400 font-mono block">1위 (최상위 결핍)</span>
+                            <strong className="text-white text-sm block font-black">자유 (Freedom)</strong>
+                            <span className="text-[10px] text-slate-400">절대적 시간 통제권</span>
+                          </div>
+                          <div className="p-2.5 bg-space-950 rounded-xl border border-slate-700 text-center">
+                            <span className="text-[10px] text-slate-400 font-mono block">2위</span>
+                            <strong className="text-white text-sm block font-black">성장 (Growth)</strong>
+                            <span className="text-[10px] text-slate-400">지식 자산 확장</span>
+                          </div>
+                          <div className="p-2.5 bg-space-950 rounded-xl border border-slate-700 text-center">
+                            <span className="text-[10px] text-slate-400 font-mono block">3위</span>
+                            <strong className="text-white text-sm block font-black">유능감 (Competence)</strong>
+                            <span className="text-[10px] text-slate-400">3분 약속 완수</span>
+                          </div>
+                          <div className="p-2.5 bg-space-950 rounded-xl border border-slate-700 text-center">
+                            <span className="text-[10px] text-slate-400 font-mono block">4위</span>
+                            <strong className="text-white text-sm block font-black">안정 (Stability)</strong>
+                            <span className="text-[10px] text-slate-400">복리 파이프라인</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Pain vs Pleasure 지렛대 */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm">
+                        <div className="p-3.5 bg-rose-950/50 rounded-2xl border border-rose-500/60 space-y-1">
+                          <strong className="text-rose-400 font-black block flex items-center gap-1">
+                            <span>🛑</span> 나태함에 결합할 최악의 고통 (Pain of Inaction):
+                          </strong>
+                          <p className="text-slate-100 font-medium leading-relaxed">
+                            {curMaster.painOfFailure || "현재의 타성에 안주하여 5년 뒤에도 똑같이 후회와 피로를 반복하는 고통"}
+                          </p>
+                        </div>
+                        <div className="p-3.5 bg-emerald-950/50 rounded-2xl border border-emerald-500/60 space-y-1">
+                          <strong className="text-emerald-400 font-black block flex items-center gap-1">
+                            <span>✨</span> 3분 실행에 결합할 극상의 쾌락 (Pleasure of Decision):
+                          </strong>
+                          <p className="text-slate-100 font-medium leading-relaxed">
+                            {curMaster.pleasureOfSuccess || "원하는 시간에 원하는 프로젝트를 주도하며 얻는 성취감과 절대적 자유"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ③ 티아고 포르테: CODE 증류 모델 & PARA 4대 바구니 아카이브 */}
+                  {selectedMasterInAnalysis.toUpperCase() === 'FORTE' && (
+                    <div className="glass-box-active rounded-3xl p-5 border-2 border-purple-400/50 space-y-4 bg-gradient-to-br from-space-950 via-purple-950/20 to-space-950">
+                      <div className="flex items-center justify-between border-b border-purple-500/30 pb-2">
+                        <strong className="text-purple-300 font-black text-sm md:text-base flex items-center gap-2">
+                          <span>💎</span> [티아고 포르테 전용] CODE 증류 & PARA 4대 바구니 지식 자산화 뷰
+                        </strong>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono">Second Brain</span>
+                      </div>
+
+                      {/* CODE 4단계 */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                        <div className="p-2.5 bg-space-900 rounded-xl border border-purple-500/30 text-center">
+                          <span className="text-purple-400 font-mono font-bold block text-[10px]">C (Capture)</span>
+                          <strong className="text-white block font-black">대화 로그 원문 수집</strong>
+                          <span className="text-[10px] text-slate-400">{dialogueCount}회 대화 축적</span>
+                        </div>
+                        <div className="p-2.5 bg-space-900 rounded-xl border border-purple-500/30 text-center">
+                          <span className="text-purple-400 font-mono font-bold block text-[10px]">O (Organize)</span>
+                          <strong className="text-white block font-black">PARA 4대 바구니 분류</strong>
+                          <span className="text-[10px] text-slate-400">실행 지향 정렬</span>
+                        </div>
+                        <div className="p-2.5 bg-space-900 rounded-xl border border-purple-500/30 text-center">
+                          <span className="text-purple-400 font-mono font-bold block text-[10px]">D (Distill)</span>
+                          <strong className="text-white block font-black">1문장 본질 증류</strong>
+                          <span className="text-[10px] text-slate-400">인지 부하 0</span>
+                        </div>
+                        <div className="p-2.5 bg-space-900 rounded-xl border border-purple-500/30 text-center">
+                          <span className="text-purple-400 font-mono font-bold block text-[10px]">E (Express)</span>
+                          <strong className="text-white block font-black">지식 제품화</strong>
+                          <span className="text-[10px] text-slate-400">디지털 PDF/가이드</span>
+                        </div>
+                      </div>
+
+                      {/* PARA 4대 바구니 실시간 자산 */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+                        <div className="p-3 bg-space-900 rounded-xl border border-indigo-500/40">
+                          <strong className="text-indigo-300 font-bold block mb-0.5">📁 Projects (진행 중 마감 프로젝트):</strong>
+                          <p className="text-white font-medium">{curMaster.projects || "2026 1인 지식 엔터프라이즈 런칭 (마감 90일 스프린트)"}</p>
+                        </div>
+                        <div className="p-3 bg-space-900 rounded-xl border border-teal-500/40">
+                          <strong className="text-teal-300 font-bold block mb-0.5">📂 Areas (지속적 관리 영역):</strong>
+                          <p className="text-white font-medium">{curMaster.areas || "지식 자산화 / 콘텐츠 시스템 / 건강 및 루틴 관리"}</p>
+                        </div>
+                        <div className="p-3 bg-space-900 rounded-xl border border-amber-500/40">
+                          <strong className="text-amber-300 font-bold block mb-0.5">🗂️ Resources (참고 데이터 DB):</strong>
+                          <p className="text-white font-medium">{curMaster.resources || "시장 조사 데이터, 프레임워크 템플릿, 고객 인터뷰 로그"}</p>
+                        </div>
+                        <div className="p-3 bg-space-900 rounded-xl border border-slate-700">
+                          <strong className="text-slate-300 font-bold block mb-0.5">📦 Archives (완료 보관소):</strong>
+                          <p className="text-slate-300 font-medium">{curMaster.archives || "완료된 이전 메모 및 아이디어 원초 스케치"}</p>
+                        </div>
+                      </div>
+
+                      {/* 1문장 증류 카드 */}
+                      <div className="p-3 bg-purple-950/60 rounded-2xl border border-purple-400 text-xs md:text-sm">
+                        <span className="text-purple-300 font-bold block mb-1">🧪 Tiago Forte 1문장 본질 증류 (Distilled Essence):</span>
+                        <strong className="text-white block font-black">"{curMaster.distilledEssence || "고객의 진짜 페인포인트 1가지만 3분 안에 해결하는 최소 기능 제품(MVP)"}"</strong>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ④ 나폴레온 힐: 명확한 중심 목표(DCA) 6단계 확약 컴파일러 */}
+                  {selectedMasterInAnalysis.toUpperCase() === 'HILL' && (
+                    <div className="glass-box-active rounded-3xl p-5 border-2 border-amber-400/50 space-y-4 bg-gradient-to-br from-space-950 via-amber-950/20 to-space-950">
+                      <div className="flex items-center justify-between border-b border-amber-500/30 pb-2">
+                        <strong className="text-amber-300 font-black text-sm md:text-base flex items-center gap-2">
+                          <span>🏆</span> [나폴레온 힐 전용] 명확한 중심 목표(DCA) 6단계 확약 컴파일러
+                        </strong>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">Chief Aim</span>
+                      </div>
+
+                      {/* DCA 6단계 카드 */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                        <div className="p-3 bg-space-900 rounded-xl border border-amber-500/40 space-y-0.5">
+                          <span className="text-amber-400 font-mono font-bold text-[10px]">1. 정확한 금액</span>
+                          <strong className="text-white block font-black">{curMaster.exactAmount || "월 100만 원 (연 1,200만 원)"}</strong>
+                        </div>
+                        <div className="p-3 bg-space-900 rounded-xl border border-rose-500/40 space-y-0.5">
+                          <span className="text-rose-400 font-mono font-bold text-[10px]">2. 포기할 대가</span>
+                          <strong className="text-white block font-black">{curMaster.sacrifice || "퇴근 후 숏폼 시청 1시간 포기"}</strong>
+                        </div>
+                        <div className="p-3 bg-space-900 rounded-xl border border-cyan-500/40 space-y-0.5">
+                          <span className="text-cyan-400 font-mono font-bold text-[10px]">3. 명확한 기한</span>
+                          <strong className="text-white block font-black">{curMaster.deadline || "2026년 12월 31일"}</strong>
+                        </div>
+                        <div className="p-3 bg-space-900 rounded-xl border border-emerald-500/40 space-y-0.5">
+                          <span className="text-emerald-400 font-mono font-bold text-[10px]">4. 즉시 착수 계획</span>
+                          <strong className="text-white block font-black">{curMaster.immediatePlan || "매일 3분 지식 노하우 기록"}</strong>
+                        </div>
+                      </div>
+
+                      {/* 북극성 확약 골든 카드 */}
+                      <div className="p-4 bg-gradient-to-r from-amber-950/80 via-space-950 to-amber-950/80 rounded-2xl border-2 border-gold-400 shadow-xl space-y-2 text-center">
+                        <span className="text-gold-300 font-black text-xs block tracking-widest">★ 단 하나의 북극성 지표 (DEFINITE CHIEF AIM) ★</span>
+                        <p className="text-white font-black text-sm md:text-lg leading-relaxed">
+                          "{curMaster.definiteChiefAim || "나는 2026년 12월 31일까지 1인 지식 시스템을 통해 월 100만 원의 지속적인 가치를 창출한다."}"
+                        </p>
+                        <span className="text-[11px] text-amber-200/80 font-mono block">
+                          루틴: 매일 아침 7시 / 밤 10시 하루 2회 소리 내어 낭독하여 잠재의식 각인
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ⑤ 데이비드 앨런: Horizons of Focus 6단계 수직 고도 정렬 트리 */}
+                  {selectedMasterInAnalysis.toUpperCase() === 'GTD' && (
+                    <div className="glass-box-active rounded-3xl p-5 border-2 border-emerald-400/50 space-y-4 bg-gradient-to-br from-space-950 via-emerald-950/20 to-space-950">
+                      <div className="flex items-center justify-between border-b border-emerald-500/30 pb-2">
+                        <strong className="text-emerald-300 font-black text-sm md:text-base flex items-center gap-2">
+                          <span>⚡</span> [데이비드 앨런 전용] Horizons of Focus 6단계 수직 고도 정렬 매퍼
+                        </strong>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">Horizons Tree</span>
+                      </div>
+
+                      {/* 6고도 수직 정렬 리스트 */}
+                      <div className="space-y-2 text-xs md:text-sm">
+                        <div className="p-2.5 bg-space-900 rounded-xl border border-purple-500/40 flex items-center justify-between">
+                          <span className="font-mono text-purple-300 font-bold">50,000ft (존재 목적)</span>
+                          <strong className="text-white text-right">{curMaster.altitude50k || "세상에 가치 있는 지식을 전달하고 온전한 자기 결정권을 누린다."}</strong>
+                        </div>
+                        <div className="p-2.5 bg-space-900 rounded-xl border border-indigo-500/40 flex items-center justify-between">
+                          <span className="font-mono text-indigo-300 font-bold">40,000ft (3~5년 비전)</span>
+                          <strong className="text-white text-right">{curMaster.altitude40k || "독립된 지식 크리에이터로서 자동화된 비즈니스 생태계 운영"}</strong>
+                        </div>
+                        <div className="p-2.5 bg-space-900 rounded-xl border border-blue-500/40 flex items-center justify-between">
+                          <span className="font-mono text-blue-300 font-bold">30,000ft (1~2년 목표)</span>
+                          <strong className="text-white text-right">{curMaster.altitude30k || "첫 1,000명의 진성 고객 확보 및 유료 파이프라인 안착"}</strong>
+                        </div>
+                        <div className="p-2.5 bg-space-900 rounded-xl border border-teal-500/40 flex items-center justify-between">
+                          <span className="font-mono text-teal-300 font-bold">20,000ft (책임 영역 Areas)</span>
+                          <strong className="text-white text-right">{curMaster.altitude20k || "건강 유지, 지속적인 학습 및 집필, 비즈니스 파이프라인 관리"}</strong>
+                        </div>
+                        <div className="p-2.5 bg-space-900 rounded-xl border border-cyan-500/40 flex items-center justify-between">
+                          <span className="font-mono text-cyan-300 font-bold">10,000ft (현재 프로젝트)</span>
+                          <strong className="text-white text-right">{curMaster.altitude10k || "첫 번째 지식 가이드북 초안 완성 (2주 스프린트)"}</strong>
+                        </div>
+                        <div className="p-3 bg-emerald-950/80 rounded-xl border-2 border-emerald-400 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 shadow-lg">
+                          <div>
+                            <span className="font-mono text-emerald-400 font-black block text-xs">지상 Runway (당장 실행할 물리적 최소 행동):</span>
+                            <strong className="text-white text-sm md:text-base font-black">"{curMaster.runway || "스마트폰 메모장에 아이디어 핵심 3단어 적기"}"</strong>
+                          </div>
+                          <button
+                            onClick={() => { setTimeLeft(180); setTimerOn(true); playSound('pop'); }}
+                            className="px-4 py-2 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-black font-black text-xs shrink-0 transition flex items-center gap-1 shadow-md">
+                            <span>🚀</span> 3분 타이머 즉시 착수
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* 4. AI 전문가 3단계 행동 처방전 */}
                   <div className="glass-box rounded-2xl p-4 border border-gold-400/50 space-y-3">
