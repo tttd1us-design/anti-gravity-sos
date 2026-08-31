@@ -75,7 +75,6 @@
       overflow-x: hidden;
       font-size: 18px;
       line-height: 1.7;
-      user-select: none;
       transition: font-size 0.15s ease;
     }
     
@@ -211,27 +210,22 @@
       });
       const [isDragging, setIsDragging] = useState(false);
 
-      const [activeTab, setActiveTab] = useState('COACH');
-
       // --- 성공관리시스템(SMS) 3단계 파이프라인 실시간 데이터 상태 ---
       const [smsPipeline, setSmsPipeline] = useState(() => {
         const saved = localStorage.getItem('AG_SMS_PIPELINE_V1');
         return saved ? JSON.parse(saved) : {
-          // 1단계: 소크라테스식 탐색 (질문-성찰)
           step1: {
             surfaceGoal: "월 100만 원 부업 수익 만들기",
             latentDesire: "회사에 종속되지 않는 경제적 자립과 자아실현",
             gravityFriction: "완벽주의에 의한 평가 공포 및 시작 지연",
             ladderLevel: "Level 2 (3분 초간단 미션)"
           },
-          // 2단계: 데이터 축적 및 패턴화 (구조화)
           step2: {
             dca: "2026년 1인 지식 엔터프라이즈 기반 월 100만 원 자동화 파이프라인 확립",
             radarWeights: { independence: 92, competence: 88, stability: 75, freedom: 95 },
             paraCategory: "Projects (진행 중인 핵심 프로젝트)",
             accumulatedDataCount: 18
           },
-          // 3단계: 행동 원칙 및 실행 엔진 (알고리즘화)
           step3: {
             ifThenRule: "IF 새로운 기획을 앞두고 미루고 싶을 때, THEN 비공개 메모장에 단어 3개만 적는다.",
             crucialAction: "스마트폰 메모장을 켜고 아이디어 단어 3개만 적기",
@@ -273,7 +267,7 @@
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, smsPipeline, leftWidthPercent, activeTab, fontSize, isRecording, recordDuration]);
+      }, [messages, smsPipeline, leftWidthPercent, fontSize, isRecording, recordDuration]);
 
       // 타이머 카운트다운
       useEffect(() => {
@@ -430,7 +424,6 @@
           if (messages.length === 1) {
             reply = `알려주셔서 고마워요! 👏\n\n오른편 화면을 보시면 **1단계 '소크라테스식 탐색'에 표면 목표가 등록되고 2단계 'DCA'가 실시간으로 조립**되었습니다!\n\n그런데 이 목표를 시작하려고 할 때, 마음에 브레이크가 걸리는 **'진짜 속마음(심리적 저항)'**은 무엇인가요?`;
             
-            // 실시간 파이프라인 1, 2단계 업데이트
             setSmsPipeline(prev => ({
               ...prev,
               step1: {
@@ -445,9 +438,8 @@
               }
             }));
           } else if (messages.length === 3) {
-            reply = `맞아요, 정말 많은 분들이 똑같은 고민을 해요.\n\n완벽하게 잘하고 싶은 마음이 크다 보니 뇌가 너무 큰 에너지가 든다고 착각해서 시작을 망설이는 거예요.\n\n오른편 **3단계 '행동 원칙 및 실행 엔진'에 당신만의 레이 달리오 If-Then 알고리즘과 3분 마이크로 미션이 완성**되었습니다!\n\n오늘 딱 3분만 **"${smsPipeline.step3.crucialAction}"** 해보는 거예요. 상단의 **[⏱️ 3분 타이머]**를 눌러 함께 시작해 볼까요?`;
+            reply = `맞아요, 정말 많은 분들이 똑같은 고민을 해요.\n\n완벽하게 잘하고 싶은 마음이 크다 보니 뇌가 너무 큰 에너지가 든다고 착각해서 시작을 망설이는 거예요.\n\n오른편 **3단계 '행동 원칙 및 실행 엔진'에 당신만의 레이 달리오 If-Then 알고리즘과 3분 마이크로 미션이 완성**되었습니다!\n\n오늘 딱 3분만 **"${smsPipeline.step3.crucialAction}"** 해보는 거예요. 우측 상단의 **[3분 실행 타이머]**를 눌러 함께 시작해 볼까요?`;
             
-            // 실시간 파이프라인 3단계 업데이트
             setSmsPipeline(prev => ({
               ...prev,
               step1: {
@@ -642,7 +634,7 @@
 
               {/* Voice Floating Banner */}
               {isRecording && (
-                <div className="px-6 py-2 bg-rose-950/90 border-t border-rose-500/40 flex items-center justify-between text-xs md:text-sm font-bold text-rose-200 animate-pulse">
+                <div className="px-6 py-2.5 bg-rose-950/90 border-t border-rose-500/40 flex items-center justify-between text-xs md:text-sm font-bold text-rose-200 animate-pulse">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 mic-pulse inline-block"></span>
                     <span>🎙️ 30분 연속 음성 인식 중... (말씀하시면 실시간 입력됩니다)</span>
@@ -653,48 +645,58 @@
                 </div>
               )}
 
-              {/* Input Box with 30-Min Mic */}
+              {/* 🌟 100% 겹침 없는 프리미엄 전용 입력바 & 액션 툴바 */}
               <div className="p-5 md:p-6 bg-space-900/95 border-t border-cyan-500/20">
-                <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="relative flex items-center gap-3">
-                  <div className="relative flex-1">
-                    <textarea
-                      rows="2"
-                      value={inputMsg}
-                      onChange={(e) => setInputMsg(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          sendChat();
-                        }
-                      }}
-                      placeholder={isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "하고 싶은 말이나 고민을 적거나 마이크를 누르세요..."}
-                      className="w-full bg-space-950 border-2 border-slate-700 focus:border-cyan-400 rounded-2xl px-6 py-4 text-white placeholder-slate-400 focus:outline-none resize-none pr-36 font-sans leading-relaxed"
-                      style={{ fontSize: `${currentFontPx}px` }}
-                    />
+                <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="flex flex-col gap-3">
+                  
+                  {/* Textarea */}
+                  <textarea
+                    rows="2"
+                    value={inputMsg}
+                    onChange={(e) => setInputMsg(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendChat();
+                      }
+                    }}
+                    placeholder={isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "하고 싶은 말이나 목표를 편하게 적거나 아래 음성 마이크를 누르세요..."}
+                    className="w-full bg-space-950 border-2 border-slate-700 focus:border-cyan-400 rounded-2xl p-4 text-white placeholder-slate-400 focus:outline-none resize-none font-sans leading-relaxed"
+                    style={{ fontSize: `${currentFontPx}px` }}
+                  />
 
-                    {/* Mic Button */}
+                  {/* Dedicated Action Toolbar (절대 겹치지 않는 분리형 툴바) */}
+                  <div className="flex items-center justify-between gap-3">
+                    
+                    {/* Left: 🎙️ 30분 연속 음성 마이크 버튼 */}
                     <button
                       type="button"
                       onClick={toggleVoiceRecording}
                       title={isRecording ? "음성 인식 중지" : "30분 연속 음성 작성 시작"}
-                      className={`absolute right-20 bottom-3.5 px-3 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 transition ${
+                      className={`px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition ${
                         isRecording
-                          ? 'bg-rose-600 text-white mic-pulse shadow-lg'
-                          : 'bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700'
+                          ? 'bg-rose-600 text-white mic-pulse shadow-lg shadow-rose-600/50 hover:bg-rose-500'
+                          : 'bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700 hover:border-cyan-400'
                       }`}>
                       <i data-lucide={isRecording ? "mic-off" : "mic"} className="w-4 h-4"></i>
-                      <span className="hidden sm:inline">{isRecording ? "중지" : "음성"}</span>
+                      <span>{isRecording ? "🎙️ 음성 녹음 중지" : "🎙️ 30분 연속 음성 인식"}</span>
                     </button>
 
-                    {/* Send Button */}
+                    {/* Right: 전송 버튼 */}
                     <button
                       type="submit"
                       disabled={!inputMsg.trim() || isThinking}
-                      className="absolute right-3.5 bottom-3.5 px-4 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg flex items-center gap-1.5">
+                      className={`px-6 py-2.5 rounded-xl font-bold text-base flex items-center gap-2 transition shadow-lg ${
+                        inputMsg.trim() && !isThinking
+                          ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:scale-105 shadow-cyan-500/40'
+                          : 'bg-space-800 text-slate-500 cursor-not-allowed border border-slate-750'
+                      }`}>
                       <span>전송</span>
                       <i data-lucide="send" className="w-4 h-4"></i>
                     </button>
+
                   </div>
+
                 </form>
               </div>
 
