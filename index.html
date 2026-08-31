@@ -393,7 +393,7 @@
       // 6대 메인 탭: 'WORKSPACE' | 'BACKUP_LOGS' | 'MATRIX' | 'ANALYSIS' | 'ACTION' | 'SOCIAL_ALARM'
       const [mainNavTab, setMainNavTab] = useState('WORKSPACE');
       const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
-      const [analysisSubTab, setAnalysisSubTab] = useState('OVERVIEW'); // 'OVERVIEW' | 'PIPELINE' | 'DATA_SCHEMA' | 'ALGORITHM'
+      const [analysisSubTab, setAnalysisSubTab] = useState('OVERVIEW');
 
       const [tierFilter, setTierFilter] = useState('ALL');
 
@@ -419,7 +419,7 @@
       const [alarmSimulatedAlert, setAlarmSimulatedAlert] = useState(null);
 
       const [latestCoachFeedback, setLatestCoachFeedback] = useState(
-        "대화가 누적될수록 작성자님의 생각이 [Tier 1 잠재의식/DCA] ➔ [Tier 2 PARA 지식] ➔ [Tier 3 GTD 수직정렬] ➔ [Tier 4 If-Then 원칙]으로 실시간 체계화됩니다. 아래 4대 질문의 추천 답변을 마우스로 클릭하거나 숫자(1~4)를 입력하세요."
+        "💡 [1./2./3./4.]만 입력하거나 [1. 답변내용]을 입력하시면 해당 질문과 완벽 연동되어 4대 성공시스템에 즉시 동기화됩니다!"
       );
 
       // 5대 거장 심층 소프트웨어 & 데이터 아키텍처 풀스택 데이터
@@ -740,17 +740,35 @@
         }
       };
 
-      // 실제 전송 실행 로직
+      // 🌟 [핵심] 1. / 2. / 3. / 4. 번호 및 접두사 파싱 & 질문 연동 실행 로직
       const executeSend = (rawText) => {
         let text = (rawText || inputMsg).trim();
         if (!text || isThinking) return;
 
-        if (selectedQuestion && selectedQuestion.options) {
-          const numMatch = text.match(/^[1-4]$/);
-          if (numMatch) {
-            const idx = parseInt(numMatch[0], 10) - 1;
-            if (selectedQuestion.options[idx]) {
-              text = selectedQuestion.options[idx];
+        let targetQ = selectedQuestion || activeQuestions[0];
+        let finalAnswerText = text;
+
+        // 패턴 A: '1.' 또는 '2.' 또는 '3.' 또는 '4.' 또는 '1', '2', '3', '4' 만 단독 입력된 경우
+        const singleNumMatch = text.match(/^([1-4])[\.\s\)\/\:]*$/);
+        if (singleNumMatch) {
+          const numIdx = parseInt(singleNumMatch[1], 10) - 1;
+          // 현재 선택된 질문의 추천 옵션 중 해당 번호 추출
+          if (targetQ && targetQ.options && targetQ.options[numIdx]) {
+            finalAnswerText = targetQ.options[numIdx];
+          } else if (activeQuestions[numIdx]) {
+            // 해당 번호의 질문 자체를 타겟으로 지정하고 그 질문의 1번 옵션 선택
+            targetQ = activeQuestions[numIdx];
+            finalAnswerText = targetQ.options[0] || targetQ.text;
+          }
+        } 
+        // 패턴 B: '1. 나의 답변' 또는 '2. 두번째 내용' 또는 '3. 세번째 내용' 또는 '4. 네번째 내용'
+        else {
+          const prefixMatch = text.match(/^([1-4])[\.\s\)\/\:]\s*(.+)$/s);
+          if (prefixMatch) {
+            const qIdx = parseInt(prefixMatch[1], 10) - 1;
+            if (activeQuestions[qIdx]) {
+              targetQ = activeQuestions[qIdx]; // 1. 은 1번 질문으로, 2. 는 2번 질문으로 자동 연동!
+              finalAnswerText = prefixMatch[2].trim();
             }
           }
         }
@@ -764,8 +782,8 @@
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         setDialogueCount(c => c + 1);
 
-        if (selectedQuestion) {
-          const qObj = selectedQuestion;
+        if (targetQ) {
+          const qObj = targetQ;
 
           setQaBackupLogs(prev => [
             ...prev,
@@ -773,7 +791,7 @@
               id: Date.now(),
               type: 'QNA',
               question: `${qObj.title}: ${qObj.text}`,
-              answer: text,
+              answer: finalAnswerText,
               time: timeStr
             }
           ]);
@@ -781,22 +799,22 @@
           setFiveMastersData(prev => {
             const next = { ...prev };
             if (qObj.slot === 'endState') {
-              next.robbins.coreDriver = text;
-              next.hill.definiteChiefAim = `2026년 중심 목표: [${text}] 완성`;
-              next.gtd.altitude50k = `50,000ft (궁극적 가치): ${text}`;
-              next.dalio.goals = text;
+              next.robbins.coreDriver = finalAnswerText;
+              next.hill.definiteChiefAim = `2026년 중심 목표: [${finalAnswerText}] 완성`;
+              next.gtd.altitude50k = `50,000ft (궁극적 가치): ${finalAnswerText}`;
+              next.dalio.goals = finalAnswerText;
             } else if (qObj.slot === 'bottleneck') {
-              next.dalio.problems = text;
-              next.dalio.diagnosis5Why = `표면 저항: [${text}] ➔ 마찰 최소화 필요`;
-              next.robbins.painOfFailure = `${text}를 극복하지 못할 경우 정체되는 고통`;
+              next.dalio.problems = finalAnswerText;
+              next.dalio.diagnosis5Why = `표면 저항: [${finalAnswerText}] ➔ 마찰 최소화 필요`;
+              next.robbins.painOfFailure = `${finalAnswerText}를 극복하지 못할 경우 정체되는 고통`;
             } else if (qObj.slot === 'leverage') {
-              next.dalio.ifThenRule = `IF [${text}] 마찰 발생 시, THEN 감정에 휘둘리지 않고 사전 프로토콜을 즉시 실행한다.`;
-              next.forte.distilledEssence = `핵심 레버리지: ${text}`;
-              next.gtd.altitude10k = `10,000ft 프로젝트: ${text} 기반 스프린트`;
+              next.dalio.ifThenRule = `IF [${finalAnswerText}] 마찰 발생 시, THEN 감정에 휘둘리지 않고 사전 프로토콜을 즉시 실행한다.`;
+              next.forte.distilledEssence = `핵심 레버리지: ${finalAnswerText}`;
+              next.gtd.altitude10k = `10,000ft 프로젝트: ${finalAnswerText} 기반 스프린트`;
             } else if (qObj.slot === 'microAction') {
-              next.dalio.execution = text;
-              next.gtd.runway = `지상 (Runway): ${text} (3분 착수)`;
-              next.hill.immediatePlan = `오늘 당장 착수: ${text}`;
+              next.dalio.execution = finalAnswerText;
+              next.gtd.runway = `지상 (Runway): ${finalAnswerText} (3분 착수)`;
+              next.hill.immediatePlan = `오늘 당장 착수: ${finalAnswerText}`;
             }
             return next;
           });
@@ -806,6 +824,7 @@
 
           setInputMsg("");
 
+          // 다음 번 질문으로 자동 포커스 이동 (1 -> 2 -> 3 -> 4)
           const currentIdx = activeQuestions.findIndex(q => q.id === qObj.id);
           if (currentIdx >= 0 && currentIdx < activeQuestions.length - 1) {
             setSelectedQuestion(activeQuestions[currentIdx + 1]);
@@ -816,7 +835,7 @@
 
           setTimeout(() => {
             setLatestCoachFeedback(
-              `✨ [${qObj.title}] 답변("${text.substring(0, 25)}...")이 전문가 데이터 아키텍처 및 4대 계층 시스템에 동기화되었습니다! 다음 질문도 마우스 클릭이나 숫자로 편하게 선택하세요.`
+              `✨ [${qObj.title}] 연동 완료! "${finalAnswerText.substring(0, 25)}..."이(가) 시스템에 즉시 동기화되었습니다. 다음 질문도 '1.'~'4.' 또는 '1. 답변'으로 편하게 입력하세요.`
             );
             setIsThinking(false);
           }, 350);
@@ -824,13 +843,14 @@
           return;
         }
 
+        // 자유 발언인 경우
         setQaBackupLogs(prev => [
           ...prev,
           {
             id: Date.now(),
             type: 'STATEMENT',
             question: '💬 자유 발언 / 목표 탐색',
-            answer: text,
+            answer: finalAnswerText,
             time: timeStr
           }
         ]);
@@ -843,7 +863,7 @@
         setIsThinking(true);
 
         setTimeout(() => {
-          const questions = generateSocratic4Questions(text);
+          const questions = generateSocratic4Questions(finalAnswerText);
           setActiveQuestions(questions);
           setSelectedQuestion(questions[0]);
 
@@ -851,30 +871,30 @@
             ...prev,
             dalio: {
               ...prev.dalio,
-              goals: text,
-              ifThenRule: `IF [${text}] 시작이 망설여질 때, THEN 감정을 배제하고 3분 마이크로 액션을 먼저 실행한다.`
+              goals: finalAnswerText,
+              ifThenRule: `IF [${finalAnswerText}] 시작이 망설여질 때, THEN 감정을 배제하고 3분 마이크로 액션을 먼저 실행한다.`
             },
             robbins: {
               ...prev.robbins,
-              coreDriver: `${text}을 통한 자기 결정권 확보와 본원적 자아실현`
+              coreDriver: `${finalAnswerText}을 통한 자기 결정권 확보와 본원적 자아실현`
             },
             forte: {
               ...prev.forte,
-              projects: `[진행 중] ${text} 완성 프로젝트 (스프린트)`
+              projects: `[진행 중] ${finalAnswerText} 완성 프로젝트 (스프린트)`
             },
             hill: {
               ...prev.hill,
-              definiteChiefAim: `나는 2026년까지 [${text}]을(를) 완벽히 달성하여 대체 불가능한 가치를 창출한다.`
+              definiteChiefAim: `나는 2026년까지 [${finalAnswerText}]을(를) 완벽히 달성하여 대체 불가능한 가치를 창출한다.`
             },
             gtd: {
               ...prev.gtd,
-              altitude30k: `30,000ft 핵심 성과: ${text}`,
-              runway: `지상 Runway: ${text.substring(0, 15)} 3분 즉시 착수`
+              altitude30k: `30,000ft 핵심 성과: ${finalAnswerText}`,
+              runway: `지상 Runway: ${finalAnswerText.substring(0, 15)} 3분 즉시 착수`
             }
           }));
 
           setLatestCoachFeedback(
-            `작성자님의 목표 [${text}]에 맞춰 전문가 데이터 아키텍처가 갱신되었습니다. 아래의 [1~4번 추천 답변]을 클릭하거나 숫자를 입력해 보세요!`
+            `새로운 목표 [${finalAnswerText}]에 맞춰 4대 질문이 생성되었습니다. '1.'~'4.' 또는 '1. 답변'을 입력해 질문에 바로 답해보세요!`
           );
           setIsThinking(false);
           playSound('pop');
@@ -952,7 +972,7 @@
                     안티그레비티 (AG-SMS)
                   </h1>
                   <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                    성공관리 시스템 & 데이터 아키텍처 v4.5
+                    성공관리 시스템 & 1./2. 질문 연동 엔진
                   </span>
                 </div>
               </div>
@@ -1089,7 +1109,7 @@
                   <div className="flex-1 px-4 py-3 bg-space-900/40 overflow-y-auto space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-xs md:text-sm font-bold text-cyan-300 flex items-center gap-1.5">
-                        <span>🧭</span> 4대 계층 심층 방향성 질문 (클릭하여 추천답변 선택):
+                        <span>🧭</span> 4대 계층 심층 방향성 질문 (1./2. 번호로 자동 연동):
                       </span>
                       <FontController label="질문 글씨:" value={questionsFontSize} onChange={setQuestionsFontSize} />
                     </div>
@@ -1108,8 +1128,8 @@
                             }`}>
                             <div className="flex items-center justify-between mb-1">
                               <span className="font-black text-cyan-300 font-mono flex items-center gap-1.5">
-                                <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-300 inline-flex items-center justify-center text-xs font-bold border border-cyan-500/40">
-                                  {idx + 1}
+                                <span className="w-5 h-5 rounded-md bg-cyan-500/20 text-cyan-300 inline-flex items-center justify-center text-xs font-bold border border-cyan-500/40">
+                                  {idx + 1}.
                                 </span>
                                 {q.title}
                               </span>
@@ -1131,10 +1151,10 @@
                     <div className="px-4 py-2.5 bg-space-900 border-t border-cyan-400/30 space-y-1.5 shrink-0" style={{ fontSize: `${questionsPx}px` }}>
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-gold-300 flex items-center gap-1">
-                          <span>💡</span> [질문 {selectedQuestion.title}] 1클릭 마우스 선택 / 숫자(1~4) 추천답변:
+                          <span>💡</span> [{selectedQuestion.title}] 1클릭 추천답변 (대화창에 '1.'~'4.' 입력 시 즉시 연동):
                         </span>
                         <span className="text-[10.5px] text-slate-400 font-mono">
-                          숫자 입력 후 엔터 ➔ 즉시 반영
+                          '1.' 입력 후 엔터 ➔ 1번 답변 확정
                         </span>
                       </div>
 
@@ -1146,7 +1166,7 @@
                             onClick={() => handleSelectOptionPreset(opt, true)}
                             className="p-2.5 text-left rounded-xl bg-space-950 hover:bg-cyan-500/20 border border-slate-750 hover:border-cyan-400 text-slate-100 font-medium transition flex items-start gap-1.5 shadow-sm group">
                             <span className="w-5 h-5 rounded-md bg-gold-500/20 text-gold-300 font-mono font-black inline-flex items-center justify-center text-xs shrink-0 group-hover:bg-gold-500 group-hover:text-black">
-                              {i + 1}
+                              {i + 1}.
                             </span>
                             <span className="line-clamp-2 leading-relaxed">{opt}</span>
                           </button>
@@ -1160,11 +1180,11 @@
                     <div className="flex items-center justify-between pb-0.5">
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1">
-                          <span>✍️</span> 대화창 (마우스 클릭 또는 숫자 1~4 입력)
+                          <span>✍️</span> 대화창 (예: <code className="text-cyan-300 bg-space-950 px-1 rounded font-mono">1.</code>, <code className="text-cyan-300 bg-space-950 px-1 rounded font-mono">2.</code> 또는 <code className="text-cyan-300 bg-space-950 px-1 rounded font-mono">1. 나의 답변</code>)
                         </span>
                         {selectedQuestion && (
                           <span className="text-[10.5px] text-cyan-300 bg-cyan-950 px-2 py-0.2 rounded border border-cyan-500/40">
-                            선택됨: {selectedQuestion.title}
+                            선택: {selectedQuestion.title}
                           </span>
                         )}
                       </div>
@@ -1182,11 +1202,7 @@
                             sendChat();
                           }
                         }}
-                        placeholder={
-                          selectedQuestion 
-                            ? `위 추천답변을 [마우스 클릭]하거나, 숫자 [1], [2], [3], [4]를 입력 후 엔터를 누르세요 (직접 작성 및 음성도 가능)...`
-                            : (isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "목표나 고민을 편하게 말씀하세요. 대화할수록 목표가 정밀하게 구조화됩니다...")
-                        }
+                        placeholder="[1.] [2.] [3.] [4.] 번호만 입력하거나 [1. 나만의 답변] 형태로 작성 후 엔터를 누르면 해당 질문과 즉시 연동됩니다..."
                         className="w-full bg-space-950 border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none resize-y font-sans leading-relaxed min-h-[55px] max-h-[300px]"
                       />
 
@@ -1202,20 +1218,19 @@
                             <span>{isRecording ? "녹음 중지" : "🎙️ 30분 음성"}</span>
                           </button>
 
-                          {selectedQuestion && (
-                            <div className="flex items-center gap-1 bg-space-800 border border-slate-700 rounded-xl p-0.5">
-                              <span className="text-[10px] text-gold-300 font-bold px-1">숫자:</span>
-                              {[1, 2, 3, 4].map(num => (
-                                <button
-                                  key={num}
-                                  type="button"
-                                  onClick={() => handleSelectOptionPreset(selectedQuestion.options[num - 1], true)}
-                                  className="w-6 h-6 rounded-lg bg-space-900 hover:bg-gold-400 hover:text-black text-gold-300 font-black text-xs transition flex items-center justify-center border border-slate-755">
-                                  {num}
-                                </button>
-                              ))}
-                            </div>
-                          )}
+                          {/* 1./2./3./4. 원터치 단축 버튼 */}
+                          <div className="flex items-center gap-1 bg-space-800 border border-slate-700 rounded-xl p-0.5">
+                            <span className="text-[10px] text-gold-300 font-bold px-1">연동:</span>
+                            {[1, 2, 3, 4].map(num => (
+                              <button
+                                key={num}
+                                type="button"
+                                onClick={() => executeSend(`${num}.`)}
+                                className="px-2 py-0.5 rounded-lg bg-space-900 hover:bg-gold-400 hover:text-black text-gold-300 font-black text-xs transition flex items-center justify-center border border-slate-755 font-mono">
+                                {num}.
+                              </button>
+                            ))}
+                          </div>
 
                           <div className="flex items-center bg-space-800 rounded-xl border border-slate-700 p-0.5 text-xs font-bold text-slate-300">
                             <span className="px-1 text-[10px] text-slate-400">높이:</span>
@@ -1231,7 +1246,7 @@
                           className={`px-5 py-1.5 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1.5 transition shadow-md ${
                             inputMsg.trim() && !isThinking ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:scale-105 shadow-cyan-500/40' : 'bg-space-800 text-slate-500 cursor-not-allowed border border-slate-750'
                           }`}>
-                          <span>{selectedQuestion ? '시스템 동기화' : '전송'}</span>
+                          <span>질문 연동 전송</span>
                           <i data-lucide="send" className="w-3.5 h-3.5"></i>
                         </button>
                       </div>
@@ -1253,7 +1268,7 @@
                         <h2 className="text-sm md:text-base font-black text-white flex items-center gap-1.5">
                           <span>🏛️</span> 4개 계층 심층 성공관리시스템
                         </h2>
-                        <span className="text-xs text-cyan-300">대화가 누적될수록 목표와 행동 규칙이 정밀하게 진화합니다 (대화 {dialogueCount}회 축적)</span>
+                        <span className="text-xs text-cyan-300">1./2. 입력과 연동되어 목표와 행동 규칙이 정밀하게 진화합니다 (대화 {dialogueCount}회 축적)</span>
                       </div>
                       <FontController label="4개 계층 글씨:" value={tierSystemFontSize} onChange={setTierSystemFontSize} />
                     </div>
@@ -1450,7 +1465,7 @@
                       </span>
                     </div>
                     <p className="text-xs md:text-sm text-slate-300 mt-1">
-                      내가 작성한 모든 발화와 소크라테스 질의 답변이 영구 보존되며, 1클릭 다운로드가 가능합니다.
+                      내가 작성한 모든 발화와 1./2. 질의 답변이 영구 보존되며, 1클릭 다운로드가 가능합니다.
                     </p>
                   </div>
 
@@ -1492,7 +1507,7 @@
               </div>
             )}
 
-            {/* 🌟 3. [5대 시스템종합] 탭 - 전문가 관점 3단계 파이프라인 & 데이터 아키텍처 매트릭스로 전면 심화 */}
+            {/* 🌟 3. [5대 시스템종합] 탭 */}
             {mainNavTab === 'MATRIX' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-7xl mx-auto" style={{ fontSize: `${analysisPx}px` }}>
                 
@@ -1572,7 +1587,6 @@
                     </thead>
                     <tbody className="divide-y divide-slate-800 text-xs md:text-sm">
                       
-                      {/* 1. 레이 달리오 */}
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">
                           <span className="text-cyan-300 font-mono text-xs block">Tier 4 / Machine OS</span>
@@ -1595,7 +1609,6 @@
                         </td>
                       </tr>
 
-                      {/* 2. 토니 로빈스 */}
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">
                           <span className="text-rose-300 font-mono text-xs block">Tier 1 / Cognitive NAC</span>
@@ -1618,7 +1631,6 @@
                         </td>
                       </tr>
 
-                      {/* 3. 티아고 포르테 */}
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">
                           <span className="text-purple-300 font-mono text-xs block">Tier 2 / Knowledge Graph</span>
@@ -1641,7 +1653,6 @@
                         </td>
                       </tr>
 
-                      {/* 4. 나폴레온 힐 */}
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">
                           <span className="text-gold-300 font-mono text-xs block">Tier 1 / Chief Aim Engine</span>
@@ -1664,7 +1675,6 @@
                         </td>
                       </tr>
 
-                      {/* 5. 데이비드 앨런 */}
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">
                           <span className="text-cyan-300 font-mono text-xs block">Tier 3 / Vertical Alignment</span>
@@ -1693,7 +1703,7 @@
               </div>
             )}
 
-            {/* 🌟 4. [분석 시스템] 탭 - 전문가 4대 심층 아키텍처 뷰로 전면 심화 */}
+            {/* 🌟 4. [분석 시스템] 탭 */}
             {mainNavTab === 'ANALYSIS' && (
               <div className="flex-1 flex w-full h-full overflow-hidden" style={{ fontSize: `${analysisPx}px` }}>
                 
@@ -1864,7 +1874,6 @@
                         </div>
                       </div>
 
-                      {/* 거장별 세부 구조 뷰 */}
                       {selectedMasterInAnalysis === 'DALIO' && (
                         <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3">
                           <h3 className="text-base font-black text-white">⚙️ 기계론적 5단계 피드백 루프</h3>
@@ -1915,7 +1924,7 @@
                     </div>
                   )}
 
-                  {/* 2. 데이터 스키마 (JSON Spec) 서브탭 */}
+                  {/* 2. 데이터 스키마 서브탭 */}
                   {analysisSubTab === 'DATA_SCHEMA' && (
                     <div className="space-y-4">
                       <div className="glass-box-active rounded-3xl p-6 border-2 border-purple-500/50 space-y-3">
