@@ -74,8 +74,8 @@
       color: #F8FAFC;
       font-family: 'Pretendard', sans-serif;
       overflow-x: hidden;
-      font-size: 18px;
-      line-height: 1.7;
+      font-size: 15px;
+      line-height: 1.6;
       user-select: none;
       transition: font-size 0.15s ease;
     }
@@ -84,27 +84,26 @@
       background-image: 
         linear-gradient(to right, rgba(34, 211, 238, 0.03) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
-      background-size: 36px 36px;
+      background-size: 32px 32px;
     }
     
     .glass-box {
       background: rgba(13, 20, 34, 0.92);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-      border: 1.5px solid rgba(34, 211, 238, 0.22);
+      border: 1px solid rgba(34, 211, 238, 0.2);
     }
 
     .glass-box-active {
       background: rgba(13, 20, 34, 0.96);
       backdrop-filter: blur(22px);
-      border: 2px solid rgba(0, 240, 255, 0.55);
-      box-shadow: 0 0 35px rgba(0, 240, 255, 0.18);
+      border: 1.5px solid rgba(0, 240, 255, 0.5);
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
     }
 
     .pipeline-step-active {
-      border-left: 4px solid #00F0FF;
-      background: rgba(34, 211, 238, 0.08);
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+      border-left: 3px solid #00F0FF;
+      background: rgba(34, 211, 238, 0.06);
     }
 
     .mic-pulse {
@@ -113,12 +112,12 @@
 
     @keyframes pulse-ring {
       0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
-      70% { box-shadow: 0 0 0 14px rgba(244, 63, 94, 0); }
+      70% { box-shadow: 0 0 0 12px rgba(244, 63, 94, 0); }
       100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
     }
 
     .resizer-bar {
-      width: 10px;
+      width: 8px;
       cursor: col-resize;
       background: #141E33;
       transition: background 0.2s ease;
@@ -126,12 +125,12 @@
     }
     .resizer-bar:hover, .resizer-bar.dragging {
       background: #00F0FF;
-      box-shadow: 0 0 18px #00F0FF;
+      box-shadow: 0 0 15px #00F0FF;
     }
 
     ::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
       background: #070B12;
@@ -161,25 +160,25 @@
           const gain = ctx.createGain();
           osc.type = 'sine';
           osc.frequency.setValueAtTime(600, ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.06);
-          gain.gain.setValueAtTime(0.05, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+          osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.05);
+          gain.gain.setValueAtTime(0.04, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start();
-          osc.stop(ctx.currentTime + 0.06);
+          osc.stop(ctx.currentTime + 0.05);
         } else if (type === 'cheer') {
           [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.06);
-            gain.gain.setValueAtTime(0.06, ctx.currentTime + i * 0.06);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.06 + 0.25);
+            osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.05);
+            gain.gain.setValueAtTime(0.05, ctx.currentTime + i * 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.05 + 0.2);
             osc.connect(gain);
             gain.connect(ctx.destination);
-            osc.start(ctx.currentTime + i * 0.06);
-            osc.stop(ctx.currentTime + i * 0.06 + 0.25);
+            osc.start(ctx.currentTime + i * 0.05);
+            osc.stop(ctx.currentTime + i * 0.05 + 0.2);
           });
         }
       } catch (e) {}
@@ -216,7 +215,6 @@
         ];
       }
 
-      // 범용 고도화 프레임워크
       return [
         { id: 'q1', slot: 'endState', pillar: '1. 본원적 열망 (End-State)', title: '🎯 달성 후의 본질적 가치', text: `[${userText.substring(0, 15)}]이(가) 완벽히 실현되었을 때, 삶에서 얻게 되는 '가장 핵심적인 변화'는 무엇인가요?` },
         { id: 'q2', slot: 'bottleneck', pillar: '2. 심리적 저항 (Gravity Friction)', title: '🛑 시작을 막는 진짜 이유', text: `이 일을 시작하거나 지속하려 할 때, 무의식적으로 뒤로 미루게 만드는 '마음속 브레이크'는 무엇인가요?` },
@@ -226,21 +224,21 @@
     };
 
     function App() {
-      // 폰트 배율 (기본 1.6)
+      // 폰트 배율 (기본 1.0 = 세련되고 컴팩트한 기본 글씨 크기)
       const [fontSize, setFontSize] = useState(() => {
-        return parseFloat(localStorage.getItem('AG_EASY_FONT') || '1.6');
+        return parseFloat(localStorage.getItem('AG_COMPACT_FONT') || '1.0');
       });
 
-      // 좌우 화면 분할 비율 (기본 50% / 50%)
+      // 좌우 화면 분할 비율 (기본 52% / 48%)
       const [leftWidthPercent, setLeftWidthPercent] = useState(() => {
-        return parseFloat(localStorage.getItem('AG_SPLIT_PERCENT') || '50');
+        return parseFloat(localStorage.getItem('AG_SPLIT_PERCENT') || '52');
       });
       const [isDragging, setIsDragging] = useState(false);
 
       // 입력창 높이
       const [inputRows, setInputRows] = useState(2);
 
-      // 4대 질문 중 현재 선택되어 활성화된 질문 (null이면 일반 모드)
+      // 4대 질문 중 현재 선택되어 활성화된 질문
       const [selectedQuestion, setSelectedQuestion] = useState(null);
 
       // 4대 질문 리스트
@@ -250,7 +248,7 @@
 
       // 성공관리시스템(SMS) 파이프라인 데이터
       const [smsPipeline, setSmsPipeline] = useState(() => {
-        const saved = localStorage.getItem('AG_SMS_PIPELINE_V2');
+        const saved = localStorage.getItem('AG_SMS_PIPELINE_V3');
         return saved ? JSON.parse(saved) : {
           step1: {
             surfaceGoal: "월 100만 원 부업 수익 만들기",
@@ -275,7 +273,7 @@
 
       // 실시간 대화 및 답변 백업 로그
       const [qaBackupLogs, setQaBackupLogs] = useState(() => {
-        const saved = localStorage.getItem('AG_QA_BACKUP_LOGS_V1');
+        const saved = localStorage.getItem('AG_QA_BACKUP_LOGS_V2');
         return saved ? JSON.parse(saved) : [
           {
             id: 1,
@@ -297,7 +295,7 @@
         {
           id: 1,
           sender: 'coach',
-          text: `안녕하세요! 반갑습니다 😊\n\n하고 싶은 목표나 프로젝트를 자유롭게 적거나 마이크로 말씀해 주세요. 그에 맞춘 **4대 소크라테스 질문**이 도출되며, 질문을 누르고 답하면 우측 하단에 실시간 백업됩니다!`,
+          text: `안녕하세요! 반갑습니다 😊\n\n상단의 **4대 소크라테스 질문** 중 하나를 클릭하면 질문이 바로 아래에 고정되며, 답변을 적으면 우측 하단 백업 로그에 실시간 축적됩니다.`,
           time: '지금'
         }
       ]);
@@ -314,8 +312,8 @@
       const recordTimerRef = useRef(null);
 
       useEffect(() => {
-        localStorage.setItem('AG_SMS_PIPELINE_V2', JSON.stringify(smsPipeline));
-        localStorage.setItem('AG_QA_BACKUP_LOGS_V1', JSON.stringify(qaBackupLogs));
+        localStorage.setItem('AG_SMS_PIPELINE_V3', JSON.stringify(smsPipeline));
+        localStorage.setItem('AG_QA_BACKUP_LOGS_V2', JSON.stringify(qaBackupLogs));
         localStorage.setItem('AG_SPLIT_PERCENT', leftWidthPercent.toString());
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         if (window.lucide) {
@@ -443,19 +441,18 @@
       };
 
       const changeFontSize = (scale) => {
-        const val = Math.min(2.4, Math.max(1.1, parseFloat(scale.toFixed(1))));
+        const val = Math.min(1.8, Math.max(0.8, parseFloat(scale.toFixed(1))));
         setFontSize(val);
-        localStorage.setItem('AG_EASY_FONT', val.toString());
+        localStorage.setItem('AG_COMPACT_FONT', val.toString());
         playSound('pop');
       };
 
-      // 4대 질문 중 하나를 클릭하면 ➔ 대화창 위쪽에 고정하여 답변 준비
       const handleSelectQuestion = (q) => {
         setSelectedQuestion(q);
         playSound('pop');
       };
 
-      // 전송 및 답변 저장 로직
+      // 전송 및 답변 저장
       const sendChat = () => {
         const text = inputMsg.trim();
         if (!text || isThinking) return;
@@ -468,7 +465,6 @@
 
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        // 1) 특정 질문에 대한 답변 저장인 경우
         if (selectedQuestion) {
           const qObj = selectedQuestion;
           const userMsg = {
@@ -478,10 +474,8 @@
             time: timeStr
           };
 
-          // 대화 기록 추가
           setMessages(prev => [...prev, userMsg]);
 
-          // 우측 하단 백업 로그에 실시간 축적
           setQaBackupLogs(prev => [
             ...prev,
             {
@@ -493,24 +487,18 @@
             }
           ]);
 
-          // 우측 성공관리시스템 파이프라인 업데이트
           setSmsPipeline(prev => {
             const next = { ...prev };
-            if (qObj.slot === 'endState') {
-              next.step1.latentDesire = text;
-            } else if (qObj.slot === 'bottleneck') {
-              next.step1.gravityFriction = text;
-            } else if (qObj.slot === 'leverage') {
-              next.step3.ifThenRule = `IF [${text}] 레버리지 가동 시, THEN 실행 마찰을 최소화한다.`;
-            } else if (qObj.slot === 'microAction') {
-              next.step3.crucialAction = text;
-            }
+            if (qObj.slot === 'endState') next.step1.latentDesire = text;
+            else if (qObj.slot === 'bottleneck') next.step1.gravityFriction = text;
+            else if (qObj.slot === 'leverage') next.step3.ifThenRule = `IF [${text}] 레버리지 가동 시, THEN 실행 마찰을 최소화한다.`;
+            else if (qObj.slot === 'microAction') next.step3.crucialAction = text;
             next.step2.accumulatedDataCount += 1;
             return next;
           });
 
           setInputMsg("");
-          setSelectedQuestion(null); // 질문 답변 완료 후 헤더 닫기
+          setSelectedQuestion(null);
           playSound('cheer');
           setIsThinking(true);
 
@@ -518,17 +506,16 @@
             const coachMsg = {
               id: Date.now() + 1,
               sender: 'coach',
-              text: `✅ **"${qObj.title}"**에 대한 소중한 답변이 성공관리시스템 및 우측 하단 백업 저장소에 안전하게 기록되었습니다! 🌟\n\n다른 질문을 선택하여 방향성을 계속 구체화하거나 자유롭게 대화를 이어가 보세요.`,
+              text: `✅ **"${qObj.title}"**에 대한 답변이 성공관리시스템 및 우측 하단 백업에 안전하게 저장되었습니다! 🌟`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
             setMessages(prev => [...prev, coachMsg]);
             setIsThinking(false);
-          }, 450);
+          }, 400);
 
           return;
         }
 
-        // 2) 일반 대화/목표 입력인 경우 ➔ 4대 질문 생성
         const userMsg = {
           id: Date.now(),
           sender: 'user',
@@ -538,7 +525,6 @@
 
         setMessages(prev => [...prev, userMsg]);
         
-        // 백업 로그에 기록
         setQaBackupLogs(prev => [
           ...prev,
           {
@@ -558,7 +544,6 @@
           const questions = generateSocratic4Questions(text);
           setActiveQuestions(questions);
 
-          // 파이프라인 동기화
           setSmsPipeline(prev => ({
             ...prev,
             step1: {
@@ -580,17 +565,16 @@
           const coachMsg = {
             id: Date.now() + 1,
             sender: 'coach',
-            text: `말씀해 주신 내용에 맞추어 **4대 소크라테스 방향성 질문**을 아래에 생성했습니다. 질문 중 하나를 클릭하여 대화창 상단에 띄우고 답변을 작성해 보세요! 👇`,
+            text: `말씀해 주신 내용에 맞추어 **상단에 4대 소크라테스 질문**이 업데이트되었습니다. 질문을 클릭하여 답변해 보세요! 👇`,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
 
           setMessages(prev => [...prev, coachMsg]);
           setIsThinking(false);
           playSound('pop');
-        }, 450);
+        }, 400);
       };
 
-      // 텍스트 파일 다운로드 유틸
       const downloadTextFile = (filename, content) => {
         const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
@@ -601,64 +585,63 @@
         playSound('cheer');
       };
 
-      const currentFontPx = Math.max(18, 14 * fontSize);
+      const currentFontPx = Math.max(13, 14.5 * fontSize);
 
       return (
         <div className="flex flex-col h-screen max-h-screen">
           
           {/* Header */}
-          <header className="h-20 border-b border-cyan-500/20 glass-box px-4 md:px-8 flex items-center justify-between z-20">
-            <div className="flex items-center space-x-3.5">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400 via-indigo-600 to-purple-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                <span className="text-2xl">🌱</span>
+          <header className="h-16 border-b border-cyan-500/20 glass-box px-4 md:px-6 flex items-center justify-between z-20">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 via-indigo-600 to-purple-600 flex items-center justify-center shadow-md shadow-cyan-500/30">
+                <span className="text-xl">🌱</span>
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg md:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-gold-300 tracking-tight">
+                  <h1 className="text-base md:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-gold-300 tracking-tight">
                     안티그레비티 (AG-SMS)
                   </h1>
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                  <span className="text-[11px] font-bold px-2 py-0.2 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
                     성공관리 & 실시간 백업
                   </span>
                 </div>
-                <p className="text-xs md:text-sm text-slate-300">4대 소크라테스 질문 선택 ➔ 상단 고정 답변 ➔ 실시간 백업 구축</p>
               </div>
             </div>
 
             {/* Split Size Controls */}
-            <div className="hidden lg:flex items-center gap-1.5 bg-space-900 border border-slate-800 rounded-2xl p-1.5 text-xs font-bold text-slate-300">
-              <span className="text-slate-400 px-1">화면 분할:</span>
+            <div className="hidden lg:flex items-center gap-1 bg-space-900 border border-slate-800 rounded-xl p-1 text-xs font-bold text-slate-300">
+              <span className="text-slate-400 px-1 text-[11px]">화면 분할:</span>
               <button 
                 onClick={() => setLeftWidthPercent(65)}
-                className={`px-2.5 py-1 rounded-xl transition ${leftWidthPercent === 65 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
-                대화창 65%
+                className={`px-2 py-1 rounded-lg transition text-xs ${leftWidthPercent === 65 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
+                대화 65%
               </button>
               <button 
                 onClick={() => setLeftWidthPercent(50)}
-                className={`px-2.5 py-1 rounded-xl transition ${leftWidthPercent === 50 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
-                50 : 50
+                className={`px-2 py-1 rounded-lg transition text-xs ${leftWidthPercent === 50 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
+                50:50
               </button>
               <button 
                 onClick={() => setLeftWidthPercent(35)}
-                className={`px-2.5 py-1 rounded-xl transition ${leftWidthPercent === 35 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
+                className={`px-2 py-1 rounded-lg transition text-xs ${leftWidthPercent === 35 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
                 시스템 65%
               </button>
             </div>
 
-            {/* Font Controller */}
-            <div className="flex items-center space-x-2 bg-space-900 border border-slate-700 rounded-2xl px-3 py-1 shadow-md">
-              <span className="text-xs font-bold text-slate-300 mr-1 hidden sm:inline">글씨:</span>
+            {/* Font Controller (컴팩트 눈 편한 폰트) */}
+            <div className="flex items-center space-x-1.5 bg-space-900 border border-slate-700 rounded-xl px-2.5 py-1 shadow-sm">
+              <span className="text-[11px] font-bold text-slate-300 mr-0.5">글씨:</span>
               <button
-                onClick={() => changeFontSize(fontSize - 0.2)}
-                className="w-8 h-8 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 font-bold text-sm flex items-center justify-center border border-slate-700">
+                onClick={() => changeFontSize(fontSize - 0.1)}
+                className="w-7 h-7 rounded-lg bg-space-800 hover:bg-space-700 text-slate-200 font-bold text-xs flex items-center justify-center border border-slate-700">
                 A-
               </button>
-              <span className="text-xs md:text-sm font-bold font-mono text-cyan-300 px-1 min-w-[50px] text-center">
+              <span className="text-xs font-bold font-mono text-cyan-300 px-1 min-w-[42px] text-center">
                 {Math.round(fontSize * 100)}%
               </span>
               <button
-                onClick={() => changeFontSize(fontSize + 0.2)}
-                className="w-8 h-8 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 font-bold text-sm flex items-center justify-center border border-slate-700">
+                onClick={() => changeFontSize(fontSize + 0.1)}
+                className="w-7 h-7 rounded-lg bg-space-800 hover:bg-space-700 text-slate-200 font-bold text-xs flex items-center justify-center border border-slate-700">
                 A+
               </button>
             </div>
@@ -667,124 +650,110 @@
           {/* Main Split Layout */}
           <div className="flex-1 flex overflow-hidden relative">
             
-            {/* LEFT PANE: CHAT & QUESTION ANSWERING */}
+            {/* LEFT PANE: 4대 질문 상단 배치 & 넓은 대화창 */}
             <section 
               className="flex flex-col bg-space-950/80 border-r border-cyan-500/10 relative overflow-hidden"
               style={{ width: `${leftWidthPercent}%` }}>
               
-              {/* 🌟 1. 상단 슬림 고정 안내 배너 (작고 깔끔하게 고정) */}
-              <div className="bg-space-900/95 border-b border-cyan-500/20 px-4 py-2 flex items-center justify-between text-xs md:text-sm font-medium">
-                <div className="flex items-center gap-2">
-                  <span className="text-cyan-300 font-bold">💡 4대 질문 방향성 모드:</span>
-                  <span className="text-slate-300 truncate">질문을 클릭하면 입력창 위에 고정되며, 답을 적으면 우측에 즉시 백업됩니다.</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setInputRows(r => r === 2 ? 4 : (r === 4 ? 6 : 2))}
-                    className="px-2 py-0.5 rounded bg-space-800 hover:bg-space-700 text-cyan-300 text-xs font-bold border border-slate-700">
-                    ↕️ {inputRows}줄
-                  </button>
-                </div>
-              </div>
-
-              {/* Messages Area */}
-              <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-                {messages.map(m => (
-                  <div key={m.id} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
-                    <div className="flex items-center gap-2 mb-1 px-1">
-                      <span className="text-xs font-bold text-cyan-400">
-                        {m.sender === 'coach' ? '🌱 AI 성공 코치' : '👤 나'}
-                      </span>
-                      <span className="text-[11px] text-slate-400">{m.time}</span>
-                    </div>
-
-                    <div className={`max-w-[95%] md:max-w-[90%] rounded-2xl p-5 leading-relaxed shadow-lg ${
-                      m.sender === 'user'
-                        ? 'bg-gradient-to-r from-cyan-950/90 to-indigo-950/95 border-2 border-cyan-500/40 text-white rounded-tr-none'
-                        : 'glass-box-active text-slate-100 border-l-4 border-l-cyan-400 rounded-tl-none'
-                    }`} style={{ fontSize: `${currentFontPx}px`, lineHeight: '1.75' }}>
-                      <p className="whitespace-pre-line font-medium">{m.text}</p>
-                    </div>
-                  </div>
-                ))}
-
-                {isThinking && (
-                  <div className="flex items-center space-x-2 text-cyan-300 text-sm font-medium p-3 glass-box rounded-xl w-fit">
-                    <i data-lucide="loader-2" className="w-4 h-4 animate-spin"></i>
-                    <span>성공관리시스템 및 백업 로그에 저장하고 있어요...</span>
-                  </div>
-                )}
-                <div ref={chatEndRef} />
-              </div>
-
-              {/* 🌟 2. 4대 질문 선택 카드 리스트 (대화창 아래에 배치) */}
-              <div className="px-4 md:px-6 py-2.5 bg-space-900/95 border-t border-cyan-500/20">
+              {/* 🌟 1. [상단 배치] 4대 소크라테스 전문 질문 카드 바 (위쪽에 시원하게 배치) */}
+              <div className="px-4 py-2.5 bg-space-900/95 border-b border-cyan-500/20">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-bold text-cyan-300 flex items-center gap-1">
-                    <span>🧭</span> 4대 전문 방향성 질문 (클릭하여 답변하기):
+                    <span>🧭</span> 4대 전문 방향성 질문 (클릭하여 아래에 답변 작성):
                   </span>
                   <span className="text-[10px] font-mono text-gold-300 bg-space-850 px-2 py-0.5 rounded-full">
-                    Select to Answer
+                    Socratic Pillars
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {activeQuestions.map((q, idx) => {
                     const isSelected = selectedQuestion?.id === q.id;
                     return (
                       <button
                         key={q.id}
                         onClick={() => handleSelectQuestion(q)}
-                        className={`p-3 rounded-xl text-left border transition shadow-sm ${
+                        className={`p-2.5 rounded-xl text-left border transition shadow-sm ${
                           isSelected 
                             ? 'bg-cyan-500/25 border-cyan-300 ring-2 ring-cyan-400/40' 
                             : 'bg-space-800 hover:bg-cyan-500/15 border-slate-700 hover:border-cyan-400'
                         }`}>
                         <div className="flex items-center justify-between mb-0.5">
                           <span className="text-xs font-bold text-cyan-300 font-mono">Q{idx + 1}. {q.title}</span>
-                          <span className="text-[10px] text-slate-400 px-1.5 py-0.2 rounded bg-space-900">{q.pillar.split('.')[0]}</span>
+                          <span className="text-[10px] text-slate-400 px-1 py-0.2 rounded bg-space-900">{idx + 1}</span>
                         </div>
-                        <p className="text-xs text-slate-200 line-clamp-2 leading-relaxed">{q.text}</p>
+                        <p className="text-[11.5px] text-slate-200 line-clamp-1 leading-snug">{q.text}</p>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* 🌟 3. 선택된 질문이 대화창/입력창 위쪽에 고정되는 프롬프트 바 */}
+              {/* 🌟 2. 넓은 대화 메시지 영역 (가로폭 100% 꽉 채움) */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {messages.map(m => (
+                  <div key={m.id} className={`flex flex-col w-full ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                    <div className="flex items-center gap-1.5 mb-1 px-1">
+                      <span className="text-[11px] font-bold text-cyan-400">
+                        {m.sender === 'coach' ? '🌱 AI 성공 코치' : '👤 나'}
+                      </span>
+                      <span className="text-[10px] text-slate-500">{m.time}</span>
+                    </div>
+
+                    {/* 🌟 가로폭을 넓힌 답변 및 메시지 카드 (w-full max-w-[98%]) */}
+                    <div className={`w-full max-w-[98%] rounded-2xl p-4 leading-relaxed shadow-md ${
+                      m.sender === 'user'
+                        ? 'bg-gradient-to-r from-cyan-950/90 to-indigo-950/95 border border-cyan-500/40 text-white rounded-tr-none'
+                        : 'glass-box-active text-slate-100 border-l-4 border-l-cyan-400 rounded-tl-none'
+                    }`} style={{ fontSize: `${currentFontPx}px`, lineHeight: '1.65' }}>
+                      <p className="whitespace-pre-line font-medium">{m.text}</p>
+                    </div>
+                  </div>
+                ))}
+
+                {isThinking && (
+                  <div className="flex items-center space-x-2 text-cyan-300 text-xs font-medium p-2.5 glass-box rounded-xl w-fit">
+                    <i data-lucide="loader-2" className="w-3.5 h-3.5 animate-spin"></i>
+                    <span>성공관리시스템 및 백업 로그에 저장하고 있어요...</span>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              {/* 🌟 3. 선택된 질문 고정 바 (넓은 폭으로 표시) */}
               {selectedQuestion && (
-                <div className="px-5 py-2.5 bg-cyan-950/90 border-t-2 border-b border-cyan-400 flex items-center justify-between animate-fadeIn">
+                <div className="px-4 py-2 bg-cyan-950/90 border-t-2 border-b border-cyan-400 flex items-center justify-between animate-fadeIn">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">🎯</span>
+                    <span className="text-base">🎯</span>
                     <div>
-                      <div className="text-xs font-bold text-cyan-300 font-mono">현재 답변 작성 중인 질문: {selectedQuestion.title}</div>
+                      <div className="text-xs font-bold text-cyan-300 font-mono">선택된 질문: {selectedQuestion.title}</div>
                       <div className="text-xs font-medium text-white">{selectedQuestion.text}</div>
                     </div>
                   </div>
                   <button
                     onClick={() => setSelectedQuestion(null)}
-                    className="text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-space-900 border border-slate-700">
-                    선택 취소 ✕
+                    className="text-xs text-slate-400 hover:text-white px-2 py-0.5 rounded bg-space-900 border border-slate-700">
+                    취소 ✕
                   </button>
                 </div>
               )}
 
               {/* Voice Floating Banner */}
               {isRecording && (
-                <div className="px-6 py-2 bg-rose-950/90 border-t border-rose-500/40 flex items-center justify-between text-xs font-bold text-rose-200 animate-pulse">
+                <div className="px-5 py-1.5 bg-rose-950/90 border-t border-rose-500/40 flex items-center justify-between text-xs font-bold text-rose-200 animate-pulse">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 mic-pulse inline-block"></span>
+                    <span className="w-2 h-2 rounded-full bg-rose-500 mic-pulse inline-block"></span>
                     <span>🎙️ 30분 연속 음성 인식 중... (말씀하시면 실시간 입력됩니다)</span>
                   </div>
-                  <div className="font-mono text-gold-300 bg-space-900 px-2.5 py-0.5 rounded-xl border border-rose-500/30">
+                  <div className="font-mono text-gold-300 bg-space-900 px-2 py-0.5 rounded-lg border border-rose-500/30">
                     ⏱️ {formatTime(recordDuration)} / 30:00+
                   </div>
                 </div>
               )}
 
-              {/* Clean Bottom Input Bar */}
-              <div className="p-4 md:p-5 bg-space-900/95 border-t border-cyan-500/20">
-                <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="flex flex-col gap-2.5">
+              {/* 🌟 4. 넓은 가로폭의 입력창 & 액션 툴바 */}
+              <div className="p-3.5 bg-space-900/95 border-t border-cyan-500/20">
+                <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="flex flex-col gap-2">
                   <textarea
                     rows={inputRows}
                     value={inputMsg}
@@ -797,38 +766,47 @@
                     }}
                     placeholder={
                       selectedQuestion 
-                        ? `[${selectedQuestion.title}]에 대한 나의 생각을 작성하거나 음성으로 말씀하세요...`
-                        : (isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "하고 싶은 말이나 목표를 적거나 위 4개 질문 중 하나를 클릭하세요...")
+                        ? `[${selectedQuestion.title}]에 대한 나의 생각을 넓게 작성하거나 음성으로 말씀하세요...`
+                        : (isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "하고 싶은 말이나 목표를 적거나 상단 4개 질문 중 하나를 클릭하세요...")
                     }
-                    className="w-full bg-space-950 border-2 border-slate-700 focus:border-cyan-400 rounded-2xl p-3.5 text-white placeholder-slate-400 focus:outline-none resize-y font-sans leading-relaxed"
+                    className="w-full bg-space-950 border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none resize-y font-sans leading-relaxed"
                     style={{ fontSize: `${currentFontPx}px` }}
                   />
 
                   {/* Toolbar */}
-                  <div className="flex items-center justify-between gap-3">
-                    <button
-                      type="button"
-                      onClick={toggleVoiceRecording}
-                      title={isRecording ? "음성 인식 중지" : "30분 연속 음성 작성 시작"}
-                      className={`px-4 py-2 rounded-xl font-bold text-xs md:text-sm flex items-center gap-2 transition ${
-                        isRecording
-                          ? 'bg-rose-600 text-white mic-pulse shadow-lg hover:bg-rose-500'
-                          : 'bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700 hover:border-cyan-400'
-                      }`}>
-                      <i data-lucide={isRecording ? "mic-off" : "mic"} className="w-4 h-4"></i>
-                      <span>{isRecording ? "🎙️ 음성 녹음 중지" : "🎙️ 30분 연속 음성 인식"}</span>
-                    </button>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={toggleVoiceRecording}
+                        title={isRecording ? "음성 인식 중지" : "30분 연속 음성 작성 시작"}
+                        className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
+                          isRecording
+                            ? 'bg-rose-600 text-white mic-pulse shadow-md hover:bg-rose-500'
+                            : 'bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700 hover:border-cyan-400'
+                        }`}>
+                        <i data-lucide={isRecording ? "mic-off" : "mic"} className="w-3.5 h-3.5"></i>
+                        <span>{isRecording ? "녹음 중지" : "🎙️ 30분 음성 인식"}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setInputRows(r => r === 2 ? 4 : (r === 4 ? 6 : 2))}
+                        className="px-2 py-1.5 rounded-xl bg-space-800 hover:bg-space-700 text-slate-300 text-xs font-bold border border-slate-700">
+                        ↕️ {inputRows}줄
+                      </button>
+                    </div>
 
                     <button
                       type="submit"
                       disabled={!inputMsg.trim() || isThinking}
-                      className={`px-6 py-2 rounded-xl font-bold text-sm md:text-base flex items-center gap-2 transition shadow-lg ${
+                      className={`px-5 py-1.5 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1.5 transition shadow-md ${
                         inputMsg.trim() && !isThinking
                           ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:scale-105 shadow-cyan-500/40'
                           : 'bg-space-800 text-slate-500 cursor-not-allowed border border-slate-750'
                       }`}>
                       <span>{selectedQuestion ? '답변 저장' : '전송'}</span>
-                      <i data-lucide="send" className="w-4 h-4"></i>
+                      <i data-lucide="send" className="w-3.5 h-3.5"></i>
                     </button>
                   </div>
                 </form>
@@ -844,87 +822,87 @@
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-slate-600 rounded-full"></div>
             </div>
 
-            {/* 🌟 RIGHT PANE: 2개로 분할된 [상단: 성공관리시스템(SMS)] & [하단: 대화내용 백업 기록] */}
+            {/* RIGHT PANE: [상단: 성공관리시스템(SMS)] & [하단: 넓은 폭 대화내용 백업 기록] */}
             <aside 
               className="flex-1 flex flex-col bg-space-950/95 overflow-hidden"
               style={{ width: `${100 - leftWidthPercent}%` }}>
               
-              {/* 🌟 4. 우측 상단 (50% 높이): 성공관리시스템(SMS) 파이프라인 */}
-              <div className="flex-1 border-b-2 border-slate-800 p-5 md:p-6 overflow-y-auto space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+              {/* 🌟 우측 상단 (50% 높이): 성공관리시스템(SMS) 파이프라인 */}
+              <div className="flex-1 border-b-2 border-slate-800 p-4 overflow-y-auto space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">📊</span>
-                    <h2 className="text-base md:text-lg font-black text-white">성공관리시스템 (SMS) 파이프라인</h2>
+                    <span className="text-base">📊</span>
+                    <h2 className="text-sm font-black text-white">성공관리시스템 (SMS) 파이프라인</h2>
                   </div>
                   <button
                     onClick={() => {
                       const doc = `# 🌌 [Anti-Gravity SMS 성공관리시스템 백데이터]\n\n## 1단계: 소크라테스식 탐색\n- 표면 목표: ${smsPipeline.step1.surfaceGoal}\n- 본원적 열망: ${smsPipeline.step1.latentDesire}\n- 심리적 저항: ${smsPipeline.step1.gravityFriction}\n\n## 2단계: 데이터 구조화 (DCA)\n- Definite Chief Aim: ${smsPipeline.step2.dca}\n- 지식 분류: ${smsPipeline.step2.paraCategory}\n\n## 3단계: 행동 알고리즘\n- Ray Dalio If-Then: ${smsPipeline.step3.ifThenRule}\n- 3분 마이크로 미션: ${smsPipeline.step3.crucialAction}\n- 활성화 에너지 지수: ${smsPipeline.step3.activationEnergy}`;
                       downloadTextFile('성공관리시스템_SMS_데이터.md', doc);
                     }}
-                    className="px-3 py-1 rounded-xl font-bold text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 flex items-center gap-1.5 shadow-md">
-                    <i data-lucide="download" className="w-3.5 h-3.5"></i>
+                    className="px-2.5 py-1 rounded-lg font-bold text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 flex items-center gap-1 shadow-sm">
+                    <i data-lucide="download" className="w-3 h-3"></i>
                     <span>SMS 다운로드</span>
                   </button>
                 </div>
 
                 {/* 1단계 */}
-                <div className="glass-box rounded-2xl p-4 border border-cyan-500/30 space-y-2 pipeline-step-active">
+                <div className="glass-box rounded-xl p-3 border border-cyan-500/30 space-y-1.5 pipeline-step-active">
                   <div className="flex justify-between items-center text-xs font-bold text-cyan-300">
                     <span>1단계: 소크라테스식 탐색 (질문-성찰)</span>
                     <span className="text-[10px] font-mono text-cyan-400">Synced</span>
                   </div>
-                  <div className="text-xs space-y-1.5">
-                    <div className="p-2 bg-space-900 rounded-lg">
-                      <span className="text-slate-400 block text-[11px]">🎯 표면적 목표:</span>
+                  <div className="text-xs space-y-1">
+                    <div className="p-1.5 bg-space-900 rounded-lg">
+                      <span className="text-slate-400 block text-[10.5px]">🎯 표면적 목표:</span>
                       <strong className="text-slate-100">{smsPipeline.step1.surfaceGoal}</strong>
                     </div>
-                    <div className="p-2 bg-space-900 rounded-lg">
-                      <span className="text-cyan-400 block text-[11px]">💎 본원적 열망:</span>
+                    <div className="p-1.5 bg-space-900 rounded-lg">
+                      <span className="text-cyan-400 block text-[10.5px]">💎 본원적 열망:</span>
                       <span className="text-cyan-200 font-semibold">{smsPipeline.step1.latentDesire}</span>
                     </div>
-                    <div className="p-2 bg-space-900 rounded-lg">
-                      <span className="text-rose-400 block text-[11px]">🛑 심리적 저항:</span>
+                    <div className="p-1.5 bg-space-900 rounded-lg">
+                      <span className="text-rose-400 block text-[10.5px]">🛑 심리적 저항:</span>
                       <span className="text-rose-200">{smsPipeline.step1.gravityFriction}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* 2단계 & 3단계 */}
-                <div className="glass-box-active rounded-2xl p-4 border-2 border-gold-400/50 space-y-2">
+                {/* 2·3단계 */}
+                <div className="glass-box-active rounded-xl p-3 border-2 border-gold-400/50 space-y-1.5">
                   <div className="flex justify-between items-center text-xs font-bold text-gold-300">
                     <span>2·3단계: 중심 목표(DCA) & If-Then 행동 알고리즘</span>
                     <span className="text-[10px] font-mono text-gold-300">Engine Ready</span>
                   </div>
-                  <div className="text-xs space-y-1.5">
-                    <div className="p-2.5 bg-space-900 rounded-lg border border-purple-500/30">
-                      <span className="text-purple-300 block text-[11px] font-bold">🧭 중심 목표 (DCA):</span>
+                  <div className="text-xs space-y-1">
+                    <div className="p-2 bg-space-900 rounded-lg border border-purple-500/30">
+                      <span className="text-purple-300 block text-[10.5px] font-bold">🧭 중심 목표 (DCA):</span>
                       <p className="text-white font-bold">{smsPipeline.step2.dca}</p>
                     </div>
-                    <div className="p-2.5 bg-space-900 rounded-lg border border-gold-500/40">
-                      <span className="text-gold-400 block text-[11px] font-bold">⚡ Ray Dalio If-Then 원칙:</span>
+                    <div className="p-2 bg-space-900 rounded-lg border border-gold-500/40">
+                      <span className="text-gold-400 block text-[10.5px] font-bold">⚡ Ray Dalio If-Then 원칙:</span>
                       <p className="text-gold-100">{smsPipeline.step3.ifThenRule}</p>
                     </div>
-                    <div className="p-2.5 bg-space-900 rounded-lg border border-cyan-400/40 flex justify-between items-center">
+                    <div className="p-2 bg-space-900 rounded-lg border border-cyan-400/40 flex justify-between items-center">
                       <div>
-                        <span className="text-cyan-300 block text-[11px] font-bold">🚀 3분 활성화 미션:</span>
+                        <span className="text-cyan-300 block text-[10.5px] font-bold">🚀 3분 활성화 미션:</span>
                         <span className="text-white font-extrabold text-xs">{smsPipeline.step3.crucialAction}</span>
                       </div>
                       <button
                         onClick={() => { setTimerOn(true); playSound('pop'); }}
-                        className="px-3 py-1.5 rounded-lg text-xs font-black bg-cyan-500 text-black hover:bg-cyan-400">
-                        타이머 시작
+                        className="px-2.5 py-1 rounded-lg text-xs font-black bg-cyan-500 text-black hover:bg-cyan-400">
+                        타이머
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* 🌟 5. 우측 하단 (50% 높이): 실시간 대화 & 답변 백업 기록 (상시 확인 및 다운로드) */}
-              <div className="flex-1 p-5 md:p-6 overflow-y-auto space-y-3 bg-space-900/60">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">📒</span>
-                    <h3 className="text-base font-bold text-emerald-400">실시간 대화 & 답변 백업 기록</h3>
+              {/* 🌟 우측 하단 (50% 높이): 가로폭을 시원하게 넓힌 실시간 대화 & 답변 백업 기록 */}
+              <div className="flex-1 p-4 overflow-y-auto space-y-2.5 bg-space-900/60">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-base">📒</span>
+                    <h3 className="text-sm font-bold text-emerald-400">실시간 대화 & 답변 백업 기록</h3>
                   </div>
                   <button
                     onClick={() => {
@@ -932,16 +910,17 @@
                         qaBackupLogs.map((log, idx) => `### ${idx + 1}. [${log.type}] ${log.question} (${log.time})\n- 답변 내용: ${log.answer}\n`).join('\n');
                       downloadTextFile('대화내용_답변_백업로그.md', doc);
                     }}
-                    className="px-3 py-1 rounded-xl font-bold text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-400 hover:bg-emerald-500/30 flex items-center gap-1.5 shadow-md">
-                    <i data-lucide="download" className="w-3.5 h-3.5"></i>
+                    className="px-2.5 py-1 rounded-lg font-bold text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-400 hover:bg-emerald-500/30 flex items-center gap-1 shadow-sm">
+                    <i data-lucide="download" className="w-3 h-3"></i>
                     <span>백업 다운로드 (.md)</span>
                   </button>
                 </div>
 
-                <div className="space-y-2.5">
+                {/* 🌟 가로폭을 시원하게 확장한 답변 카드 리스트 (w-full) */}
+                <div className="space-y-2 w-full">
                   {qaBackupLogs.map((log, idx) => (
-                    <div key={log.id} className="p-3.5 rounded-xl bg-space-850 border border-slate-800 space-y-1">
-                      <div className="flex justify-between items-center text-[11px] text-slate-400">
+                    <div key={log.id} className="w-full p-3 rounded-xl bg-space-850 border border-slate-800 space-y-1">
+                      <div className="flex justify-between items-center text-[10.5px] text-slate-400">
                         <span className="font-bold text-cyan-300 font-mono">#{idx + 1} {log.question}</span>
                         <span>{log.time}</span>
                       </div>
@@ -960,18 +939,18 @@
           {/* 3-Minute Stamp Complete Modal */}
           {showStampPopup && (
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="glass-box-active rounded-3xl max-w-md w-full p-8 text-center border-2 border-cyan-400 shadow-2xl">
-                <div className="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center mb-4">
-                  <span className="text-4xl">🎉</span>
+              <div className="glass-box-active rounded-3xl max-w-md w-full p-6 text-center border-2 border-cyan-400 shadow-2xl">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center mb-3">
+                  <span className="text-3xl">🎉</span>
                 </div>
-                <h3 className="text-2xl font-black text-white mb-2">3분 미션 성공 완료!</h3>
-                <p className="text-base text-slate-200 mb-6 leading-relaxed">
+                <h3 className="text-xl font-black text-white mb-1.5">3분 미션 성공 완료!</h3>
+                <p className="text-xs text-slate-200 mb-5 leading-relaxed">
                   오늘의 귀차니즘을 멋지게 이겨내셨어요!<br/>
                   오른편 <strong>성공관리시스템 모멘텀 +10%</strong>가 적립되었습니다.
                 </p>
                 <button
                   onClick={() => setShowStampPopup(false)}
-                  className="w-full py-4 rounded-xl font-bold text-base bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg">
+                  className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg">
                   확인
                 </button>
               </div>
