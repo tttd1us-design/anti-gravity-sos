@@ -243,7 +243,7 @@
       const [inputHeightPx, setInputHeightPx] = useState(90);
       const [selectedQuestion, setSelectedQuestion] = useState(null);
 
-      // 5대 메인 탭
+      // 🌟 6대 메인 탭: 'WORKSPACE' | 'MATRIX' | 'ANALYSIS' | 'ACTION' | 'SOCIAL_ALARM' | 'BACKUP_LOGS'
       const [mainNavTab, setMainNavTab] = useState('WORKSPACE');
       const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
 
@@ -276,7 +276,7 @@
       // 4대 질문 목록
       const [activeQuestions, setActiveQuestions] = useState(() => generateSocratic4Questions("월 100만 원 부업 수익 만들기"));
 
-      // 5대 거장 심층 분석 데이터 (4대 Tier 구조로 고도화)
+      // 5대 거장 심층 분석 데이터
       const [fiveMastersData, setFiveMastersData] = useState(() => {
         const saved = localStorage.getItem('AG_FIVE_MASTERS_V4');
         return saved ? JSON.parse(saved) : {
@@ -580,7 +580,6 @@
             return next;
           });
 
-          // 진행도 상승
           setBuildStep(4);
           setBuildProgressPercent(prev => Math.min(100, prev + 10));
 
@@ -699,7 +698,7 @@
 
       const chatPx = Math.max(14, 16 * chatFontSize);
       const systemPx = Math.max(14, 15.5 * systemFontSize);
-      const backupPx = Math.max(13, 14.5 * backupFontSize);
+      const backupPx = Math.max(14, 15.5 * backupFontSize);
       const analysisPx = Math.max(15, 16.5 * analysisFontSize);
       const actionPx = Math.max(16, 17.5 * actionFontSize);
       const alarmPx = Math.max(15, 16.5 * alarmFontSize);
@@ -759,9 +758,11 @@
             </button>
           </header>
 
-          {/* 5대 메인 내비게이션 탭 바 */}
+          {/* 🌟 6대 메인 내비게이션 탭 바 (대화&답변 백업로그 탭 상단 추가 완료) */}
           <nav className="bg-space-900/95 border-b border-cyan-500/20 px-4 py-2.5 flex items-center justify-between overflow-x-auto z-10">
             <div className="flex items-center gap-2 min-w-max">
+              
+              {/* 1. 대화 워크스페이스 */}
               <button
                 onClick={() => { setMainNavTab('WORKSPACE'); playSound('pop'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -772,6 +773,21 @@
                 <span>💬 대화 워크스페이스</span>
               </button>
 
+              {/* 🌟 [신규 추가] 대화 & 답변 백업로그 상단 탭 */}
+              <button
+                onClick={() => { setMainNavTab('BACKUP_LOGS'); playSound('pop'); }}
+                className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
+                  mainNavTab === 'BACKUP_LOGS'
+                    ? 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-black shadow-lg shadow-emerald-500/30'
+                    : 'bg-space-800 text-emerald-300 hover:text-white border border-slate-700'
+                }`}>
+                <span>📒 대화&답변 백업로그</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-[10.5px] font-mono text-white">
+                  {qaBackupLogs.length}
+                </span>
+              </button>
+
+              {/* 3. 5대 시스템종합 */}
               <button
                 onClick={() => { setMainNavTab('MATRIX'); playSound('pop'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -782,6 +798,7 @@
                 <span>📑 5대 시스템종합</span>
               </button>
 
+              {/* 4. 분석 시스템 */}
               <button
                 onClick={() => { setMainNavTab('ANALYSIS'); playSound('pop'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -792,6 +809,7 @@
                 <span>📊 분석 시스템</span>
               </button>
 
+              {/* 5. 행동연계 */}
               <button
                 onClick={() => { setMainNavTab('ACTION'); playSound('pop'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -802,6 +820,7 @@
                 <span>⚡ 행동연계</span>
               </button>
 
+              {/* 6. 소셜 알람 */}
               <button
                 onClick={() => { setMainNavTab('SOCIAL_ALARM'); playSound('bell'); }}
                 className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center gap-1.5 ${
@@ -826,7 +845,7 @@
           {/* MAIN CONTENT AREA */}
           <main className="flex-1 flex overflow-hidden relative">
 
-            {/* 🌟 1. [대화 워크스페이스] 탭 */}
+            {/* 🌟 1. [대화 워크스페이스] 탭 (우측 100% 전체 공간을 4대 계층 성공시스템에 집중 활용) */}
             {mainNavTab === 'WORKSPACE' && (
               <div className="flex-1 flex w-full h-full overflow-hidden">
                 
@@ -993,27 +1012,26 @@
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-slate-600 rounded-full"></div>
                 </div>
 
-                {/* 🌟 우측 시스템 및 백업 영역 (4대 계층 AI 종합 성공관리시스템 아키텍처) */}
+                {/* 🌟 우측 시스템 영역 (백업로그가 상단 탭으로 이동하여 우측 전체를 4대 계층 성공시스템으로 100% 쾌적하게 활용) */}
                 <aside className="flex-1 flex flex-col bg-space-950/95 overflow-hidden" style={{ width: `${100 - leftWidthPercent}%` }}>
                   
-                  {/* 🌟 우측 상단: 4대 계층 세부 작동 메커니즘 & 실시간 진화 파이프라인 */}
-                  <div className="h-[65%] border-b-2 border-slate-800 p-3.5 md:p-4 flex flex-col overflow-hidden space-y-2.5">
+                  <div className="h-full p-4 md:p-6 flex flex-col overflow-hidden space-y-3">
                     
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <div>
-                        <h2 className="text-xs md:text-sm font-black text-white flex items-center gap-1.5">
+                        <h2 className="text-sm md:text-base font-black text-white flex items-center gap-1.5">
                           <span>🏛️</span> AI 4대 계층 성공관리시스템 (4-Tier Architecture)
                         </h2>
-                        <span className="text-[10.5px] text-cyan-300">대화가 누적될수록 목표와 행동 규칙이 정밀하게 진화합니다 (대화 {dialogueCount}회 축적)</span>
+                        <span className="text-xs text-cyan-300">대화가 누적될수록 목표와 행동 규칙이 정밀하게 진화합니다 (대화 {dialogueCount}회 축적)</span>
                       </div>
-                      <FontController label="시스템:" value={systemFontSize} onChange={setSystemFontSize} />
+                      <FontController label="시스템 글씨:" value={systemFontSize} onChange={setSystemFontSize} />
                     </div>
 
-                    {/* 🌟 4단계 통합 데이터 흐름 파이프라인 (탐색 ➔ 체계화 ➔ 구체화 ➔ 최적화) */}
-                    <div className="bg-space-900/90 rounded-2xl p-2.5 border border-cyan-500/30 space-y-1.5">
-                      <div className="flex items-center justify-between text-[11px] font-bold">
+                    {/* 4단계 통합 데이터 흐름 파이프라인 */}
+                    <div className="bg-space-900/90 rounded-2xl p-3 border border-cyan-500/30 space-y-2">
+                      <div className="flex items-center justify-between text-xs font-bold">
                         <span className="text-slate-300 flex items-center gap-1">
-                          <span>🔄</span> 시스템 아키텍처 데이터 흐름:
+                          <span>🔄</span> 실시간 시스템 구축 파이프라인:
                         </span>
                         <span className="text-gold-300 font-mono font-black">
                           단계 {buildStep}/4 ({buildProgressPercent}% 구축 완료)
@@ -1021,158 +1039,158 @@
                       </div>
 
                       {/* 게이지 바 */}
-                      <div className="w-full h-2 bg-space-950 rounded-full overflow-hidden border border-slate-800">
+                      <div className="w-full h-2.5 bg-space-950 rounded-full overflow-hidden border border-slate-800">
                         <div 
                           className="h-full bg-gradient-to-r from-cyan-400 via-purple-400 via-pink-400 to-gold-400 transition-all duration-500 shadow-lg shadow-cyan-500/50"
                           style={{ width: `${buildProgressPercent}%` }}></div>
                       </div>
 
                       {/* 4대 파이프라인 단계 인디케이터 */}
-                      <div className="grid grid-cols-4 gap-1 pt-0.5 text-[9.5px] text-center font-bold">
-                        <div className={`p-1 rounded ${buildStep >= 1 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-space-800 text-slate-500'}`}>
+                      <div className="grid grid-cols-4 gap-1.5 pt-0.5 text-[10px] text-center font-bold">
+                        <div className={`p-1.5 rounded-lg ${buildStep >= 1 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-space-800 text-slate-500'}`}>
                           1. 탐색(DCA) ✓
                         </div>
-                        <div className={`p-1 rounded ${buildStep >= 2 ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'bg-space-800 text-slate-500'}`}>
+                        <div className={`p-1.5 rounded-lg ${buildStep >= 2 ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'bg-space-800 text-slate-500'}`}>
                           2. 체계화(PARA) ✓
                         </div>
-                        <div className={`p-1 rounded ${buildStep >= 3 ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40' : 'bg-space-800 text-slate-500'}`}>
+                        <div className={`p-1.5 rounded-lg ${buildStep >= 3 ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40' : 'bg-space-800 text-slate-500'}`}>
                           3. 구체화(GTD) ✓
                         </div>
-                        <div className={`p-1 rounded ${buildStep >= 4 ? 'bg-gold-500/20 text-gold-300 border border-gold-500/40' : 'bg-space-800 text-slate-500'}`}>
+                        <div className={`p-1.5 rounded-lg ${buildStep >= 4 ? 'bg-gold-500/20 text-gold-300 border border-gold-500/40' : 'bg-space-800 text-slate-500'}`}>
                           4. 최적화(원칙) ⚡
                         </div>
                       </div>
                     </div>
 
                     {/* Tier 필터 탭 */}
-                    <div className="flex items-center gap-1 overflow-x-auto pb-0.5 text-xs font-bold">
-                      <button onClick={() => setTierFilter('ALL')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'ALL' ? 'bg-cyan-500 text-black font-black' : 'bg-space-900 text-slate-400 hover:text-white'}`}>전체 보기</button>
-                      <button onClick={() => setTierFilter('TIER1')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'TIER1' ? 'bg-gold-500 text-black font-black' : 'bg-space-900 text-gold-300 hover:text-white'}`}>Tier 1 (잠재의식/DCA)</button>
-                      <button onClick={() => setTierFilter('TIER2')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'TIER2' ? 'bg-purple-500 text-white font-black' : 'bg-space-900 text-purple-300 hover:text-white'}`}>Tier 2 (지식/PARA)</button>
-                      <button onClick={() => setTierFilter('TIER3')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'TIER3' ? 'bg-emerald-500 text-black font-black' : 'bg-space-900 text-emerald-300 hover:text-white'}`}>Tier 3 (수직정렬/GTD)</button>
-                      <button onClick={() => setTierFilter('TIER4')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'TIER4' ? 'bg-cyan-400 text-black font-black' : 'bg-space-900 text-cyan-300 hover:text-white'}`}>Tier 4 (원칙진화/If-Then)</button>
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-bold">
+                      <button onClick={() => setTierFilter('ALL')} className={`px-2.5 py-1 rounded-xl transition ${tierFilter === 'ALL' ? 'bg-cyan-500 text-black font-black' : 'bg-space-900 text-slate-400 hover:text-white'}`}>전체 보기</button>
+                      <button onClick={() => setTierFilter('TIER1')} className={`px-2.5 py-1 rounded-xl transition ${tierFilter === 'TIER1' ? 'bg-gold-500 text-black font-black' : 'bg-space-900 text-gold-300 hover:text-white'}`}>Tier 1 (잠재의식/DCA)</button>
+                      <button onClick={() => setTierFilter('TIER2')} className={`px-2.5 py-1 rounded-xl transition ${tierFilter === 'TIER2' ? 'bg-purple-500 text-white font-black' : 'bg-space-900 text-purple-300 hover:text-white'}`}>Tier 2 (지식/PARA)</button>
+                      <button onClick={() => setTierFilter('TIER3')} className={`px-2.5 py-1 rounded-xl transition ${tierFilter === 'TIER3' ? 'bg-emerald-500 text-black font-black' : 'bg-space-900 text-emerald-300 hover:text-white'}`}>Tier 3 (수직정렬/GTD)</button>
+                      <button onClick={() => setTierFilter('TIER4')} className={`px-2.5 py-1 rounded-xl transition ${tierFilter === 'TIER4' ? 'bg-cyan-400 text-black font-black' : 'bg-space-900 text-cyan-300 hover:text-white'}`}>Tier 4 (원칙진화/If-Then)</button>
                     </div>
 
-                    {/* 🌟 4대 계층별 세부 작동 메커니즘 카드 스트림 */}
-                    <div className="flex-1 overflow-y-auto space-y-2.5 pr-1" style={{ fontSize: `${systemPx}px` }}>
+                    {/* 4대 계층별 세부 작동 메커니즘 카드 스트림 */}
+                    <div className="flex-1 overflow-y-auto space-y-3 pr-1" style={{ fontSize: `${systemPx}px` }}>
                       
-                      {/* 🌟 Tier 1. 잠재의식 발굴 계층 (Cognitive & Subconscious Layer) */}
+                      {/* Tier 1. 잠재의식 발굴 계층 */}
                       {(tierFilter === 'ALL' || tierFilter === 'TIER1') && (
-                        <div className="glass-box-active rounded-2xl p-3.5 border-2 border-gold-400/50 space-y-2 shadow-lg">
+                        <div className="glass-box-active rounded-3xl p-5 border-2 border-gold-400/50 space-y-3 shadow-lg">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-2">
                               <span className="tier-badge bg-gold-400/20 text-gold-300 border border-gold-400/40">Tier 1</span>
-                              <strong className="text-gold-300 font-bold text-xs md:text-sm">잠재의식 발굴 계층 (Cognitive & Subconscious)</strong>
+                              <strong className="text-gold-300 font-bold text-sm md:text-base">잠재의식 발굴 계층 (Cognitive & Subconscious)</strong>
                             </div>
-                            <span className="text-[10px] text-slate-400 font-mono">로빈스(NAC) + 힐(DCA)</span>
+                            <span className="text-xs text-slate-400 font-mono">로빈스(NAC) + 힐(DCA)</span>
                           </div>
                           
-                          <div className="p-2.5 bg-space-950 rounded-xl border border-gold-500/30 space-y-1">
-                            <span className="text-[11px] text-gold-400 font-black block">🎯 DCA 단 하나의 북극성 지표 (Definite Chief Aim):</span>
-                            <p className="text-white font-extrabold text-xs md:text-sm leading-relaxed">"{fiveMastersData.hill.definiteChiefAim}"</p>
+                          <div className="p-3.5 bg-space-950 rounded-2xl border border-gold-500/30 space-y-1">
+                            <span className="text-xs text-gold-400 font-black block">🎯 DCA 단 하나의 북극성 지표 (Definite Chief Aim):</span>
+                            <p className="text-white font-extrabold text-sm md:text-base leading-relaxed">"{fiveMastersData.hill.definiteChiefAim}"</p>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2 text-[11px]">
-                            <div className="p-2 bg-space-900 rounded-lg">
-                              <span className="text-slate-400 block font-bold">✨ 본원적 핵심 동기(Need):</span>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+                            <div className="p-3 bg-space-900 rounded-xl">
+                              <span className="text-slate-400 block font-bold mb-0.5">✨ 본원적 핵심 동기(Need):</span>
                               <p className="text-white font-bold">{fiveMastersData.robbins.coreDriver}</p>
                             </div>
-                            <div className="p-2 bg-space-900 rounded-lg">
-                              <span className="text-rose-400 block font-bold">🛑 실패 시 최악의 고통:</span>
-                              <p className="text-slate-200 font-medium line-clamp-2">{fiveMastersData.robbins.painOfFailure}</p>
+                            <div className="p-3 bg-space-900 rounded-xl">
+                              <span className="text-rose-400 block font-bold mb-0.5">🛑 실패 시 최악의 고통:</span>
+                              <p className="text-slate-200 font-medium">{fiveMastersData.robbins.painOfFailure}</p>
                             </div>
                           </div>
                         </div>
                       )}
 
-                      {/* 🌟 Tier 2. 지식 및 맥락 구조화 계층 (Knowledge & Architecture Layer) */}
+                      {/* Tier 2. 지식 및 맥락 구조화 계층 */}
                       {(tierFilter === 'ALL' || tierFilter === 'TIER2') && (
-                        <div className="glass-box rounded-2xl p-3.5 border border-purple-500/40 space-y-2">
+                        <div className="glass-box rounded-3xl p-5 border border-purple-500/40 space-y-3">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-2">
                               <span className="tier-badge bg-purple-500/20 text-purple-300 border border-purple-500/40">Tier 2</span>
-                              <strong className="text-purple-300 font-bold text-xs md:text-sm">지식 및 맥락 구조화 계층 (Knowledge & Architecture)</strong>
+                              <strong className="text-purple-300 font-bold text-sm md:text-base">지식 및 맥락 구조화 계층 (Knowledge & Architecture)</strong>
                             </div>
-                            <span className="text-[10px] text-slate-400 font-mono">포르테(CODE & PARA)</span>
+                            <span className="text-xs text-slate-400 font-mono">포르테(CODE & PARA)</span>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-1.5 text-[11px]">
-                            <div className="p-2 bg-space-900 rounded-lg border-l-2 border-purple-400">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                            <div className="p-3 bg-space-900 rounded-xl border-l-4 border-purple-400">
                               <strong className="text-purple-300 block mb-0.5">📁 Projects (구체적 목표)</strong>
-                              <p className="text-white font-bold line-clamp-2">{fiveMastersData.forte.projects}</p>
+                              <p className="text-white font-bold">{fiveMastersData.forte.projects}</p>
                             </div>
-                            <div className="p-2 bg-space-900 rounded-lg border-l-2 border-slate-600">
+                            <div className="p-3 bg-space-900 rounded-xl border-l-4 border-slate-600">
                               <strong className="text-slate-300 block mb-0.5">📂 Areas (지속 관리 영역)</strong>
-                              <p className="text-white font-bold line-clamp-2">{fiveMastersData.forte.areas}</p>
+                              <p className="text-white font-bold">{fiveMastersData.forte.areas}</p>
                             </div>
-                            <div className="p-2 bg-space-900 rounded-lg border-l-2 border-cyan-600">
+                            <div className="p-3 bg-space-900 rounded-xl border-l-4 border-cyan-600">
                               <strong className="text-cyan-300 block mb-0.5">📚 Resources (참조 데이터)</strong>
-                              <p className="text-white font-bold line-clamp-2">{fiveMastersData.forte.resources}</p>
+                              <p className="text-white font-bold">{fiveMastersData.forte.resources}</p>
                             </div>
-                            <div className="p-2 bg-space-900 rounded-lg border-l-2 border-slate-700">
+                            <div className="p-3 bg-space-900 rounded-xl border-l-4 border-slate-700">
                               <strong className="text-slate-400 block mb-0.5">🗄️ Archives (보관 기록)</strong>
-                              <p className="text-slate-300 line-clamp-2">{fiveMastersData.forte.archives}</p>
+                              <p className="text-slate-300">{fiveMastersData.forte.archives}</p>
                             </div>
                           </div>
 
-                          <div className="p-2 bg-space-950 rounded-xl border border-purple-500/30 text-[11px]">
+                          <div className="p-3 bg-space-950 rounded-2xl border border-purple-500/30 text-xs">
                             <span className="text-purple-300 font-bold block mb-0.5">💎 증류된 본질 (Distilled Essence):</span>
                             <p className="text-white font-bold">{fiveMastersData.forte.distilledEssence}</p>
                           </div>
                         </div>
                       )}
 
-                      {/* 🌟 Tier 3. 수직적 행동 정렬 계층 (Vertical Alignment Layer) */}
+                      {/* Tier 3. 수직적 행동 정렬 계층 */}
                       {(tierFilter === 'ALL' || tierFilter === 'TIER3') && (
-                        <div className="glass-box rounded-2xl p-3.5 border border-emerald-500/40 space-y-2">
+                        <div className="glass-box rounded-3xl p-5 border border-emerald-500/40 space-y-3">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-2">
                               <span className="tier-badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Tier 3</span>
-                              <strong className="text-emerald-300 font-bold text-xs md:text-sm">수직적 행동 정렬 계층 (Vertical Alignment Layer)</strong>
+                              <strong className="text-emerald-300 font-bold text-sm md:text-base">수직적 행동 정렬 계층 (Vertical Alignment Layer)</strong>
                             </div>
-                            <span className="text-[10px] text-slate-400 font-mono">앨런(GTD 6 Altitudes)</span>
+                            <span className="text-xs text-slate-400 font-mono">앨런(GTD 6 Altitudes)</span>
                           </div>
 
-                          <div className="space-y-1 text-[11px]">
-                            <div className="p-1.5 bg-space-900 rounded-lg border-l-2 border-purple-400 flex justify-between">
+                          <div className="space-y-1.5 text-xs">
+                            <div className="p-2.5 bg-space-900 rounded-xl border-l-4 border-purple-400 flex justify-between items-center">
                               <span className="text-purple-300 font-bold">50,000ft (존재목적):</span>
-                              <span className="text-white font-bold truncate max-w-[70%]">{fiveMastersData.gtd.altitude50k}</span>
+                              <span className="text-white font-bold">{fiveMastersData.gtd.altitude50k}</span>
                             </div>
-                            <div className="p-1.5 bg-space-900 rounded-lg border-l-2 border-cyan-400 flex justify-between">
+                            <div className="p-2.5 bg-space-900 rounded-xl border-l-4 border-cyan-400 flex justify-between items-center">
                               <span className="text-cyan-300 font-bold">10,000ft (프로젝트):</span>
-                              <span className="text-white font-bold truncate max-w-[70%]">{fiveMastersData.gtd.altitude10k}</span>
+                              <span className="text-white font-bold">{fiveMastersData.gtd.altitude10k}</span>
                             </div>
                           </div>
 
-                          <div className="p-2.5 bg-emerald-950/80 rounded-xl border-2 border-emerald-400 flex items-center justify-between">
+                          <div className="p-4 bg-emerald-950/80 rounded-2xl border-2 border-emerald-400 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                             <div>
-                              <span className="text-emerald-400 font-bold text-[11px] block">⚡ Runway (지금 당장 3분 최소 물리 행동):</span>
-                              <p className="text-white font-black text-xs md:text-sm">{fiveMastersData.gtd.runway}</p>
+                              <span className="text-emerald-400 font-bold text-xs block mb-0.5">⚡ Runway (지금 당장 3분 최소 물리 행동):</span>
+                              <p className="text-white font-black text-sm md:text-base">{fiveMastersData.gtd.runway}</p>
                             </div>
-                            <button onClick={() => { setTimeLeft(180); setTimerOn(true); playSound('pop'); }} className="px-3 py-1.5 rounded-lg bg-emerald-400 text-black font-black text-xs shadow-md">
+                            <button onClick={() => { setTimeLeft(180); setTimerOn(true); playSound('pop'); }} className="px-4 py-2 rounded-xl bg-emerald-400 text-black font-black text-xs shadow-md">
                               ⏱️ 3분 착수
                             </button>
                           </div>
                         </div>
                       )}
 
-                      {/* 🌟 Tier 4. 원칙화 및 진화 계층 (Algorithmic Principles & Evolution Layer) */}
+                      {/* Tier 4. 원칙화 및 진화 계층 */}
                       {(tierFilter === 'ALL' || tierFilter === 'TIER4') && (
-                        <div className="glass-box rounded-2xl p-3.5 border border-cyan-400/50 space-y-2">
+                        <div className="glass-box rounded-3xl p-5 border border-cyan-400/50 space-y-3">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-2">
                               <span className="tier-badge bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">Tier 4</span>
-                              <strong className="text-cyan-300 font-bold text-xs md:text-sm">원칙화 및 진화 계층 (Principles & Evolution)</strong>
+                              <strong className="text-cyan-300 font-bold text-sm md:text-base">원칙화 및 진화 계층 (Principles & Evolution)</strong>
                             </div>
-                            <span className="text-[10px] text-slate-400 font-mono">달리오(Machine Feedback)</span>
+                            <span className="text-xs text-slate-400 font-mono">달리오(Machine Feedback)</span>
                           </div>
 
-                          <div className="p-2.5 bg-space-950 rounded-xl border border-cyan-500/30 space-y-1">
-                            <span className="text-cyan-400 font-black text-[11px] block">⚡ 개인 의사결정 헌법 (If-Then Rule DB):</span>
-                            <p className="text-white font-black text-xs md:text-sm leading-relaxed">{fiveMastersData.dalio.ifThenRule}</p>
+                          <div className="p-3.5 bg-space-950 rounded-2xl border border-cyan-500/30 space-y-1">
+                            <span className="text-cyan-400 font-black text-xs block">⚡ 개인 의사결정 헌법 (If-Then Rule DB):</span>
+                            <p className="text-white font-black text-sm md:text-base leading-relaxed">{fiveMastersData.dalio.ifThenRule}</p>
                           </div>
 
-                          <div className="p-2 bg-space-900 rounded-lg text-[11px]">
+                          <div className="p-3 bg-space-900 rounded-xl text-xs">
                             <span className="text-slate-400 font-bold block mb-0.5">🔍 5-Whys 구조적 편향 진단:</span>
                             <p className="text-slate-200">{fiveMastersData.dalio.diagnosis5Why}</p>
                           </div>
@@ -1182,32 +1200,69 @@
                     </div>
                   </div>
 
-                  {/* 우측 하단 백업 로그 */}
-                  <div className="flex-1 p-3.5 overflow-y-auto space-y-2 bg-space-900/60 flex flex-col">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-1">
-                      <h3 className="text-xs font-bold text-emerald-400 flex items-center gap-1"><span>📒</span> 대화 & 답변 백업 로그</h3>
-                      <FontController label="백업:" value={backupFontSize} onChange={setBackupFontSize} />
-                    </div>
-
-                    <div className="space-y-1.5 w-full flex-1 overflow-y-auto" style={{ fontSize: `${backupPx}px` }}>
-                      {qaBackupLogs.map((log, idx) => (
-                        <div key={log.id} className="w-full p-2.5 rounded-xl bg-space-850 border border-slate-800 space-y-0.5">
-                          <div className="flex justify-between items-center text-[10.5px] text-slate-400">
-                            <span className="font-bold text-cyan-300 font-mono">#{idx + 1} {log.question}</span>
-                            <span>{log.time}</span>
-                          </div>
-                          <p className="text-slate-100 font-medium whitespace-pre-line leading-relaxed">{log.answer}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
                 </aside>
 
               </div>
             )}
 
-            {/* 🌟 2. [5대 시스템종합] 탭 */}
+            {/* 🌟 2. [신규 메인 탭] 대화&답변 백업로그 (Full-Page Vault) */}
+            {mainNavTab === 'BACKUP_LOGS' && (
+              <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-6xl mx-auto" style={{ fontSize: `${backupPx}px` }}>
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-emerald-300 to-cyan-300">
+                        📒 실시간 대화 & 답변 백업로그 볼트 (Backup Vault)
+                      </h2>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold">
+                        총 {qaBackupLogs.length}건 기록
+                      </span>
+                    </div>
+                    <p className="text-xs md:text-sm text-slate-300 mt-1">
+                      내가 작성한 모든 발화와 소크라테스 질의 답변이 영구 보존되며, 1클릭 다운로드가 가능합니다.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <FontController label="백업 글씨:" value={backupFontSize} onChange={setBackupFontSize} />
+                    <button
+                      onClick={() => {
+                        const content = `# 📒 [Anti-Gravity 대화 & 답변 전체 백업로그]\n\n` +
+                          `생성일시: ${new Date().toLocaleString()}\n` +
+                          `총 로그 수: ${qaBackupLogs.length}건\n\n---\n\n` +
+                          qaBackupLogs.map((log, i) => `### #${i + 1} [${log.time}] ${log.question}\n\n${log.answer}\n\n`).join('---\n\n');
+                        downloadTextFile(`대화답변_전체백업로그_${new Date().toISOString().slice(0,10)}.md`, content);
+                      }}
+                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs md:text-sm shadow-lg shadow-emerald-500/30 flex items-center gap-1.5">
+                      <i data-lucide="download" className="w-4 h-4"></i>
+                      <span>백업로그 다운로드 (.md)</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 백업 로그 카드 리스트 */}
+                <div className="space-y-3">
+                  {qaBackupLogs.map((log, idx) => (
+                    <div key={log.id} className="glass-box-active rounded-2xl p-5 border border-slate-750 hover:border-emerald-400 transition space-y-2 shadow-md">
+                      <div className="flex flex-wrap justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold font-mono text-xs">
+                            LOG #{idx + 1}
+                          </span>
+                          <strong className="text-cyan-300 text-sm font-bold">{log.question}</strong>
+                        </div>
+                        <span className="font-mono text-slate-500">{log.time}</span>
+                      </div>
+                      <p className="text-white font-medium whitespace-pre-line leading-relaxed pl-2 bg-space-950/60 p-3 rounded-xl border border-slate-850">
+                        {log.answer}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 🌟 3. [5대 시스템종합] 탭 */}
             {mainNavTab === 'MATRIX' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-7xl mx-auto" style={{ fontSize: `${analysisPx}px` }}>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -1269,7 +1324,7 @@
               </div>
             )}
 
-            {/* 🌟 3. [분석 시스템] 탭 */}
+            {/* 🌟 4. [분석 시스템] 탭 */}
             {mainNavTab === 'ANALYSIS' && (
               <div className="flex-1 flex w-full h-full overflow-hidden" style={{ fontSize: `${analysisPx}px` }}>
                 
@@ -1480,7 +1535,7 @@
               </div>
             )}
 
-            {/* 🌟 4. [행동연계] 탭 */}
+            {/* 🌟 5. [행동연계] 탭 */}
             {mainNavTab === 'ACTION' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${actionPx}px` }}>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -1563,7 +1618,7 @@
               </div>
             )}
 
-            {/* 🌟 5. [소셜 알람] 탭 */}
+            {/* 🌟 6. [소셜 알람] 탭 */}
             {mainNavTab === 'SOCIAL_ALARM' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${alarmPx}px` }}>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-4">
