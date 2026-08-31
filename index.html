@@ -199,6 +199,115 @@
       } catch (e) {}
     };
 
+    const MASTER_SYSTEMS_CANONICAL = {
+      dalio: {
+        id: 'DALIO',
+        bookTitle: "《원칙 (Principles)》",
+        author: "레이 달리오",
+        tierName: "Tier 4. 원칙화 및 진화 계층",
+        engineType: "기계론적 5단계 피드백 루프 & 결정론적 If-Then 의사결정 컴파일러 (Machine OS)",
+        corePrinciple: "모든 문제와 고통을 감정적으로 자책하지 않고 '기계(Machine)의 결함'으로 객관화하며, 5-Whys를 통해 근본 원인을 찾아내어 [IF 상황 ➔ THEN 행동]의 불변 알고리즘으로 컴파일하여 실행 마찰을 0으로 수렴시키는 원리",
+        evaluationCriteria: [
+          "1. [감정 배제와 객관화]: 실패나 게으름을 인격의 문제가 아닌 '기계 설계의 결함'으로 분석하고 있는가?",
+          "2. [결정론적 If-Then 규칙화]: 위기나 타성 발생 시 0.1초 만에 발동되는 사전 행동 규칙이 정의되어 있는가?",
+          "3. [극단적 투명성과 피드백]: 결과를 회피하지 않고 있는 그대로 직시하여 시스템을 수정하고 있는가?"
+        ],
+        systemUnderstanding: "작성자님의 '10조 자산'과 '부업 시스템' 실행에서 발생하는 지연은 의지력 부족이 아니라, '초안이 완벽해야 한다'는 심리적 오류와 시작 마찰 에너지가 너무 높게 설정된 기계적 결함에서 비롯되었습니다.",
+        cognitiveDiagnosis: "목표가 거대할수록 뇌의 전두엽은 시작 에너지에 압도됩니다. 감정을 배제하고 '비공개 메모장에 3분 동안 단어 3개만 적는 마찰 0 기계 루틴'으로 즉시 쪼개야 합니다.",
+        stopDirectives: "🛑 [STOP / 즉시 중단]: '완벽한 기획이 준비될 때까지 시작을 미루는 완벽주의 환상'을 지금 즉시 중단하십시오.",
+        startDirectives: "🚀 [START / 즉시 실행]: 매일 아침 7시, 아무도 보지 않는 스마트폰 비공개 메모장에 3분간 단어 3개만 적는 '마찰 0 루틴'을 시작하십시오.",
+        immutablePrinciple: "⚡ [Core Law / 불변 헌법]: '실패는 데이터일 뿐이다. 5-Whys로 원인을 고치면 성공 확률은 100%로 수렴한다.'",
+        ifThenRule: "IF 새로운 기획을 앞두고 미루고 싶을 때, THEN 비공개 메모장에 3분간 단어 3개만 적는다.",
+        problems: "완벽주의로 인한 집필 및 기획 시작 지연, 막막함",
+        diagnosis5Why: "평가에 대한 두려움 ➔ 실패 회피 본능 ➔ 시작 마찰 에너지 과다"
+      },
+      robbins: {
+        id: 'ROBBINS',
+        bookTitle: "《거인을 깨워라》",
+        author: "토니 로빈스",
+        tierName: "Tier 1. 잠재의식 발굴 계층",
+        engineType: "신경연합조건화(NAC) & 심층 인지 가치 맵 (Cognitive Neural Conditioning)",
+        corePrinciple: "인간의 모든 행동을 지배하는 2대 원동력인 '고통 회피(Pain)'와 '쾌락 추구(Pleasure)'를 뇌 신경망에 의도적으로 강력히 재결합(Conditioning)하여, 나태함을 즉각적 고통으로 결단과 실행을 극상의 쾌락으로 전환하는 원리",
+        evaluationCriteria: [
+          "1. [신경학적 지렛대(Leverage)]: '지금 변하지 않으면 5년 뒤 겪게 될 최악의 고통'이 생생하게 느껴지는가?",
+          "2. [핵심 가치관의 정렬]: 1순위 가치관(자유, 성장)이 오늘의 3분 행동과 완벽하게 일치하는가?",
+          "3. [결단(Decision)의 절대성]: 이전의 모든 타협 가능성을 완전히 잘라내고 실행을 선택했는가?"
+        ],
+        systemUnderstanding: "작성자님의 '10조 자산'이라는 표면적 욕망(Want) 아래에는 '누구에게도 종속되지 않고 내 삶의 시간을 온전히 통제하려는 절대적 자유(Need)'가 본원적 결핍으로 자리 잡고 있습니다.",
+        cognitiveDiagnosis: "목표가 머리로만 이해되고 감정적 절박감(Pain/Pleasure)과 결합되지 않으면, 퇴근 후 뇌는 에너지 절약을 위해 본능적으로 스마트폰 숏폼과 나태함을 선택합니다.",
+        stopDirectives: "🛑 [STOP / 즉시 중단]: '나중에 여유가 생기면 열심히 하겠다'는 타협의 내면 대화를 즉시 중단하십시오.",
+        startDirectives: "🚀 [START / 즉시 실행]: 거울을 보며 '5년 뒤에도 지금처럼 후회하며 살 것인가?'를 자문하고, 절대적 자유를 누리는 1년 뒤 나의 모습을 30초간 시각화하십시오.",
+        immutablePrinciple: "⚡ [Core Law / 불변 헌법]: '결단이란 이전의 모든 타협 가능성을 잘라내는 것이다. 나의 1순위 핵심 가치는 자유(Freedom)다.'",
+        coreDriver: "타인에게 종속되지 않는 경제적·시간적 절대 자립과 자아실현",
+        painOfFailure: "현재의 타성에 안주하여 5년 뒤에도 후회와 피로를 반복하는 고통",
+        pleasureOfSuccess: "원하는 시간에 원하는 프로젝트를 주도하며 얻는 성취감과 절대적 자유"
+      },
+      forte: {
+        id: 'FORTE',
+        bookTitle: "《세컨드 브레인》",
+        author: "티아고 포르테",
+        tierName: "Tier 2. 지식 및 맥락 구조화 계층",
+        engineType: "CODE 증류 모델 & 4단계 계층형 지식 그래프 (PARA Storage Knowledge Engine)",
+        corePrinciple: "머릿속의 인지 부하(Cognitive Overload)를 제거하기 위해 모든 영감과 대화를 수집(Capture)➔조직(Organize)➔증류(Distill)➔표현(Express)하고, 실행 마감 중심의 PARA(Projects, Areas, Resources, Archives)로 영구 복리 자산화하는 원리",
+        evaluationCriteria: [
+          "1. [외재화(Externalization)]: 머릿속의 모든 아이디어가 외부 신뢰 시스템에 빠짐없이 기록되어 있는가?",
+          "2. [1문장 증류(Distillation)]: 축적된 대화와 경험이 미래의 내가 3초 만에 꺼내 쓸 수 있는 1문장 에센스로 요약되었는가?",
+          "3. [실행 지향 분류(PARA)]: 지식이 단순 보관용이 아니라 현재 진행 중인 프로젝트(Projects)로 연결되는가?"
+        ],
+        systemUnderstanding: "작성자님의 머릿속에 흩어져 있는 수많은 비전과 대화 로그는 체계화되지 않으면 두뇌의 램(RAM) 용량만 낭비시킵니다. 1문장으로 증류되어 즉시 조립 가능한 지식 레고 블록으로 변환되어야 합니다.",
+        cognitiveDiagnosis: "생각을 외재화하지 않으면 매일 똑같은 고민을 제자리에서 반복하게 됩니다. 모든 대화는 PARA 시스템을 거쳐 영구적인 콘텐츠 자산으로 농축되어야 합니다.",
+        stopDirectives: "🛑 [STOP / 즉시 중단]: 아이디어를 머릿속에만 담아두거나 아무 폴더에나 무작위로 적어두는 습관을 멈추십시오.",
+        startDirectives: "🚀 [START / 즉시 실행]: 오늘 나눈 대화 중 가장 가슴을 뛰게 한 1문장을 PARA 'Resources'에 저장하여 영구 복리 자산으로 만드십시오.",
+        immutablePrinciple: "⚡ [Core Law / 불변 헌법]: '완벽하게 보관하려 하지 말고, 미래의 내가 3초 만에 찾아서 바로 써먹을 수 있는 형태로만 남긴다.'",
+        distilledEssence: "고객의 진짜 페인포인트 1가지만 3분 안에 해결하는 최소 기능 제품(MVP)",
+        projects: "2026 1인 지식 엔터프라이즈 런칭 (마감 90일 스프린트)",
+        resources: "시장 조사 데이터, 프레임워크 템플릿, 고객 인터뷰 로그"
+      },
+      hill: {
+        id: 'HILL',
+        bookTitle: "《생각하라 부자가 되어라》",
+        author: "나폴레온 힐",
+        tierName: "Tier 1. 잠재의식 발굴 계층",
+        engineType: "DCA(명확한 중심 목표) 북극성 엔진 & 6단계 확약 컴파일러 (Chief Aim Engine)",
+        corePrinciple: "성공을 위한 잠재의식의 전제조건으로 모호한 희망 대신 '정확한 수치, 명확한 달성 기한, 기꺼이 포기할 대가(Sacrifice), 즉시 착수할 계획'의 4요소를 결합하여 매일 2회 확약문을 낭독하는 원리",
+        evaluationCriteria: [
+          "1. [정량적 명확성(Exactness)]: 목표가 '돈을 많이 벌겠다'가 아니라 '정확한 금액과 일자'로 정의되어 있는가?",
+          "2. [포기할 대가의 명시(Sacrifice)]: 목표를 위해 포기할 시간과 쾌락(숏폼, 불필요한 약속)이 명확히 선언되었는가?",
+          "3. [잠재의식 각인(Autosuggestion)]: 확약문을 소리 내어 읽으며 이미 이루어진 것처럼 감정적으로 몰입하는가?"
+        ],
+        systemUnderstanding: "목표가 모호하면 잠재의식은 어느 방향으로 에너지를 모아야 할지 모릅니다. '10조 자산'이라는 거대한 비전도 2026년의 구체적 1단계 정량 수치와 포기할 대가로 정밀 정의되어야 잠재의식이 움직입니다.",
+        cognitiveDiagnosis: "'언젠가 잘 되겠지'라는 막연한 태도는 뇌의 도파민을 마비시킵니다. 내가 지불할 구체적 대가를 명시할 때 비로소 진정한 몰입이 시작됩니다.",
+        stopDirectives: "🛑 [STOP / 즉시 중단]: 아무런 대가도 치르지 않고 부수입을 얻으려는 '공짜 점심'의 기대를 완전히 버리십시오.",
+        startDirectives: "🚀 [START / 즉시 실행]: '2026년 12월 31일까지 월 100만 원을 위해 매일 퇴근 후 숏폼 시청 1시간을 포기한다'는 확약문을 하루 2회 소리 내어 낭독하십시오.",
+        immutablePrinciple: "⚡ [Core Law / 불변 헌법]: '세상에 공짜는 없다. 내가 얻고자 하는 가치만큼의 시간과 집중력을 정직하게 지불한다.'",
+        definiteChiefAim: "나는 2026년 12월 31일까지 1인 지식 시스템을 통해 월 100만 원의 지속적인 가치를 창출한다.",
+        exactAmount: "월 100만 원 (연 1,200만 원 추가 자동화 수익)",
+        deadline: "2026년 12월 31일",
+        sacrifice: "퇴근 후 의미 없는 스마트폰 숏폼 시청 1시간 포기"
+      },
+      gtd: {
+        id: 'GTD',
+        bookTitle: "《GTD》",
+        author: "데이비드 앨런",
+        tierName: "Tier 3. 수직적 행동 정렬 계층",
+        engineType: "Horizons of Focus 6단계 수직적 인과 정렬 트리 (Vertical Alignment Tree)",
+        corePrinciple: "50,000피트 존재 목적부터 지상(Runway)의 '물리적으로 즉시 실행 가능한 다음 최소 행동(Next Physical Action)'까지 6개 고도를 수직 정렬하여, 머릿속 잔여 부하를 0으로 만들고 실행 마찰을 제로화하는 원리",
+        evaluationCriteria: [
+          "1. [물리적 최소 행동의 구체성]: '부업 시작하기' 같은 모호한 프로젝트가 아닌 '메모장에 단어 3개 적기'처럼 0.1초 만에 착수 가능한가?",
+          "2. [수직적 인과 정렬]: 지상의 3분 행동이 10,000ft 프로젝트 ➔ 50,000ft 존재 목적과 정확히 정렬되어 있는가?",
+          "3. [마음의 평정(Mind Like Water)]: 모든 할 일이 외부 신뢰 시스템에 기록되어 두뇌에 잔여 스트레스가 0인가?"
+        ],
+        systemUnderstanding: "작성자님의 '10조 자산'이라는 50,000피트 고도와 '오늘 당장 무엇을 해야 할지' 사이의 고도 격차(Altitude Gap)가 너무 커서 지상에서의 실행이 지연되고 있습니다.",
+        cognitiveDiagnosis: "거대한 프로젝트는 뇌에 인지적 과부하를 줍니다. '스마트폰 메모장 열기'처럼 3분 안에 완수할 수 있는 지상 최소 물리 행동으로 쪼개야 합니다.",
+        stopDirectives: "🛑 [STOP / 즉시 중단]: '오늘 2시간 동안 책 1챕터 다 써야지' 같은 거대하고 모호한 계획을 세우는 행위를 즉시 중단하십시오.",
+        startDirectives: "🚀 [START / 즉시 실행]: 지금 당장 3분 타이머를 누르고, 메모장에 '내 상품의 핵심 가치 3단어'만 가볍게 적으십시오.",
+        immutablePrinciple: "⚡ [Core Law / 불변 헌법]: '생각은 50,000ft 고도에서 하고, 실행은 지상(Runway)에서 3분 단위로 가볍게 밀어붙인다.'",
+        runway: "지상 (Runway): 스마트폰 메모장에 아이디어 핵심 3단어 적기 (소요 3분)",
+        altitude50k: "50,000ft (존재 목적): 세상에 가치 있는 지식을 전달하고 온전한 자기 결정권을 누린다.",
+        altitude10k: "10,000ft (현재 프로젝트): 첫 번째 지식 가이드북 초안 완성 (2주 스프린트)"
+      }
+    };
+
     // 상단 세트: 4대 계층 심층 방향성 질문 생성기
     const generateChainedSocraticQuestions = (latestAnswer, round = 1) => {
       const ans = latestAnswer ? latestAnswer.trim() : "월 100만 원 부업 시스템";
@@ -921,7 +1030,8 @@
         </div>
       );
 
-      const curMaster = fiveMastersData[selectedMasterInAnalysis.toLowerCase()];
+      const defaultMaster = MASTER_SYSTEMS_CANONICAL[selectedMasterInAnalysis.toLowerCase()] || MASTER_SYSTEMS_CANONICAL['dalio'];
+      const curMaster = { ...defaultMaster, ...(fiveMastersData[selectedMasterInAnalysis.toLowerCase()] || {}) };
 
       return (
         <div className="flex flex-col h-screen max-h-screen">
@@ -1853,31 +1963,159 @@
               </div>
             )}
 
-            {/* 🌟 4. [분석 시스템] 탭 */}
+            {/* 🌟 4. [분석 시스템] 탭 - 전문가 관점 5대 거장 심층 분석 & 대화 기반 처방 대시보드 */}
             {mainNavTab === 'ANALYSIS' && (
               <div className="flex-1 flex w-full h-full overflow-hidden" style={{ fontSize: `${analysisPx}px` }}>
-                <aside className="w-[35%] border-r border-cyan-500/20 bg-space-950/90 p-4 space-y-3 overflow-y-auto">
-                  <h3 className="text-sm font-black text-white">🏛️ 5대 거장 성공엔진 선택</h3>
-                  {['DALIO', 'ROBBINS', 'FORTE', 'HILL', 'GTD'].map((mKey) => (
-                    <button
-                      key={mKey}
-                      onClick={() => setSelectedMasterInAnalysis(mKey)}
-                      className={`w-full text-left p-3.5 rounded-2xl border transition ${selectedMasterInAnalysis === mKey ? 'bg-cyan-950/80 border-cyan-400' : 'glass-box'}`}>
-                      <strong className="text-cyan-300 text-sm block">{fiveMastersData[mKey.toLowerCase()].bookTitle}</strong>
-                      <span className="text-xs text-slate-300">{fiveMastersData[mKey.toLowerCase()].author}</span>
-                    </button>
-                  ))}
+                
+                {/* 좌측: 5대 거장 성공엔진 선택 패널 (30%) */}
+                <aside className="w-[30%] border-r border-cyan-500/20 bg-space-950/95 p-3.5 space-y-2.5 overflow-y-auto shrink-0">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-1">
+                    <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+                      <span>🏛️</span> 5대 거장 엔진 선택
+                    </h3>
+                    <FontController label="글씨:" value={analysisFontSize} onChange={setAnalysisFontSize} />
+                  </div>
+
+                  {['DALIO', 'ROBBINS', 'FORTE', 'HILL', 'GTD'].map((mKey) => {
+                    const mObj = MASTER_SYSTEMS_CANONICAL[mKey.toLowerCase()];
+                    const isSelected = selectedMasterInAnalysis.toUpperCase() === mKey;
+                    return (
+                      <button
+                        key={mKey}
+                        onClick={() => { setSelectedMasterInAnalysis(mKey); playSound('pop'); }}
+                        className={`w-full text-left p-3 rounded-2xl border transition shadow-md ${
+                          isSelected
+                            ? 'bg-gradient-to-br from-indigo-950 via-space-900 to-cyan-950 border-cyan-300 ring-2 ring-cyan-400/50 shadow-cyan-500/20'
+                            : 'glass-box hover:border-cyan-500/40 opacity-80 hover:opacity-100'
+                        }`}>
+                        <div className="flex items-center justify-between mb-1">
+                          <strong className="text-cyan-300 text-xs md:text-sm font-black">{mObj.bookTitle}</strong>
+                          <span className="text-[10px] px-2 py-0.2 rounded bg-space-900 text-cyan-400 font-mono border border-slate-800">
+                            {mObj.tierName.slice(0, 6)}
+                          </span>
+                        </div>
+                        <span className="text-xs text-slate-300 font-bold block mb-1">{mObj.author}</span>
+                        <div className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                          {mObj.corePrinciple}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </aside>
-                <section className="flex-1 p-6 overflow-y-auto space-y-4">
-                  <h2 className="text-xl font-black text-white">{curMaster.bookTitle} · {curMaster.author}</h2>
-                  <div className="p-4 bg-space-900 rounded-2xl border border-cyan-400/50">
-                    <strong className="text-cyan-300 block mb-1">시스템 관점 해석:</strong>
-                    <p className="text-white font-bold">{curMaster.systemUnderstanding}</p>
+
+                {/* 우측: 선택된 거장의 핵심원리, 절대기준, 상태해석, 3단계 행동처방전 초상세 뷰 (70%) */}
+                <section className="flex-1 p-5 md:p-7 overflow-y-auto space-y-4 bg-space-950/80">
+                  
+                  {/* 상단 타이틀 & 서브 헤더 바 */}
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono font-bold">
+                          {curMaster.tierName}
+                        </span>
+                        <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                          {curMaster.bookTitle} · {curMaster.author}
+                        </h2>
+                      </div>
+                      <p className="text-xs text-slate-300 mt-1 font-medium">
+                        {curMaster.engineType}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        const doc = `# 🌌 [Anti-Gravity ${curMaster.bookTitle} 심층 분석 보고서]\n\n` +
+                          `## 1. 핵심 원리 (Core Principle)\n${curMaster.corePrinciple}\n\n` +
+                          `## 2. 절대적 판단 기준 (Criteria)\n${(curMaster.evaluationCriteria || []).join('\n')}\n\n` +
+                          `## 3. 대화 분석 기반 인지 진단\n${curMaster.systemUnderstanding}\n\n` +
+                          `## 4. AI 행동 처방전\n- ${curMaster.stopDirectives}\n- ${curMaster.startDirectives}\n- ${curMaster.immutablePrinciple}\n`;
+                        downloadTextFile(`${curMaster.author}_심층분석보고서.md`, doc);
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 text-xs font-bold flex items-center gap-1.5 shrink-0 shadow-sm transition">
+                      <span>💾</span> 거장 보고서 다운로드 (.md)
+                    </button>
                   </div>
-                  <div className="p-4 bg-space-900 rounded-2xl border border-gold-400/50">
-                    <strong className="text-gold-300 block mb-1">AI 행동 처방전:</strong>
-                    <p className="text-white font-bold">{curMaster.startDirectives}</p>
+
+                  {/* 1. 핵심 원리 (Core Principle) */}
+                  <div className="glass-box-active rounded-2xl p-4 border border-cyan-400/40 space-y-2">
+                    <strong className="text-cyan-300 font-black text-xs md:text-sm flex items-center gap-1.5">
+                      <span>🏛️</span> 1. 핵심 성공 엔진 원리 (Core Engine Mechanics):
+                    </strong>
+                    <p className="text-white font-medium text-xs md:text-sm leading-relaxed pl-1">
+                      {curMaster.corePrinciple}
+                    </p>
                   </div>
+
+                  {/* 2. 절대적 판단 기준 (Evaluation Criteria) */}
+                  <div className="glass-box rounded-2xl p-4 border border-slate-800 space-y-2">
+                    <strong className="text-emerald-300 font-black text-xs md:text-sm flex items-center gap-1.5">
+                      <span>⚖️</span> 2. 3대 절대적 평가 기준 (Evaluation Criteria):
+                    </strong>
+                    <div className="space-y-1.5 pl-1">
+                      {(curMaster.evaluationCriteria || [
+                        "1. [명확한 인과성]: 목표와 일일 행동 사이의 인과관계가 명확히 연결되어 있는가?",
+                        "2. [마찰 계수 최소화]: 실행 착수 에너지가 3분 단위로 극소화되어 있는가?",
+                        "3. [시스템 신뢰도]: 두뇌의 기억에 의존하지 않고 외부 시스템에 100% 기록되어 있는가?"
+                      ]).map((crit, cIdx) => (
+                        <div key={cIdx} className="p-2.5 bg-space-900/90 rounded-xl border border-slate-800 text-xs md:text-sm font-medium text-slate-100 leading-snug">
+                          {crit}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 3. 대화 분석 기반 시스템 해석 및 인지 진단 */}
+                  <div className="glass-box-active rounded-2xl p-4 border border-indigo-400/40 space-y-2 bg-gradient-to-br from-space-950 via-indigo-950/30 to-space-950">
+                    <strong className="text-indigo-300 font-black text-xs md:text-sm flex items-center gap-1.5">
+                      <span>🧠</span> 3. 작성자 대화 분석 기반 인지 진단 & 시스템 해석:
+                    </strong>
+                    <p className="text-slate-100 font-medium text-xs md:text-sm leading-relaxed pl-1">
+                      {curMaster.systemUnderstanding}
+                    </p>
+                    <div className="p-3 bg-space-900/80 rounded-xl border border-indigo-500/30 text-xs text-slate-200 mt-2">
+                      <strong className="text-pink-300 block mb-0.5">🔍 인지적 근본 원인 분석 (Cognitive Diagnosis):</strong>
+                      <p className="leading-snug">{curMaster.cognitiveDiagnosis}</p>
+                    </div>
+                  </div>
+
+                  {/* 4. AI 전문가 3단계 행동 처방전 */}
+                  <div className="glass-box rounded-2xl p-4 border border-gold-400/50 space-y-3">
+                    <strong className="text-gold-300 font-black text-xs md:text-sm flex items-center gap-1.5">
+                      <span>🚀</span> 4. AI 전문가 3단계 행동 처방전 (Action Directives):
+                    </strong>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs md:text-sm">
+                      <div className="p-3 bg-rose-950/40 rounded-xl border border-rose-500/40 space-y-1">
+                        <strong className="text-rose-400 font-black block">🛑 즉시 중단 지침 (STOP Directive):</strong>
+                        <p className="text-slate-100 font-medium leading-snug">{curMaster.stopDirectives}</p>
+                      </div>
+
+                      <div className="p-3 bg-emerald-950/40 rounded-xl border border-emerald-500/40 space-y-1">
+                        <strong className="text-emerald-400 font-black block">🚀 즉시 실행 지침 (START Directive):</strong>
+                        <p className="text-slate-100 font-medium leading-snug">{curMaster.startDirectives}</p>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-space-950 rounded-xl border border-cyan-400/60 space-y-1">
+                      <span className="text-cyan-300 font-black text-xs block">⚡ 불변의 실행 헌법 (Core Law):</span>
+                      <p className="text-white font-black text-xs md:text-sm leading-relaxed">{curMaster.immutablePrinciple}</p>
+                    </div>
+                  </div>
+
+                  {/* 5. 바로가기 버튼 */}
+                  <div className="pt-2 flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => { setMainNavTab('ACTION'); playSound('cheer'); }}
+                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:scale-105 transition text-black font-black text-xs shadow-md flex items-center gap-1.5">
+                      <span>⚡</span> 3분 행동연계 런치패드로 이동
+                    </button>
+                    <button
+                      onClick={() => { setMainNavTab('WORKSPACE'); playSound('pop'); }}
+                      className="px-4 py-2 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 border border-slate-700 text-xs font-bold transition flex items-center gap-1.5">
+                      <span>💬</span> 대화창으로 돌아가기
+                    </button>
+                  </div>
+
                 </section>
               </div>
             )}
