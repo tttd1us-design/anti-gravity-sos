@@ -498,6 +498,9 @@
         return saved ? JSON.parse(saved) : generateDeepTailQuestionAndPrescription("");
       });
 
+      // 🌟 [핵심] 내 답변 분석 꼬리 질문 전용 색상 상태
+      const [tailQuestionColor, setTailQuestionColor] = useState(() => localStorage.getItem('AG_TAIL_QUESTION_COLOR_V1') || '#facc15');
+
       const [mainNavTab, setMainNavTab] = useState('WORKSPACE');
       const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
       const [analysisSubTab, setAnalysisSubTab] = useState('DIRECTIVES');
@@ -709,10 +712,11 @@
         localStorage.setItem('AG_FONT_ANALYSIS', analysisFontSize.toString());
         localStorage.setItem('AG_FONT_ACTION', actionFontSize.toString());
         localStorage.setItem('AG_FONT_ALARM', alarmFontSize.toString());
+        localStorage.setItem('AG_TAIL_QUESTION_COLOR_V1', tailQuestionColor);
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [fiveMastersData, qaBackupLogs, socialAlarmSettings, currentTailInsight, set1Collapsed, set2Collapsed, buildStep, buildProgressPercent, dialogueCount, leftWidthPercent, socraticRound, questionsFontSize, set2FontSize, inputBoxFontSize, tierSystemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis, analysisSubTab, tierFilter]);
+      }, [fiveMastersData, qaBackupLogs, socialAlarmSettings, currentTailInsight, tailQuestionColor, set1Collapsed, set2Collapsed, buildStep, buildProgressPercent, dialogueCount, leftWidthPercent, socraticRound, questionsFontSize, set2FontSize, inputBoxFontSize, tierSystemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis, analysisSubTab, tierFilter]);
 
       useEffect(() => {
         let timer = null;
@@ -1352,11 +1356,60 @@
                       {!set2Collapsed && (
                         <div className="space-y-2 pt-1 animate-fadeIn" style={{ fontSize: `${set2Px}px` }}>
                           {/* 꼬리 질문 */}
-                          <div className="p-2.5 bg-space-950/80 rounded-xl border border-purple-500/30">
-                            <span className="text-[10.5px] text-pink-300 font-black flex items-center gap-1 mb-0.5">
-                              <span>🔮</span> 내 답변을 분석한 꼬리 질문 (본질 탐색):
-                            </span>
-                            <p className="text-white font-bold leading-relaxed">
+                          <div
+                            className="p-3 bg-space-950/90 rounded-2xl border transition-all duration-300 shadow-lg space-y-1.5"
+                            style={{ borderColor: `${tailQuestionColor}60`, boxShadow: `0 0 15px ${tailQuestionColor}15` }}>
+                            <div className="flex flex-wrap items-center justify-between gap-1.5 border-b border-slate-800/80 pb-1.5">
+                              <span className="text-[11px] font-black flex items-center gap-1" style={{ color: tailQuestionColor }}>
+                                <span>🔮</span> 내 답변을 분석한 꼬리 질문 (본질 탐색):
+                              </span>
+
+                              {/* 🎨 꼬리 질문 전용 색상 선택기 */}
+                              <div className="flex items-center gap-1.5 bg-space-900/90 border border-slate-700/80 rounded-xl px-2 py-0.5 shadow-sm">
+                                <span className="text-[10px] text-slate-300 font-bold">🎨 질문 색상:</span>
+                                {[
+                                  { name: '화이트', code: '#ffffff' },
+                                  { name: '골드 옐로우', code: '#facc15' },
+                                  { name: '네온 시안', code: '#38bdf8' },
+                                  { name: '네온 핑크', code: '#f472b6' },
+                                  { name: '에메랄드 그린', code: '#34d399' },
+                                  { name: '네온 오렌지', code: '#fb923c' },
+                                  { name: '바이올렛', code: '#c084fc' }
+                                ].map((c) => (
+                                  <button
+                                    key={c.code}
+                                    type="button"
+                                    title={c.name}
+                                    onClick={() => {
+                                      setTailQuestionColor(c.code);
+                                      localStorage.setItem('AG_TAIL_QUESTION_COLOR_V1', c.code);
+                                      playSound('pop');
+                                    }}
+                                    style={{ backgroundColor: c.code }}
+                                    className={`w-3.5 h-3.5 rounded-full border transition transform hover:scale-125 ${
+                                      tailQuestionColor.toLowerCase() === c.code.toLowerCase() ? 'ring-2 ring-white border-black scale-110' : 'border-slate-600 opacity-80 hover:opacity-100'
+                                    }`}
+                                  />
+                                ))}
+                                {/* 커스텀 색상 선택기 (Color Picker) */}
+                                <label className="relative cursor-pointer flex items-center" title="직접 색상 선택">
+                                  <input
+                                    type="color"
+                                    value={tailQuestionColor}
+                                    onChange={(e) => {
+                                      setTailQuestionColor(e.target.value);
+                                      localStorage.setItem('AG_TAIL_QUESTION_COLOR_V1', e.target.value);
+                                    }}
+                                    className="w-4 h-4 rounded-full overflow-hidden opacity-0 absolute cursor-pointer"
+                                  />
+                                  <span className="w-3.5 h-3.5 rounded-full border border-slate-500 flex items-center justify-center text-[8px] bg-gradient-to-tr from-rose-500 via-yellow-400 to-cyan-400 hover:scale-125 transition">
+                                    +
+                                  </span>
+                                </label>
+                              </div>
+                            </div>
+
+                            <p className="font-black leading-relaxed text-sm md:text-base tracking-tight" style={{ color: tailQuestionColor }}>
                               "{currentTailInsight.tailQuestion}"
                             </p>
                           </div>
