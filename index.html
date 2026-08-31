@@ -361,7 +361,9 @@
     };
 
     function App() {
+      // 폰트 크기 상태
       const [questionsFontSize, setQuestionsFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_QUESTIONS') || '1.15'));
+      const [set2FontSize, setSet2FontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_SET2') || '1.15')); // 🌟 세트2 전용 글씨 크기
       const [inputBoxFontSize, setInputBoxFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_INPUT_BOX') || '1.15'));
       const [tierSystemFontSize, setTierSystemFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_TIER_SYSTEM') || '1.15'));
 
@@ -369,6 +371,10 @@
       const [analysisFontSize, setAnalysisFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ANALYSIS') || '1.15'));
       const [actionFontSize, setActionFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ACTION') || '1.20'));
       const [alarmFontSize, setAlarmFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ALARM') || '1.15'));
+
+      // 🌟 [핵심] 세트1, 세트2 접기/펴기 토글 상태
+      const [set1Collapsed, setSet1Collapsed] = useState(() => localStorage.getItem('AG_SET1_COLLAPSED') === 'true');
+      const [set2Collapsed, setSet2Collapsed] = useState(() => localStorage.getItem('AG_SET2_COLLAPSED') === 'true');
 
       const [leftWidthPercent, setLeftWidthPercent] = useState(() => parseFloat(localStorage.getItem('AG_SPLIT_PERCENT') || '50'));
       const [isDragging, setIsDragging] = useState(false);
@@ -397,35 +403,24 @@
       const [editQuestionText, setEditQuestionText] = useState("");
       const [editAnswerText, setEditAnswerText] = useState("");
 
-      // 🌟 [핵심] 소셜 알람 다채널(메일/카톡/텔레그램/웹푸시) 정밀 설정 상태
       const [socialAlarmSettings, setSocialAlarmSettings] = useState(() => {
         const saved = localStorage.getItem('AG_SOCIAL_ALARM_SETTINGS_V2');
         return saved ? JSON.parse(saved) : {
-          // 채널 활성화 토글
           enableEmail: true,
           userEmail: "my-success@example.com",
-
           enableKakao: true,
           userKakaoPhone: "010-9876-5432",
-
           enableTelegram: true,
           telegramChatId: "@my_daily_action_bot",
-
           enableWebPush: true,
-
-          // 파트너 상호 감시
           partnerName: "성공 파트너 (김동반)",
           partnerPhone: "010-1234-5678",
           partnerEmail: "partner@example.com",
           penaltyPerMiss: "10,000",
           socialPledgeUrl: "https://anti-gravity.app/pledge/user-7ef32b",
-
-          // 3대 일일 정기 행동 유도 스케줄 시간
           morningAlarmTime: "07:00",
           middayAlarmTime: "13:00",
           nightAlarmTime: "22:00",
-
-          // 긴급 방어 알람
           ifThenEmergencyAlarm: true
         };
       });
@@ -433,7 +428,7 @@
       const [alarmSimulatedAlert, setAlarmSimulatedAlert] = useState(null);
 
       const [latestCoachFeedback, setLatestCoachFeedback] = useState(
-        "💡 [소셜 알람 관제탑 가동]: 메일, 카카오톡, 텔레그램을 연동하면 매일 정해진 시간(07:00 / 13:00 / 22:00)에 오늘 내가 해야 할 명확한 행동 지침을 자동으로 유도 발송합니다!"
+        "💡 세트1과 세트2의 [접기/펴기] 버튼을 통해 화면 공간을 자유롭게 조절하실 수 있으며, [세트2 글씨] 조절기로 꼬꼬무 질문과 처방전의 글씨 크기를 독립 조절할 수 있습니다!"
       );
 
       // 5대 거장 심층 데이터
@@ -588,7 +583,11 @@
         localStorage.setItem('AG_SOCRATIC_ROUND', socraticRound.toString());
         localStorage.setItem('AG_TAIL_INSIGHT_V1', JSON.stringify(currentTailInsight));
         
+        localStorage.setItem('AG_SET1_COLLAPSED', set1Collapsed.toString());
+        localStorage.setItem('AG_SET2_COLLAPSED', set2Collapsed.toString());
+
         localStorage.setItem('AG_FONT_QUESTIONS', questionsFontSize.toString());
+        localStorage.setItem('AG_FONT_SET2', set2FontSize.toString());
         localStorage.setItem('AG_FONT_INPUT_BOX', inputBoxFontSize.toString());
         localStorage.setItem('AG_FONT_TIER_SYSTEM', tierSystemFontSize.toString());
 
@@ -599,7 +598,7 @@
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [fiveMastersData, qaBackupLogs, socialAlarmSettings, currentTailInsight, buildStep, buildProgressPercent, dialogueCount, leftWidthPercent, socraticRound, questionsFontSize, inputBoxFontSize, tierSystemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis, analysisSubTab, tierFilter]);
+      }, [fiveMastersData, qaBackupLogs, socialAlarmSettings, currentTailInsight, set1Collapsed, set2Collapsed, buildStep, buildProgressPercent, dialogueCount, leftWidthPercent, socraticRound, questionsFontSize, set2FontSize, inputBoxFontSize, tierSystemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis, analysisSubTab, tierFilter]);
 
       useEffect(() => {
         let timer = null;
@@ -848,7 +847,7 @@
           setCurrentTailInsight(nextTailInsight);
 
           setLatestCoachFeedback(
-            `✨ [분석 완료!] 방금 답변하신 "${finalAnswerText.substring(0, 20)}..."을 분석하여, [소셜 알람] 채널별 전송될 데일리 행동 지침 메시지가 실시간으로 업데이트되었습니다!`
+            `✨ [분석 완료!] 방금 답변하신 "${finalAnswerText.substring(0, 20)}..."을 분석하여, [세트 2 꼬꼬무 질문 & AI 행동 처방]이 실시간으로 갱신되었습니다!`
           );
           setIsThinking(false);
           playSound('pop');
@@ -859,7 +858,6 @@
         executeSend(inputMsg);
       };
 
-      // 🌟 [핵심] 채널별 실시간 행동 유도 테스트 발송
       const triggerChannelActionAlarm = (channelName, timeType) => {
         playSound('bell');
         let title = "";
@@ -873,7 +871,7 @@
           actionMsg = `오후 집중 방어: "${fiveMastersData.robbins.coreDriver}"\n\n🛑 STOP 지침: ${fiveMastersData.dalio.stopDirectives}\n지금 즉시 3분 타이머를 누르고 착수하세요!`;
         } else {
           title = `🌙 [밤 22:00 데일리 결산 및 파트너 서약]`;
-          actionMsg = `오늘 3분 미션 완수 여부를 파트너 ${socialAlarmSettings.partnerName}님께 보고하세요!\n\n미완수 시 벌금: ${socialAlarmSettings.penaltyPerMiss}원\n서약 확인 링크: ${socialAlarmSettings.socialPledgeUrl}`;
+          actionMsg = `오늘 3분 미션을 완수하셨나요? 미완수 시 파트너 ${socialAlarmSettings.partnerName}님에게 ${socialAlarmSettings.penaltyPerMiss}원이 청구됩니다.\n\n서약 확인 링크: ${socialAlarmSettings.socialPledgeUrl}`;
         }
 
         const fullAlert = `[${channelName} 연동 발송 성공]\n${title}\n\n${actionMsg}`;
@@ -892,6 +890,7 @@
       };
 
       const questionsPx = Math.max(13, 14.5 * questionsFontSize);
+      const set2Px = Math.max(13, 14.5 * set2FontSize); // 🌟 세트 2 글씨 픽셀
       const inputBoxPx = Math.max(14, 15.5 * inputBoxFontSize);
       const tierSystemPx = Math.max(14, 15.5 * tierSystemFontSize);
 
@@ -936,7 +935,7 @@
                     안티그레비티 (AG-SMS)
                   </h1>
                   <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 flex items-center gap-1">
-                    <span>🔔</span> 메일·카톡·텔레그램 다채널 일일 행동 유도 알람 센터
+                    <span>⚡</span> 2-Set 스마트 접기/펴기 & 독립 글씨 조절
                   </span>
                 </div>
               </div>
@@ -944,17 +943,20 @@
 
             <button
               onClick={() => {
-                const doc = `# 🌌 [Anti-Gravity 개인화된 성공관리시스템(AG-SMS) 데이터 아키텍처 및 소셜알람 명세서]\n\n` +
-                  `## 🏛️ 탐색 라운드 진행: Round ${socraticRound} (대화 ${dialogueCount}회 축적)\n` +
-                  `### 🔔 연동 채널: 이메일(${socialAlarmSettings.enableEmail ? 'ON' : 'OFF'}), 카카오톡(${socialAlarmSettings.enableKakao ? 'ON' : 'OFF'}), 텔레그램(${socialAlarmSettings.enableTelegram ? 'ON' : 'OFF'})\n` +
-                  `### ☀️ 아침 07:00 행동 지침: ${fiveMastersData.gtd.runway}\n` +
-                  `### ⚡ Ray Dalio 헌법: ${fiveMastersData.dalio.ifThenRule}\n` +
-                  `### 🤝 파트너 서약: ${socialAlarmSettings.partnerName} (${socialAlarmSettings.socialPledgeUrl})`;
-                downloadTextFile(`소셜알람_행동유도_설정보고서.md`, doc);
+                const doc = `# 🌌 [Anti-Gravity 개인화된 성공관리시스템(AG-SMS) 보고서]\n\n` +
+                  `## 🏛️ 탐색 라운드: Round ${socraticRound} (대화 ${dialogueCount}회 축적)\n` +
+                  `### 💡 AI 실시간 진단 처방: ${currentTailInsight.aiPrescription}\n` +
+                  `### 🔮 핵심 자아 통찰: ${currentTailInsight.deepInsight}\n\n---\n\n` +
+                  `## 1. Ray Dalio Machine OS (Tier 4)\n- If-Then 규칙: ${fiveMastersData.dalio.ifThenRule}\n- 해야 할 일: ${fiveMastersData.dalio.startDirectives}\n\n` +
+                  `## 2. Tony Robbins NAC Engine (Tier 1)\n- 본원적동기(Need): ${fiveMastersData.robbins.coreDriver}\n- 해야 할 일: ${fiveMastersData.robbins.startDirectives}\n\n` +
+                  `## 3. Tiago Forte CODE PARA Graph (Tier 2)\n- Distilled Essence: ${fiveMastersData.forte.distilledEssence}\n- Projects: ${fiveMastersData.forte.projects}\n\n` +
+                  `## 4. Napoleon Hill DCA Polaris Engine (Tier 1)\n- DCA 중심목표: ${fiveMastersData.hill.definiteChiefAim}\n- 포기할대가: ${fiveMastersData.hill.sacrifice}\n\n` +
+                  `## 5. David Allen GTD Horizons Tree (Tier 3)\n- Runway (Ground Action): ${fiveMastersData.gtd.runway}`;
+                downloadTextFile(`성공관리시스템_Round${socraticRound}_보고서.md`, doc);
               }}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30">
               <i data-lucide="download" className="w-3.5 h-3.5"></i>
-              <span>알람 설정 보고서 (.md)</span>
+              <span>시스템 보고서 (.md)</span>
             </button>
           </header>
 
@@ -1041,13 +1043,15 @@
           {/* MAIN CONTENT AREA */}
           <main className="flex-1 flex overflow-hidden relative">
 
-            {/* 🌟 1. [대화 워크스페이스] 탭 */}
+            {/* 🌟 1. [대화 워크스페이스] 탭 - 세트1/세트2 접기펴기 & 세트2 독립 글씨 조절기 완비 */}
             {mainNavTab === 'WORKSPACE' && (
               <div className="flex-1 flex w-full h-full overflow-hidden">
+                
                 <section 
                   className="flex flex-col bg-space-950/80 border-r border-cyan-500/10 relative overflow-hidden"
                   style={{ width: `${leftWidthPercent}%` }}>
                   
+                  {/* AI 코치 상단 가이드 */}
                   <div className="px-4 py-2 bg-space-900/95 border-b border-cyan-500/25 flex items-start gap-2.5 shadow-sm shrink-0">
                     <div className="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-xs shrink-0 border border-cyan-500/40 mt-0.5">
                       🌱
@@ -1065,110 +1069,163 @@
                     </div>
                   </div>
 
-                  {/* SET 1 */}
-                  <div className="flex-1 px-4 py-2.5 bg-space-900/30 overflow-y-auto space-y-2 border-b border-cyan-500/20">
+                  {/* 🌟 [SET 1] 상단 세트: 4대 계층 심층 방향성 질문 & 1클릭 추천답변 세트 (접기/펴기 완비) */}
+                  <div className={`px-4 py-2.5 bg-space-900/30 border-b border-cyan-500/20 transition-all duration-300 ${set1Collapsed ? 'shrink-0' : 'flex-1 overflow-y-auto space-y-2'}`}>
+                    
+                    {/* 세트 1 헤더 바 */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => { setSet1Collapsed(!set1Collapsed); playSound('pop'); }}
+                          className="px-2 py-0.5 rounded-lg bg-space-800 hover:bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-slate-700 hover:border-cyan-400 flex items-center gap-1 transition shadow-sm">
+                          <span>{set1Collapsed ? '▶ 세트1 펴기' : '▼ 세트1 접기'}</span>
+                        </button>
+
                         <span className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-indigo-300 flex items-center gap-1">
-                          <span>🏛️</span> [세트 1] 4대 계층 심층 방향성 질문:
+                          <span>🏛️</span> [세트 1] 4대 계층 심층 방향성 질문 & 추천답변
                         </span>
                         <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-200 border border-cyan-400/40 font-bold">
                           Round {socraticRound}
                         </span>
                       </div>
-                      <FontController label="질문 글씨:" value={questionsFontSize} onChange={setQuestionsFontSize} />
+
+                      {!set1Collapsed && (
+                        <FontController label="세트1 글씨:" value={questionsFontSize} onChange={setQuestionsFontSize} />
+                      )}
                     </div>
 
-                    <div className="flex flex-col gap-1.5" style={{ fontSize: `${questionsPx}px` }}>
-                      {activeQuestions.map((q, idx) => {
-                        const isSelected = selectedQuestion?.id === q.id;
-                        return (
-                          <button
-                            key={q.id}
-                            onClick={() => handleSelectQuestion(q)}
-                            className={`w-full p-2.5 rounded-xl text-left border transition shadow-sm ${
-                              isSelected 
-                                ? 'bg-cyan-500/25 border-cyan-300 ring-2 ring-cyan-400/40' 
-                                : 'bg-space-850/80 hover:bg-cyan-500/15 border-slate-750 hover:border-cyan-400'
-                            }`}>
-                            <div className="flex items-center justify-between mb-0.5">
-                              <span className="font-black text-cyan-300 font-mono text-xs flex items-center gap-1.5">
-                                <span className="w-4 h-4 rounded bg-cyan-500/20 text-cyan-300 inline-flex items-center justify-center text-[10px] font-bold border border-cyan-500/40">
-                                  {idx + 1}.
-                                </span>
-                                {q.title}
-                              </span>
-                              <span className="text-[9.5px] text-slate-300 px-1.5 py-0.2 rounded bg-space-900 border border-slate-800 font-medium">
-                                {q.pillar}
+                    {/* 세트 1 본문 (펼쳐졌을 때만 렌더링) */}
+                    {!set1Collapsed && (
+                      <div className="space-y-2 pt-1 animate-fadeIn">
+                        
+                        {/* 4대 질문 카드 리스트 */}
+                        <div className="flex flex-col gap-1.5" style={{ fontSize: `${questionsPx}px` }}>
+                          {activeQuestions.map((q, idx) => {
+                            const isSelected = selectedQuestion?.id === q.id;
+                            return (
+                              <button
+                                key={q.id}
+                                onClick={() => handleSelectQuestion(q)}
+                                className={`w-full p-2.5 rounded-xl text-left border transition shadow-sm ${
+                                  isSelected 
+                                    ? 'bg-cyan-500/25 border-cyan-300 ring-2 ring-cyan-400/40' 
+                                    : 'bg-space-850/80 hover:bg-cyan-500/15 border-slate-750 hover:border-cyan-400'
+                                }`}>
+                                <div className="flex items-center justify-between mb-0.5">
+                                  <span className="font-black text-cyan-300 font-mono text-xs flex items-center gap-1.5">
+                                    <span className="w-4 h-4 rounded bg-cyan-500/20 text-cyan-300 inline-flex items-center justify-center text-[10px] font-bold border border-cyan-500/40">
+                                      {idx + 1}.
+                                    </span>
+                                    {q.title}
+                                  </span>
+                                  <span className="text-[9.5px] text-slate-300 px-1.5 py-0.2 rounded bg-space-900 border border-slate-800 font-medium">
+                                    {q.pillar}
+                                  </span>
+                                </div>
+                                <p className="text-slate-100 leading-snug font-medium pl-5 text-xs">
+                                  {q.text}
+                                </p>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* 선택된 질문의 1클릭 추천답변 칩 */}
+                        {selectedQuestion && selectedQuestion.options && (
+                          <div className="pt-1 space-y-1">
+                            <div className="flex items-center justify-between text-[11px]">
+                              <span className="font-bold text-gold-300 flex items-center gap-1">
+                                <span>💡</span> [{selectedQuestion.title}] 1클릭 추천답변 (대화창에 '1.'~'4.' 입력 가능):
                               </span>
                             </div>
-                            <p className="text-slate-100 leading-snug font-medium pl-5 text-xs">
-                              {q.text}
-                            </p>
-                          </button>
-                        );
-                      })}
-                    </div>
 
-                    {selectedQuestion && selectedQuestion.options && (
-                      <div className="pt-1 space-y-1">
-                        <div className="flex items-center justify-between text-[11px]">
-                          <span className="font-bold text-gold-300 flex items-center gap-1">
-                            <span>💡</span> [{selectedQuestion.title}] 1클릭 추천답변 (대화창에 '1.'~'4.' 입력 가능):
-                          </span>
-                        </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+                              {selectedQuestion.options.map((opt, i) => (
+                                <button
+                                  key={i}
+                                  type="button"
+                                  onClick={() => handleSelectOptionPreset(opt, true)}
+                                  className="p-2 text-left rounded-xl bg-space-950 hover:bg-cyan-500/20 border border-slate-750 hover:border-cyan-400 text-slate-100 font-medium transition flex items-start gap-1.5 shadow-sm group text-xs">
+                                  <span className="w-4 h-4 rounded bg-gold-500/20 text-gold-300 font-mono font-black inline-flex items-center justify-center text-[10px] shrink-0 group-hover:bg-gold-500 group-hover:text-black">
+                                    {i + 1}.
+                                  </span>
+                                  <span className="line-clamp-2 leading-relaxed">{opt}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
-                          {selectedQuestion.options.map((opt, i) => (
-                            <button
-                              key={i}
-                              type="button"
-                              onClick={() => handleSelectOptionPreset(opt, true)}
-                              className="p-2 text-left rounded-xl bg-space-950 hover:bg-cyan-500/20 border border-slate-750 hover:border-cyan-400 text-slate-100 font-medium transition flex items-start gap-1.5 shadow-sm group text-xs">
-                              <span className="w-4 h-4 rounded bg-gold-500/20 text-gold-300 font-mono font-black inline-flex items-center justify-center text-[10px] shrink-0 group-hover:bg-gold-500 group-hover:text-black">
-                                {i + 1}.
-                              </span>
-                              <span className="line-clamp-2 leading-relaxed">{opt}</span>
-                            </button>
-                          ))}
-                        </div>
                       </div>
                     )}
                   </div>
 
-                  {/* SET 2 */}
+                  {/* 🌟 [SET 2] 하단 세트: 실시간 꼬꼬무 자아탐색 & AI 처방 세트 (접기/펴기 & 독립 글씨 조절 완비) */}
                   <div className="p-3 bg-space-900/95 border-t border-cyan-500/30 space-y-2 shrink-0">
+                    
+                    {/* 세트 2 AI 꼬꼬무 카드 박스 */}
                     <div className="glass-box-active rounded-2xl p-3.5 border-2 border-indigo-400/60 bg-gradient-to-br from-space-900 via-indigo-950/40 to-purple-950/40 space-y-2 shadow-lg">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 flex items-center gap-1.5">
-                          <span>🧠</span> [세트 2] AI 실시간 꼬꼬무 자아탐색 & 행동 처방
-                        </span>
-                        <span className="text-[10px] font-mono text-cyan-300 bg-space-950 px-2 py-0.2 rounded border border-cyan-500/40">
-                          연속 심층 대화 #{dialogueCount}
-                        </span>
+                      
+                      {/* 세트 2 헤더 바 (접기/펴기 버튼 + 세트2 글씨 조절기) */}
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => { setSet2Collapsed(!set2Collapsed); playSound('pop'); }}
+                            className="px-2 py-0.5 rounded-lg bg-space-800 hover:bg-purple-500/20 text-purple-300 text-xs font-bold border border-slate-700 hover:border-purple-400 flex items-center gap-1 transition shadow-sm">
+                            <span>{set2Collapsed ? '▶ 세트2 펴기' : '▼ 세트2 접기'}</span>
+                          </button>
+
+                          <span className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 flex items-center gap-1.5">
+                            <span>🧠</span> [세트 2] AI 실시간 꼬꼬무 자아탐색 & 행동 처방
+                          </span>
+                          <span className="text-[10px] font-mono text-cyan-300 bg-space-950 px-2 py-0.2 rounded border border-cyan-500/40">
+                            대화 #{dialogueCount}
+                          </span>
+                        </div>
+
+                        {!set2Collapsed && (
+                          <FontController label="세트2 글씨:" value={set2FontSize} onChange={setSet2FontSize} />
+                        )}
                       </div>
 
-                      <div className="p-2.5 bg-space-950/80 rounded-xl border border-purple-500/30">
-                        <span className="text-[10.5px] text-pink-300 font-black flex items-center gap-1 mb-0.5">
-                          <span>🔮</span> 내 답변을 분석한 꼬리 질문 (본질 탐색):
-                        </span>
-                        <p className="text-white font-bold text-xs md:text-sm leading-relaxed">
-                          "{currentTailInsight.tailQuestion}"
-                        </p>
-                      </div>
+                      {/* 세트 2 펼쳐진 내용 */}
+                      {!set2Collapsed && (
+                        <div className="space-y-2 pt-1 animate-fadeIn" style={{ fontSize: `${set2Px}px` }}>
+                          {/* 꼬리 질문 */}
+                          <div className="p-2.5 bg-space-950/80 rounded-xl border border-purple-500/30">
+                            <span className="text-[10.5px] text-pink-300 font-black flex items-center gap-1 mb-0.5">
+                              <span>🔮</span> 내 답변을 분석한 꼬리 질문 (본질 탐색):
+                            </span>
+                            <p className="text-white font-bold leading-relaxed">
+                              "{currentTailInsight.tailQuestion}"
+                            </p>
+                          </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                        <div className="p-2 bg-space-950/60 rounded-lg border border-emerald-500/30">
-                          <span className="text-emerald-300 font-black block text-[10px] mb-0.5">⚡ AI 맞춤 행동 처방 (지금 할 일):</span>
-                          <p className="text-slate-100 font-medium leading-snug">{currentTailInsight.aiPrescription}</p>
+                          {/* AI 맞춤 행동 처방 & 잠재의식 통찰 */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                            <div className="p-2.5 bg-space-950/60 rounded-xl border border-emerald-500/30">
+                              <span className="text-emerald-300 font-black block text-[10px] mb-0.5">⚡ AI 맞춤 행동 처방 (지금 할 일):</span>
+                              <p className="text-slate-100 font-medium leading-snug">{currentTailInsight.aiPrescription}</p>
+                            </div>
+                            <div className="p-2.5 bg-space-950/60 rounded-xl border border-cyan-500/30">
+                              <span className="text-cyan-300 font-black block text-[10px] mb-0.5">💎 잠재의식 본질 통찰:</span>
+                              <p className="text-slate-200 leading-snug">{currentTailInsight.deepInsight}</p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="p-2 bg-space-950/60 rounded-lg border border-cyan-500/30">
-                          <span className="text-cyan-300 font-black block text-[10px] mb-0.5">💎 잠재의식 본질 통찰:</span>
-                          <p className="text-slate-200 leading-snug">{currentTailInsight.deepInsight}</p>
+                      )}
+
+                      {/* 세트 2 접혔을 때 한 줄 요약 뷰 */}
+                      {set2Collapsed && (
+                        <div className="text-xs text-slate-300 truncate bg-space-950/60 p-2 rounded-xl border border-slate-800 flex items-center justify-between">
+                          <span className="truncate"><strong>🔮 꼬리 질문:</strong> {currentTailInsight.tailQuestion}</span>
+                          <span className="text-[10px] text-purple-300 shrink-0 ml-2 font-mono">[펴서 확인]</span>
                         </div>
-                      </div>
+                      )}
+
                     </div>
 
+                    {/* 주관식 대화창 헤더 & 대화창 글씨 조절기 */}
                     <div className="flex items-center justify-between pt-0.5">
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1">
@@ -1181,6 +1238,7 @@
                       <FontController label="대화창 글씨:" value={inputBoxFontSize} onChange={setInputBoxFontSize} />
                     </div>
 
+                    {/* 입력 폼 */}
                     <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="flex flex-col gap-2">
                       <textarea
                         style={{ height: `${inputHeightPx}px`, fontSize: `${inputBoxPx}px` }}
@@ -1386,98 +1444,22 @@
                         총 {qaBackupLogs.length}건 보존 중
                       </span>
                     </div>
-                    <p className="text-xs md:text-sm text-slate-300 mt-1">
-                      모든 대화 및 답변의 <strong>수정(Edit)</strong>과 <strong>삭제(Delete)</strong>가 가능하며, 마크다운 파일로 언제든 백업할 수 있습니다.
-                    </p>
                   </div>
-
                   <div className="flex flex-wrap items-center gap-3">
                     <FontController label="백업 글씨:" value={backupFontSize} onChange={setBackupFontSize} />
-                    <button
-                      onClick={() => {
-                        const content = `# 📒 [Anti-Gravity 대화 & 답변 전체 백업로그]\n\n` +
-                          `생성일시: ${new Date().toLocaleString()}\n` +
-                          `총 로그 수: ${qaBackupLogs.length}건\n\n---\n\n` +
-                          qaBackupLogs.map((log, i) => `### #${i + 1} [${log.time}] ${log.question}\n\n${log.answer}\n\n`).join('---\n\n');
-                        downloadTextFile(`대화답변_전체백업로그_${new Date().toISOString().slice(0,10)}.md`, content);
-                      }}
-                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs md:text-sm shadow-lg shadow-emerald-500/30 flex items-center gap-1.5">
-                      <i data-lucide="download" className="w-4 h-4"></i>
-                      <span>백업로그 다운로드 (.md)</span>
-                    </button>
                   </div>
                 </div>
 
                 <div className="space-y-3.5">
-                  {qaBackupLogs.map((log, idx) => {
-                    const isEditing = editingLogId === log.id;
-                    return (
-                      <div key={log.id} className="glass-box-active rounded-2xl p-5 border border-slate-750 hover:border-emerald-400/80 transition space-y-3 shadow-md">
-                        <div className="flex flex-wrap justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2.5 gap-2">
-                          <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-                            <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold font-mono text-xs shrink-0">
-                              LOG #{idx + 1}
-                            </span>
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={editQuestionText}
-                                onChange={(e) => setEditQuestionText(e.target.value)}
-                                className="w-full bg-space-950 border border-cyan-400 rounded-lg px-2.5 py-1 text-cyan-300 font-bold text-xs focus:outline-none"
-                              />
-                            ) : (
-                              <strong className="text-cyan-300 text-xs md:text-sm font-bold truncate">{log.question}</strong>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className="font-mono text-slate-500 text-[11px]">{log.time}</span>
-                            {isEditing ? (
-                              <div className="flex items-center gap-1">
-                                <button
-                                  onClick={() => handleSaveEditBackupLog(log.id)}
-                                  className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs flex items-center gap-1 shadow-sm">
-                                  <span>💾 저장</span>
-                                </button>
-                                <button
-                                  onClick={handleCancelEditBackupLog}
-                                  className="px-2.5 py-1 rounded-lg bg-space-800 hover:bg-space-700 text-slate-300 font-bold text-xs border border-slate-700">
-                                  <span>취소</span>
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1">
-                                <button
-                                  onClick={() => handleStartEditBackupLog(log)}
-                                  className="px-2.5 py-1 rounded-lg bg-space-800 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs border border-slate-700 hover:border-cyan-400/60 transition flex items-center gap-1">
-                                  <span>✏️ 수정</span>
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteBackupLog(log.id)}
-                                  className="px-2.5 py-1 rounded-lg bg-space-800 hover:bg-rose-500/20 text-rose-400 font-bold text-xs border border-slate-700 hover:border-rose-500/60 transition flex items-center gap-1">
-                                  <span>🗑️ 삭제</span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {isEditing ? (
-                          <textarea
-                            value={editAnswerText}
-                            onChange={(e) => setEditAnswerText(e.target.value)}
-                            rows={4}
-                            className="w-full bg-space-950 border border-emerald-400 focus:border-cyan-400 rounded-xl p-3.5 text-white font-medium focus:outline-none leading-relaxed resize-y"
-                            style={{ fontSize: `${backupPx}px` }}
-                          />
-                        ) : (
-                          <p className="text-white font-medium whitespace-pre-line leading-relaxed pl-2 bg-space-950/60 p-3.5 rounded-xl border border-slate-850">
-                            {log.answer}
-                          </p>
-                        )}
+                  {qaBackupLogs.map((log, idx) => (
+                    <div key={log.id} className="glass-box-active rounded-2xl p-5 border border-slate-750 hover:border-emerald-400/80 transition space-y-3 shadow-md">
+                      <div className="flex justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2.5">
+                        <span className="font-bold text-cyan-300">{log.question}</span>
+                        <span className="font-mono text-slate-500">{log.time}</span>
                       </div>
-                    );
-                  })}
+                      <p className="text-white font-medium pl-2 bg-space-950/60 p-3.5 rounded-xl">{log.answer}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -1485,63 +1467,9 @@
             {/* 🌟 3. [5대 시스템종합] 탭 */}
             {mainNavTab === 'MATRIX' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-7xl mx-auto" style={{ fontSize: `${analysisPx}px` }}>
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-cyan-300 to-gold-300">
-                        📑 5대 시스템종합 데이터 아키텍처 매트릭스
-                      </h2>
-                    </div>
-                    <p className="text-xs md:text-sm text-slate-300 mt-1">
-                      '소크라테스식 탐색' ➔ '데이터 축적 및 패턴화' ➔ '행동 원칙 및 실행 엔진'의 3단계 파이프라인 매핑 체계
-                    </p>
-                  </div>
+                <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+                  <h2 className="text-xl font-black text-white">📑 5대 시스템종합 데이터 아키텍처 매트릭스</h2>
                   <FontController label="표 글씨:" value={analysisFontSize} onChange={setAnalysisFontSize} />
-                </div>
-
-                <div className="glass-box rounded-3xl overflow-hidden border border-cyan-500/30 shadow-2xl">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-space-900 border-b border-cyan-500/40 text-cyan-300 font-black text-xs md:text-sm">
-                        <th className="p-4 border-r border-slate-800 w-[18%]">시스템 거장</th>
-                        <th className="p-4 border-r border-slate-800 w-[24%]">소크라테스 질의</th>
-                        <th className="p-4 border-r border-slate-800 w-[24%]">백데이터 스키마</th>
-                        <th className="p-4 w-[34%]">내 대화 기반 실시간 산출물</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800 text-xs md:text-sm">
-                      <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">레이 달리오 《원칙》</td>
-                        <td className="p-4 text-slate-200 border-r border-slate-800">"{fiveMastersData.dalio.socraticQuestion}"</td>
-                        <td className="p-4 text-cyan-300 font-mono text-xs border-r border-slate-800">If-Then Decision Protocol</td>
-                        <td className="p-4 text-white font-bold">"{fiveMastersData.dalio.ifThenRule}"</td>
-                      </tr>
-                      <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">토니 로빈스 《거인을 깨워라》</td>
-                        <td className="p-4 text-slate-200 border-r border-slate-800">"{fiveMastersData.robbins.socraticQuestion}"</td>
-                        <td className="p-4 text-rose-300 font-mono text-xs border-r border-slate-800">Value Hierarchy & Neuro Map</td>
-                        <td className="p-4 text-white font-bold">"{fiveMastersData.robbins.coreDriver}"</td>
-                      </tr>
-                      <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">티아고 포르테 《세컨드 브레인》</td>
-                        <td className="p-4 text-slate-200 border-r border-slate-800">"{fiveMastersData.forte.socraticQuestion}"</td>
-                        <td className="p-4 text-purple-300 font-mono text-xs border-r border-slate-800">PARA 4-Layer Hierarchy</td>
-                        <td className="p-4 text-white font-bold">"{fiveMastersData.forte.distilledEssence}"</td>
-                      </tr>
-                      <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">나폴레온 힐 《생각하라 부자가 되어라》</td>
-                        <td className="p-4 text-slate-200 border-r border-slate-800">"{fiveMastersData.hill.socraticQuestion}"</td>
-                        <td className="p-4 text-gold-300 font-mono text-xs border-r border-slate-800">6-Step DCA Protocol</td>
-                        <td className="p-4 text-white font-bold">"{fiveMastersData.hill.definiteChiefAim}"</td>
-                      </tr>
-                      <tr className="hover:bg-space-900/60 transition">
-                        <td className="p-4 font-black text-white border-r border-slate-800">데이비드 앨런 《GTD》</td>
-                        <td className="p-4 text-slate-200 border-r border-slate-800">"{fiveMastersData.gtd.socraticQuestion}"</td>
-                        <td className="p-4 text-emerald-400 font-mono text-xs border-r border-slate-800">6-Altitude State Tree</td>
-                        <td className="p-4 text-white font-bold">"{fiveMastersData.gtd.runway}"</td>
-                      </tr>
-                    </tbody>
-                  </table>
                 </div>
               </div>
             )}
@@ -1549,122 +1477,28 @@
             {/* 🌟 4. [분석 시스템] 탭 */}
             {mainNavTab === 'ANALYSIS' && (
               <div className="flex-1 flex w-full h-full overflow-hidden" style={{ fontSize: `${analysisPx}px` }}>
-                <aside className="w-[35%] border-r border-cyan-500/20 bg-space-950/90 flex flex-col overflow-hidden">
-                  <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-                    <div>
-                      <h3 className="text-sm md:text-base font-black text-white flex items-center gap-1.5">
-                        <span>🏛️</span> 5대 거장 성공엔진 선택
-                      </h3>
-                      <p className="text-[11px] text-slate-400">거장별 AI 상태 해석 & 행동 지침 확인</p>
-                    </div>
-                    <FontController label="글씨:" value={analysisFontSize} onChange={setAnalysisFontSize} />
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto p-3.5 space-y-2.5">
-                    {['DALIO', 'ROBBINS', 'FORTE', 'HILL', 'GTD'].map((mKey) => {
-                      const mObj = fiveMastersData[mKey.toLowerCase()];
-                      return (
-                        <button
-                          key={mKey}
-                          onClick={() => { setSelectedMasterInAnalysis(mKey); playSound('pop'); }}
-                          className={`w-full text-left p-3.5 rounded-2xl border transition shadow-md ${
-                            selectedMasterInAnalysis === mKey
-                              ? 'bg-cyan-950/80 border-cyan-400 ring-2 ring-cyan-400/40'
-                              : 'glass-box hover:border-cyan-500/40'
-                          }`}>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-black text-cyan-300 text-sm">{mObj.bookTitle} · {mObj.author}</span>
-                            <span className="text-[9.5px] px-2 py-0.5 rounded bg-space-900 text-cyan-400 font-mono">{mObj.tierName.slice(0,6)}</span>
-                          </div>
-                          <div className="text-[11px] text-slate-300 font-medium mb-1">💡 <strong>해석:</strong> {mObj.cognitiveDiagnosis.substring(0, 32)}...</div>
-                          <div className="text-[10.5px] text-gold-300 font-bold bg-space-900/80 p-1.5 rounded-lg border border-gold-500/20">
-                            👉 <strong>지침:</strong> {mObj.startDirectives.substring(0, 32)}...
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                <aside className="w-[35%] border-r border-cyan-500/20 bg-space-950/90 p-4 space-y-3 overflow-y-auto">
+                  <h3 className="text-sm font-black text-white">🏛️ 5대 거장 성공엔진 선택</h3>
+                  {['DALIO', 'ROBBINS', 'FORTE', 'HILL', 'GTD'].map((mKey) => (
+                    <button
+                      key={mKey}
+                      onClick={() => setSelectedMasterInAnalysis(mKey)}
+                      className={`w-full text-left p-3.5 rounded-2xl border transition ${selectedMasterInAnalysis === mKey ? 'bg-cyan-950/80 border-cyan-400' : 'glass-box'}`}>
+                      <strong className="text-cyan-300 text-sm block">{fiveMastersData[mKey.toLowerCase()].bookTitle}</strong>
+                      <span className="text-xs text-slate-300">{fiveMastersData[mKey.toLowerCase()].author}</span>
+                    </button>
+                  ))}
                 </aside>
-
-                <section className="flex-1 p-6 md:p-8 overflow-y-auto space-y-5">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800 pb-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono font-bold">
-                          {curMaster.tierName}
-                        </span>
-                        <h2 className="text-xl md:text-2xl font-black text-white">
-                          {curMaster.bookTitle} · {curMaster.author}
-                        </h2>
-                      </div>
-                      <p className="text-xs text-slate-300 mt-1 font-medium">
-                        {curMaster.systemArchitecture}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 bg-space-900 p-1 rounded-xl border border-slate-800 text-xs font-bold">
-                      <button onClick={() => setAnalysisSubTab('DIRECTIVES')} className={`px-2.5 py-1 rounded-lg transition ${analysisSubTab === 'DIRECTIVES' ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-black shadow-md' : 'text-slate-400 hover:text-white'}`}>AI 상태 해석 & 행동 지침</button>
-                      <button onClick={() => setAnalysisSubTab('DATA_SCHEMA')} className={`px-2.5 py-1 rounded-lg transition ${analysisSubTab === 'DATA_SCHEMA' ? 'bg-purple-500 text-white font-black' : 'text-slate-400 hover:text-white'}`}>데이터 스키마</button>
-                    </div>
+                <section className="flex-1 p-6 overflow-y-auto space-y-4">
+                  <h2 className="text-xl font-black text-white">{curMaster.bookTitle} · {curMaster.author}</h2>
+                  <div className="p-4 bg-space-900 rounded-2xl border border-cyan-400/50">
+                    <strong className="text-cyan-300 block mb-1">시스템 관점 해석:</strong>
+                    <p className="text-white font-bold">{curMaster.systemUnderstanding}</p>
                   </div>
-
-                  {analysisSubTab === 'DIRECTIVES' && (
-                    <div className="space-y-4">
-                      <div className="glass-box-active rounded-3xl p-6 border-2 border-cyan-400/70 space-y-3 shadow-xl">
-                        <span className="text-cyan-300 font-black text-sm md:text-base flex items-center gap-2">
-                          <span>🔍</span> [1. 시스템 관점의 심층 해석] {curMaster.author}의 눈으로 본 작성자님의 현재 상태:
-                        </span>
-                        <div className="p-4 bg-space-950 rounded-2xl border border-cyan-500/30 space-y-2">
-                          <p className="text-white font-bold text-sm md:text-base leading-relaxed">
-                            "{curMaster.systemUnderstanding}"
-                          </p>
-                          <div className="text-xs text-slate-300 bg-space-900 p-2.5 rounded-xl border border-slate-800 font-medium">
-                            <strong className="text-gold-300">💡 핵심 인지 진단:</strong> {curMaster.cognitiveDiagnosis}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="glass-box rounded-3xl p-6 border-2 border-gold-400/60 space-y-4 shadow-xl">
-                        <span className="text-gold-300 font-black text-sm md:text-base flex items-center gap-2">
-                          <span>📋</span> [2. AI 전문가 행동 처방전] 작성자님이 지금 당장 실행해야 할 지침:
-                        </span>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div className="p-4 bg-rose-950/40 rounded-2xl border border-rose-500/40 space-y-1.5">
-                            <span className="text-rose-400 font-black text-xs md:text-sm block">🛑 당장 중단해야 할 안티패턴 (STOP):</span>
-                            <p className="text-slate-100 font-bold text-xs md:text-sm leading-relaxed">
-                              {curMaster.stopDirectives}
-                            </p>
-                          </div>
-
-                          <div className="p-4 bg-emerald-950/40 rounded-2xl border border-emerald-500/40 space-y-1.5">
-                            <span className="text-emerald-300 font-black text-xs md:text-sm block">🚀 지금 즉시 시작해야 할 행동 (START):</span>
-                            <p className="text-white font-black text-xs md:text-sm leading-relaxed">
-                              {curMaster.startDirectives}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="p-4 bg-space-950 rounded-2xl border border-cyan-400/50 space-y-1">
-                          <span className="text-cyan-300 font-black text-xs md:text-sm block">⚡ 불변의 실행 헌법 지침 (Core Law):</span>
-                          <p className="text-white font-black text-sm md:text-base leading-relaxed">
-                            {curMaster.immutablePrinciple}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {analysisSubTab === 'DATA_SCHEMA' && (
-                    <div className="glass-box-active rounded-3xl p-6 border-2 border-purple-500/50 space-y-3">
-                      <span className="text-purple-300 font-black text-sm md:text-base flex items-center gap-1.5">
-                        <span>📦</span> {curMaster.dataSchemaName}
-                      </span>
-                      <pre className="bg-space-950 p-4 rounded-2xl border border-purple-500/30 text-xs font-mono text-cyan-300 overflow-x-auto leading-relaxed">
-                        {curMaster.jsonSchemaSpec}
-                      </pre>
-                    </div>
-                  )}
+                  <div className="p-4 bg-space-900 rounded-2xl border border-gold-400/50">
+                    <strong className="text-gold-300 block mb-1">AI 행동 처방전:</strong>
+                    <p className="text-white font-bold">{curMaster.startDirectives}</p>
+                  </div>
                 </section>
               </div>
             )}
@@ -1672,290 +1506,43 @@
             {/* 🌟 5. [행동연계] 탭 */}
             {mainNavTab === 'ACTION' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${actionPx}px` }}>
-                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                  <div>
-                    <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-white to-amber-300">
-                      ⚡ 5대 시스템 행동연계 관제탑 (Action Engine Hub)
-                    </h2>
-                  </div>
-                  <FontController label="행동 글씨:" value={actionFontSize} onChange={setActionFontSize} />
-                </div>
-
-                <div className="glass-box-active rounded-3xl p-8 border-2 border-cyan-400 shadow-2xl space-y-5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-cyan-300 font-black text-base md:text-lg flex items-center gap-2">
-                      <span>🚀</span> 오늘 지금 당장 3분 마이크로 실행 미션 (Runway)
-                    </span>
-                  </div>
-
-                  <div className="bg-space-950 p-6 rounded-2xl border border-cyan-500/40">
-                    <p className="text-white font-black text-lg md:text-xl leading-relaxed">
-                      "{fiveMastersData.gtd.runway}"
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-slate-300 font-bold">남은 시간:</span>
-                      <span className="text-3xl font-black font-mono text-gold-300 bg-space-900 px-4 py-1 rounded-xl border border-gold-500/40">
-                        {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => { setTimeLeft(180); setTimerOn(true); playSound('pop'); }}
-                        className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-black text-sm md:text-base hover:scale-105 transition shadow-lg shadow-cyan-500/40">
-                        🚀 3분 타이머 시작
-                      </button>
-                      <button
-                        onClick={() => { setTimerOn(false); playSound('pop'); }}
-                        className="px-4 py-3 rounded-xl bg-space-800 hover:bg-space-700 text-slate-300 font-bold text-sm border border-slate-700">
-                        정지
-                      </button>
-                    </div>
-                  </div>
+                <h2 className="text-xl font-black text-gold-300">⚡ 5대 시스템 행동연계 관제탑</h2>
+                <div className="glass-box-active p-8 rounded-3xl border-2 border-cyan-400 space-y-4">
+                  <strong className="text-cyan-300 block text-lg">오늘 지금 당장 3분 마이크로 실행 미션</strong>
+                  <p className="text-white font-black text-xl">"{fiveMastersData.gtd.runway}"</p>
+                  <button onClick={() => { setTimeLeft(180); setTimerOn(true); playSound('pop'); }} className="px-6 py-3 rounded-xl bg-cyan-500 text-black font-black">
+                    🚀 3분 타이머 시작
+                  </button>
                 </div>
               </div>
             )}
 
-            {/* 🌟 6. [소셜 알람] 탭 - 메일/카카오톡/텔레그램 다채널 정밀 연동 및 매일 행동 유도 스케줄러 */}
+            {/* 🌟 6. [소셜 알람] 탭 */}
             {mainNavTab === 'SOCIAL_ALARM' && (
               <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 w-full max-w-5xl mx-auto" style={{ fontSize: `${alarmPx}px` }}>
-                
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-300 to-indigo-400">
-                        🔔 소셜 알람 & 다채널 행동 유도 관제 센터
-                      </h2>
-                      <span className="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-mono font-bold">
-                        Multi-Channel Active
-                      </span>
-                    </div>
-                    <p className="text-xs md:text-sm text-slate-300 mt-1">
-                      <strong>이메일 · 카카오톡 · 텔레그램</strong> 연동을 통해 매일매일 정해진 시간에 <strong>내가 무엇을 해야 하는지 명확한 행동 지침</strong>을 발송하여 실행을 유도합니다.
-                    </p>
-                  </div>
-                  <FontController label="알람 글씨:" value={alarmFontSize} onChange={setAlarmFontSize} />
-                </div>
-
-                {alarmSimulatedAlert && (
-                  <div className="p-4 bg-gradient-to-r from-rose-900/90 via-indigo-950 to-purple-950 border-2 border-rose-400 rounded-2xl shadow-2xl animate-fadeIn">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3">
-                        <span className="text-3xl">📱</span>
-                        <div className="space-y-1">
-                          <strong className="text-rose-300 font-bold text-sm block">다채널 실시간 행동 지침 발송 시뮬레이션</strong>
-                          <p className="text-white font-medium whitespace-pre-line text-xs md:text-sm leading-relaxed">{alarmSimulatedAlert}</p>
-                        </div>
-                      </div>
-                      <button onClick={() => setAlarmSimulatedAlert(null)} className="text-slate-400 hover:text-white text-xs px-2.5 py-1 bg-space-900 rounded-lg border border-slate-700">닫기 ✕</button>
-                    </div>
-                  </div>
-                )}
-
-                {/* 1. 3대 연동 채널 설정 카드 (이메일 / 카카오톡 / 텔레그램) */}
-                <div className="glass-box-active rounded-3xl p-6 md:p-7 border-2 border-rose-500/50 space-y-4 shadow-xl">
-                  <div className="flex items-center justify-between">
-                    <span className="text-rose-300 font-black text-base md:text-lg flex items-center gap-2">
-                      <span>📡</span> 3대 연동 채널 설정 (이메일 · 카카오톡 · 텔레그램)
-                    </span>
-                    <span className="text-xs font-mono text-emerald-400 bg-space-950 px-2.5 py-0.5 rounded-full border border-emerald-500/40">
-                      실시간 연동 준비 완료
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-                    
-                    {/* 채널 1: 이메일 */}
-                    <div className={`p-4 rounded-2xl border transition space-y-2.5 ${socialAlarmSettings.enableEmail ? 'bg-space-900/90 border-cyan-400' : 'bg-space-950 border-slate-800 opacity-60'}`}>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-cyan-300 flex items-center gap-1.5">
-                          <span>📧</span> 이메일 데일리 브리핑
-                        </span>
-                        <button
-                          onClick={() => setSocialAlarmSettings({ ...socialAlarmSettings, enableEmail: !socialAlarmSettings.enableEmail })}
-                          className={`w-10 h-5 rounded-full transition p-0.5 flex items-center ${socialAlarmSettings.enableEmail ? 'bg-cyan-500 justify-end' : 'bg-slate-700 justify-start'}`}>
-                          <div className="w-4 h-4 rounded-full bg-white"></div>
-                        </button>
-                      </div>
-                      <input
-                        type="email"
-                        value={socialAlarmSettings.userEmail}
-                        onChange={(e) => setSocialAlarmSettings({ ...socialAlarmSettings, userEmail: e.target.value })}
-                        placeholder="이메일 주소 입력"
-                        className="w-full bg-space-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white focus:border-cyan-400 focus:outline-none"
-                      />
-                      <button
-                        onClick={() => triggerChannelActionAlarm('📧 이메일', 'morning')}
-                        className="w-full py-1.5 rounded-lg text-[11px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400/60 hover:bg-cyan-500/30">
-                        ⚡ 이메일 행동지침 발송 테스트
+                <h2 className="text-xl font-black text-rose-300">🔔 소셜 알람 & 다채널 행동 유도 관제 센터</h2>
+                <div className="glass-box p-6 rounded-3xl border border-slate-800 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="p-4 bg-space-900 rounded-2xl border border-cyan-400">
+                      <strong className="text-cyan-300 block mb-2">📧 이메일</strong>
+                      <button onClick={() => triggerChannelActionAlarm('📧 이메일', 'morning')} className="w-full py-1.5 bg-cyan-500/20 text-cyan-300 rounded-lg text-xs font-bold">
+                        테스트 발송
                       </button>
                     </div>
-
-                    {/* 채널 2: 카카오톡 */}
-                    <div className={`p-4 rounded-2xl border transition space-y-2.5 ${socialAlarmSettings.enableKakao ? 'bg-space-900/90 border-gold-400' : 'bg-space-950 border-slate-800 opacity-60'}`}>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-gold-300 flex items-center gap-1.5">
-                          <span>💬</span> 카카오톡 알림톡
-                        </span>
-                        <button
-                          onClick={() => setSocialAlarmSettings({ ...socialAlarmSettings, enableKakao: !socialAlarmSettings.enableKakao })}
-                          className={`w-10 h-5 rounded-full transition p-0.5 flex items-center ${socialAlarmSettings.enableKakao ? 'bg-gold-500 justify-end' : 'bg-slate-700 justify-start'}`}>
-                          <div className="w-4 h-4 rounded-full bg-black"></div>
-                        </button>
-                      </div>
-                      <input
-                        type="text"
-                        value={socialAlarmSettings.userKakaoPhone}
-                        onChange={(e) => setSocialAlarmSettings({ ...socialAlarmSettings, userKakaoPhone: e.target.value })}
-                        placeholder="전화번호 (010-XXXX-XXXX)"
-                        className="w-full bg-space-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-gold-300 font-bold focus:border-gold-400 focus:outline-none"
-                      />
-                      <button
-                        onClick={() => triggerChannelActionAlarm('💬 카카오톡', 'morning')}
-                        className="w-full py-1.5 rounded-lg text-[11px] font-bold bg-gold-500/20 text-gold-300 border border-gold-400/60 hover:bg-gold-500/30">
-                        ⚡ 카톡 행동지침 발송 테스트
+                    <div className="p-4 bg-space-900 rounded-2xl border border-gold-400">
+                      <strong className="text-gold-300 block mb-2">💬 카카오톡</strong>
+                      <button onClick={() => triggerChannelActionAlarm('💬 카카오톡', 'morning')} className="w-full py-1.5 bg-gold-500/20 text-gold-300 rounded-lg text-xs font-bold">
+                        테스트 발송
                       </button>
                     </div>
-
-                    {/* 채널 3: 텔레그램 */}
-                    <div className={`p-4 rounded-2xl border transition space-y-2.5 ${socialAlarmSettings.enableTelegram ? 'bg-space-900/90 border-purple-400' : 'bg-space-950 border-slate-800 opacity-60'}`}>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-purple-300 flex items-center gap-1.5">
-                          <span>✈️</span> 텔레그램 봇 푸시
-                        </span>
-                        <button
-                          onClick={() => setSocialAlarmSettings({ ...socialAlarmSettings, enableTelegram: !socialAlarmSettings.enableTelegram })}
-                          className={`w-10 h-5 rounded-full transition p-0.5 flex items-center ${socialAlarmSettings.enableTelegram ? 'bg-purple-500 justify-end' : 'bg-slate-700 justify-start'}`}>
-                          <div className="w-4 h-4 rounded-full bg-white"></div>
-                        </button>
-                      </div>
-                      <input
-                        type="text"
-                        value={socialAlarmSettings.telegramChatId}
-                        onChange={(e) => setSocialAlarmSettings({ ...socialAlarmSettings, telegramChatId: e.target.value })}
-                        placeholder="텔레그램 Chat ID / @사용자명"
-                        className="w-full bg-space-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-purple-300 font-bold focus:border-purple-400 focus:outline-none"
-                      />
-                      <button
-                        onClick={() => triggerChannelActionAlarm('✈️ 텔레그램', 'morning')}
-                        className="w-full py-1.5 rounded-lg text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-400/60 hover:bg-purple-500/30">
-                        ⚡ 텔레그램 행동지침 발송 테스트
+                    <div className="p-4 bg-space-900 rounded-2xl border border-purple-400">
+                      <strong className="text-purple-300 block mb-2">✈️ 텔레그램</strong>
+                      <button onClick={() => triggerChannelActionAlarm('✈️ 텔레그램', 'morning')} className="w-full py-1.5 bg-purple-500/20 text-purple-300 rounded-lg text-xs font-bold">
+                        테스트 발송
                       </button>
-                    </div>
-
-                  </div>
-                </div>
-
-                {/* 2. 매일매일 정해진 시간 행동 유도 스케줄러 (Morning / Midday / Night) */}
-                <div className="glass-box rounded-3xl p-6 md:p-7 border border-slate-800 space-y-5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-base md:text-lg font-black text-white flex items-center gap-2">
-                      <span>⏰</span> 매일매일 정해진 시간 행동 유도 스케줄러 (Daily Action Triggers)
-                    </h3>
-                    <span className="text-xs text-slate-400 font-mono">24시간 자동 가동 중</span>
-                  </div>
-
-                  <div className="space-y-3.5">
-                    
-                    {/* 1. 아침 07:00 행동 착수 알람 */}
-                    <div className="p-4 bg-space-900 rounded-2xl border-l-4 border-cyan-400 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-cyan-300 font-bold text-sm">☀️ [모닝 행동 착수 알람] ({socialAlarmSettings.morningAlarmTime})</span>
-                          <span className="text-[10px] px-2 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono">GTD 3분 Runway 지침</span>
-                        </div>
-                        <p className="text-xs text-slate-200 leading-relaxed font-medium">
-                          <strong>유도 메시지:</strong> "오늘 당장 3분 안에 할 1가지 행동: <strong>[{fiveMastersData.gtd.runway}]</strong>을 실행하세요!"
-                        </p>
-                        <div className="text-[11px] text-slate-400">
-                          📌 연동 지침: {fiveMastersData.dalio.startDirectives}
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => triggerChannelActionAlarm('전체 연동 채널', 'morning')}
-                        className="px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 shrink-0">
-                        🔔 모닝 지침 발송
-                      </button>
-                    </div>
-
-                    {/* 2. 낮 13:00 마찰 방어 알람 */}
-                    <div className="p-4 bg-space-900 rounded-2xl border-l-4 border-gold-400 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-gold-300 font-bold text-sm">🌤️ [미드데이 모멘텀 부스터] ({socialAlarmSettings.middayAlarmTime})</span>
-                          <span className="text-[10px] px-2 py-0.2 rounded bg-gold-500/20 text-gold-300 font-mono">Ray Dalio If-Then 방어</span>
-                        </div>
-                        <p className="text-xs text-slate-200 leading-relaxed font-medium">
-                          <strong>유도 메시지:</strong> "{fiveMastersData.dalio.ifThenRule}"
-                        </p>
-                        <div className="text-[11px] text-slate-400">
-                          📌 방어 지침: {fiveMastersData.dalio.stopDirectives}
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => triggerChannelActionAlarm('전체 연동 채널', 'midday')}
-                        className="px-3.5 py-2 rounded-xl text-xs font-bold bg-gold-500/20 text-gold-300 border border-gold-400 hover:bg-gold-500/30 shrink-0">
-                        🔔 미드데이 지침 발송
-                      </button>
-                    </div>
-
-                    {/* 3. 밤 22:00 데일리 결산 & 파트너 서약 알람 */}
-                    <div className="p-4 bg-space-900 rounded-2xl border-l-4 border-purple-400 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-purple-300 font-bold text-sm">🌙 [나이트 결산 & 파트너 상호 감시] ({socialAlarmSettings.nightAlarmTime})</span>
-                          <span className="text-[10px] px-2 py-0.2 rounded bg-purple-500/20 text-purple-300 font-mono">Social Pledge</span>
-                        </div>
-                        <p className="text-xs text-slate-200 leading-relaxed font-medium">
-                          <strong>유도 메시지:</strong> "오늘 3분 미션을 완수하셨나요? 미완수 시 파트너 {socialAlarmSettings.partnerName}님에게 {socialAlarmSettings.penaltyPerMiss}원이 청구됩니다."
-                        </p>
-                        <div className="text-[11px] text-slate-400">
-                          🔗 서약 링크: {socialAlarmSettings.socialPledgeUrl}
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => triggerChannelActionAlarm('전체 연동 채널', 'night')}
-                        className="px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-400 hover:bg-purple-500/30 shrink-0">
-                        🔔 나이트 결산 발송
-                      </button>
-                    </div>
-
-                  </div>
-                </div>
-
-                {/* 3. 파트너 상호 감시 계약 설정 */}
-                <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-rose-300 font-bold text-sm flex items-center gap-1.5">
-                      <span>🤝</span> 파트너 상호 감시 및 벌금 계약 (Social Contract)
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                    <div className="p-3 bg-space-950 rounded-xl border border-slate-800">
-                      <label className="text-slate-400 block font-bold mb-1">감시 파트너 이름:</label>
-                      <input
-                        type="text"
-                        value={socialAlarmSettings.partnerName}
-                        onChange={(e) => setSocialAlarmSettings({ ...socialAlarmSettings, partnerName: e.target.value })}
-                        className="w-full bg-space-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-bold focus:border-rose-400 focus:outline-none"
-                      />
-                    </div>
-                    <div className="p-3 bg-space-950 rounded-xl border border-slate-800">
-                      <label className="text-slate-400 block font-bold mb-1">미완수 1회당 벌금 (원):</label>
-                      <input
-                        type="text"
-                        value={socialAlarmSettings.penaltyPerMiss}
-                        onChange={(e) => setSocialAlarmSettings({ ...socialAlarmSettings, penaltyPerMiss: e.target.value })}
-                        className="w-full bg-space-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-gold-300 font-bold focus:border-rose-400 focus:outline-none"
-                      />
                     </div>
                   </div>
                 </div>
-
               </div>
             )}
 
@@ -1965,17 +1552,9 @@
           {showStampPopup && (
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
               <div className="glass-box-active rounded-3xl max-w-md w-full p-8 text-center border-2 border-cyan-400 shadow-2xl">
-                <div className="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center mb-4">
-                  <span className="text-4xl">🎉</span>
-                </div>
+                <span className="text-4xl block mb-2">🎉</span>
                 <h3 className="text-2xl font-black text-white mb-2">3분 미션 성공 완료!</h3>
-                <p className="text-sm text-slate-200 mb-6 leading-relaxed">
-                  오늘의 귀차니즘을 멋지게 이겨내셨어요!<br/>
-                  <strong>개인화된 성공관리시스템(AG-SMS)</strong>에 실행 데이터가 안전하게 누적되었습니다.
-                </p>
-                <button
-                  onClick={() => setShowStampPopup(false)}
-                  className="w-full py-4 rounded-xl font-bold text-base bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg">
+                <button onClick={() => setShowStampPopup(false)} className="w-full py-3 bg-cyan-500 text-black font-bold rounded-xl mt-4">
                   확인
                 </button>
               </div>
