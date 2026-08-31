@@ -3,152 +3,723 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>3분 실험실</title>
+<title>3분 실험실 (3-Minute Lab)</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- React 18 & ReactDOM -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<!-- Babel for JSX -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Canvas Confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          space: {
+            950: '#0e1116',
+            900: '#171c24',
+            850: '#1f2632',
+            800: '#2c3542',
+            700: '#3d4858',
+          },
+          cyan: {
+            300: '#67E8F9',
+            400: '#22D3EE',
+            500: '#06B6D4',
+            glow: '#00F0FF',
+          },
+          gold: {
+            300: '#FDE047',
+            400: '#FACC15',
+            500: '#EAB308',
+            glow: '#FFD700',
+          },
+          warm: {
+            400: '#f0a04b',
+            500: '#e69035',
+          },
+          emerald: {
+            400: '#34D399',
+            500: '#10B981',
+          }
+        },
+        fontFamily: {
+          sans: ['Pretendard', '-apple-system', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+
 <style>
-:root{--bg:#0e1116;--card:#171c24;--fg:#e8eaed;--sub:#9aa4b2;--acc:#5b8def;--warm:#f0a04b}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,"Segoe UI",sans-serif;
-     display:flex;justify-content:center;padding:24px 16px}
-.wrap{width:100%;max-width:430px}
-.card{background:var(--card);border-radius:18px;padding:22px;margin-bottom:14px}
-h1{font-size:17px;margin:0 0 18px;color:var(--sub);font-weight:600}
-.no{font-size:13px;color:var(--acc);margin-bottom:10px}
-.hyp{font-size:16px;line-height:1.55;margin-bottom:6px}
-.ev{font-size:13px;color:var(--sub);margin-bottom:18px}
-.step{background:#1f2632;border-radius:12px;padding:14px;font-size:15px;line-height:1.5;margin-bottom:8px}
-.howto{font-size:13px;color:var(--sub);line-height:1.5;margin-bottom:16px}
-button{width:100%;padding:14px;border:0;border-radius:12px;font-size:15px;font-weight:600;
-       background:var(--acc);color:#fff;margin-bottom:8px;cursor:pointer}
-button.ghost{background:transparent;color:var(--sub);border:1px solid #2c3542}
-button.warm{background:var(--warm);color:#1a1a1a}
-input{width:100%;padding:14px;border-radius:12px;border:1px solid #2c3542;background:#1f2632;
-      color:var(--fg);font-size:15px;margin-bottom:10px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.grid button{margin:0}
-.rule{border-left:3px solid var(--acc);padding:10px 12px;margin-bottom:10px;font-size:14px;line-height:1.5}
-.rule small{color:var(--sub)}
-.locked{color:#5a6472;font-size:13px}
-.dis{font-size:11px;color:#5a6472;line-height:1.5;margin-top:18px}
+  body {
+    margin: 0;
+    background-color: #0e1116;
+    color: #e8eaed;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px;
+    font-size: 17px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 480px;
+  }
+  .card {
+    background: #171c24;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  }
+  .card-safe {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1.5px solid rgba(16, 185, 129, 0.4);
+  }
+  .step-box {
+    background: #1f2632;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  button {
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  button:active {
+    transform: scale(0.98);
+  }
 </style>
 </head>
-<body><div class="wrap" id="app"></div>
-<script>
-const API=""; let uid=localStorage.getItem("uid"), exp=null;
-const $=h=>document.getElementById("app").innerHTML=h;
-const post=(u,b)=>fetch(API+u,{method:"POST",headers:{"Content-Type":"application/json"},
-  body:JSON.stringify(b||{})}).then(r=>r.json());
-const get=u=>fetch(API+u).then(r=>r.json());
+<body>
+  <div class="wrap" id="root"></div>
 
-async function boot(){
-  if(!uid){const r=await post("/api/users",{nickname:"연구자",consent_emotion_log:true});
-    uid=r.user_id;localStorage.setItem("uid",uid);}
-  screenStart();
-}
-function screenStart(){
-  $(`<h1>🧪 3분 실험실</h1><div class="card">
-   <div class="hyp">오늘 뭘 하려다 못 하고 있어요?</div>
-   <div class="ev">한 줄만 적어주세요. 잘 쓸 필요 없어요.</div>
-   <input id="t" placeholder="예: 보고서 쓰기"/>
-   <div class="ev">지금 컨디션</div>
-   <div class="grid" style="margin-bottom:12px">
-     ${[1,2,3,4].map(i=>`<button class="ghost" onclick="setE(${i})" id="e${i}">${["바닥","별로","보통","좋음"][i-1]}</button>`).join("")}
-   </div>
-   <button onclick="startExp()">실험 받기</button></div>
-   <div class="dis" id="dis"></div>`);
-  window.energy=3;
-}
-window.setE=i=>{window.energy=i;[1,2,3,4].forEach(n=>
-  document.getElementById("e"+n).className=n===i?"":"ghost");};
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
 
-async function startExp(){
-  const task=document.getElementById("t").value.trim(); if(!task)return;
-  const r=await post("/api/today",{user_id:uid,task_text:task,energy:window.energy,place:"unknown"});
-  if(r.mode==="SOS")return screenSOS(r);
-  exp=r; screenExp(r,r.suggested_level);
-}
-function screenExp(r,lv){
-  const s=r.ladder[lv];
-  $(`<h1>🧪 3분 실험실</h1><div class="card">
-   <div class="no">실험 #${r.experiment_no} · ${r.variation.name}</div>
-   <div class="hyp">가설: ${r.hypothesis_line}</div>
-   <div class="ev">${r.evidence_line}</div>
-   <div class="step">${s.text} <b>(${s.minutes}분)</b></div>
-   <div class="howto">${r.variation.howto}</div>
-   <button onclick="lock(${lv})">실험 시작</button>
-   ${lv>0?`<button class="ghost" onclick="screenExp(exp,${lv-1})">너무 부담돼요 → 더 작게</button>`:
-          `<div class="ev">여기가 가장 작은 크기예요.</div>`}
-   ${lv<4?`<button class="ghost" onclick="screenExp(exp,${lv+1})">더 할 수 있어요 ↑</button>`:""}
-   </div>`);
-}
-async function lock(lv){
-  const r=await post(`/api/experiments/${exp.experiment_id}/ladder`,{level:lv});
-  $(`<h1>🧪 진행 중</h1><div class="card">
-    <div class="step">${r.step.text}</div><div class="ev">${r.message}</div>
-    <button onclick="screenObs()">끝났어요 / 기록할게요</button></div>`);
-}
-function screenObs(){
-  $(`<h1>🔬 관찰 기록</h1><div class="card">
-   <div class="hyp">무슨 일이 일어났나요?</div>
-   <div class="ev">어떤 답이든 유효한 데이터예요.</div>
-   ${[["NOT_STARTED","시작도 못 함"],["STARTED_STOPPED","시작했다 멈춤"],
-      ["DID_MINIMUM","계획한 만큼 함"],["WENT_LONGER","계획보다 더 함"]]
-     .map(([k,l])=>`<button class="ghost" onclick="send('${k}')">${l}</button>`).join("")}
-   <div class="ev" style="margin-top:14px">그때 기분 (안 써도 됨)</div>
-   <input id="n" placeholder="한 줄"/></div>`);
-}
-async function send(o){
-  const note=document.getElementById("n").value;
-  const r=await post(`/api/experiments/${exp.experiment_id}/observe`,
-    {outcome:o,note:note||null});
-  if(r.mode==="SUPPORT")return screenSupport(r);
-  let h=`<h1>🔬 기록됐어요</h1><div class="card"><div class="hyp">${r.message}</div>
-    <div class="ev">누적 관찰 ${r.observed_total}회</div></div>`;
-  (r.new_hypotheses||[]).forEach(n=>{h+=`<div class="card">
-    <div class="hyp">${n.question}</div><div class="ev">${n.evidence}</div>
-    <div class="grid">${n.actions.map(a=>
-      `<button class="${a.key==='yes'?'':'ghost'}" onclick="verdict('${n.rule_id}','${a.key}')">${a.label}</button>`).join("")}</div></div>`;});
-  h+=`<button class="ghost" onclick="showManual()">📕 내 사용설명서 보기</button>`;
-  $(h);
-}
-async function verdict(id,v){
-  const r=await post(`/api/rules/${id}/verdict`,{verdict:v});
-  if(r.share_card){const c=r.share_card;
-    $(`<h1>📕 등재됐어요</h1><div class="card">
-      <div class="no">${c.headline}</div><div class="hyp">"${c.statement}"</div>
-      <div class="ev">${c.proof} ${c.byline}</div>
-      <div class="howto">${c.caption}</div>
-      <button onclick="showManual()">사용설명서 보기</button></div>`);}
-  else showManual();
-}
-async function showManual(){
-  const m=await get(`/api/manual/${uid}`);
-  let h=`<h1>${m.title}</h1><div class="card">
-    <div class="no">발견 ${m.progress.found}/${m.progress.total}</div>`;
-  h+=m.confirmed.length?m.confirmed.map(c=>`<div class="rule"><b>${c.no}</b> ${c.statement}
-      <br><small>${c.evidence}</small></div>`).join(""):`<div class="ev">아직 비어 있어요. 관찰이 쌓이면 채워집니다.</div>`;
-  if(m.testing.length){h+=`<div class="no" style="margin-top:16px">🔍 검증 중</div>`+
-    m.testing.map(t=>`<div class="rule" style="border-color:#f0a04b">${t.statement}<br><small>${t.evidence}</small></div>`).join("");}
-  h+=`<div class="locked" style="margin-top:14px">🔒 아직 발견되지 않음 ${m.progress.locked}개</div>
-    <div class="dis">${m.disclaimer}</div></div>
-    <button onclick="screenStart()">새 실험 하기</button>`;
-  $(h);
-}
-function screenSOS(r){
-  $(`<h1>${r.title}</h1><div class="card">
-    <div class="hyp">${r.body}</div>
-    <div class="ev" style="margin:14px 0 8px">오늘 유일한 미션</div>
-    ${r.missions.map(m=>`<div class="step">□ ${m}</div>`).join("")}
-    <div class="howto" style="margin-top:14px">${r.footer}</div>
-    <button class="warm" onclick="showManual()">알겠어요</button>
-    <button class="ghost" onclick="resume()">그래도 아주 작은 거 하나 할래요</button></div>`);
-}
-async function resume(){await post(`/api/sos/${uid}/resume`);screenStart();}
-function screenSupport(r){
-  $(`<h1>${r.title}</h1><div class="card">
-    <div class="hyp">${r.body}</div>
-    <div class="ev" style="margin-top:14px">${r.suggestions.map(s=>"· "+s).join("<br>")}</div>
-    ${(r.resources||[]).map(x=>`<div class="step">${x.name} <b>${x.contact}</b> <small>${x.note}</small></div>`).join("")}
-    </div>`);
-}
-boot();
-</script></body></html>
+    const playSound = (type) => {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        if (type === 'pop') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.06);
+          gain.gain.setValueAtTime(0.05, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.06);
+        } else if (type === 'cheer') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.06);
+            gain.gain.setValueAtTime(0.06, ctx.currentTime + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.06 + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + i * 0.06);
+            osc.stop(ctx.currentTime + i * 0.06 + 0.25);
+          });
+        } else if (type === 'calm') {
+          [440, 554.37, 659.25].forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.15);
+            gain.gain.setValueAtTime(0.04, ctx.currentTime + i * 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.6);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + i * 0.15);
+            osc.stop(ctx.currentTime + i * 0.15 + 0.6);
+          });
+        }
+      } catch (e) {}
+    };
+
+    function App() {
+      // 폰트 크기
+      const [fontScale, setFontScale] = useState(1.0);
+
+      // 뷰: 'START', 'EXPERIMENT', 'IN_PROGRESS', 'OBSERVE', 'RESULT', 'MANUAL', 'SOS', 'SUPPORT'
+      const [view, setView] = useState('START');
+
+      // 사용자 입력 상태
+      const [taskInput, setTaskInput] = useState("");
+      const [energy, setEnergy] = useState(3);
+      const [observationNote, setObservationNote] = useState("");
+
+      // 실험 상태
+      const [experiment, setExperiment] = useState({
+        no: 17,
+        title: "보고서/기획서 쓰기",
+        variationName: "일부러 최악으로",
+        hypothesis: "나는 '완성'을 목표로 하면 시작을 못 한다 (지금까지 6번 중 5번 그랬어요)",
+        evidence: "관찰이 5번 쌓여 첫 패턴이 감지되었습니다.",
+        howto: "'형편없이 하기'가 목표입니다. 잘하려고 하면 규칙 위반입니다.",
+        ladderLevel: 1, // 0: 30초, 1: 3분, 2: 10분, 3: 25분, 4: 원래대로
+        steps: [
+          { level: 0, label: "열기만", minutes: 0.5, text: "파일/노트만 열고 바로 닫기" },
+          { level: 1, label: "3분만", minutes: 3.0, text: "제목 한 줄만 쓰기" },
+          { level: 2, label: "10분만", minutes: 10.0, text: "목차나 소제목만 적기" },
+          { level: 3, label: "25분", minutes: 25.0, text: "아무 단락 하나만 쓰기" },
+          { level: 4, label: "원래대로", minutes: 45.0, text: "원래 계획대로 하기" }
+        ]
+      });
+
+      // 타이머 (초)
+      const [timeLeft, setTimeLeft] = useState(180);
+      const [timerOn, setTimerOn] = useState(false);
+
+      // 관찰 피드백
+      const [feedbackText, setFeedbackText] = useState("");
+      const [newHypotheses, setNewHypotheses] = useState([]);
+      const [observedTotal, setObservedTotal] = useState(14);
+
+      // 사용설명서 데이터
+      const [manual, setManual] = useState({
+        title: "📕 연구자 님의 사용설명서",
+        found: 7,
+        total: 30,
+        confirmed: [
+          { no: "#01", statement: "나는 오후 2시보다 오전 7시에 시작 성공 확률이 3배 높다", evidence: "실험 14회 · 오전 82% / 오후 27%" },
+          { no: "#03", statement: "'완벽하게'라는 단어가 들어간 과제는 4일 이상 미룬다", evidence: "실험 9회 중 8회 시작 지연" },
+          { no: "#05", statement: "3분 타이머로 '형편없이 쓰기'를 시도할 때 착수율이 88%로 급증한다", evidence: "실험 8회 중 7회 완수" }
+        ],
+        testing: [
+          { statement: "누군가에게 먼저 선언하면 시작 확률이 올라간다?", evidence: "2회 관찰 중" }
+        ]
+      });
+
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [view]);
+
+      // 타이머 카운트다운
+      useEffect(() => {
+        let timer = null;
+        if (timerOn && timeLeft > 0) {
+          timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
+        } else if (timeLeft === 0 && timerOn) {
+          setTimerOn(false);
+          playSound('cheer');
+          if (window.confetti) {
+            window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+          }
+        }
+        return () => clearInterval(timer);
+      }, [timerOn, timeLeft]);
+
+      // 실험 생성
+      const handleStartExperiment = () => {
+        const task = taskInput.trim() || "보고서/과제 시작하기";
+        playSound('pop');
+
+        // 과제 맞춤형 사다리 텍스트 구성
+        const shortTask = task.length > 15 ? task.substring(0, 15) + "…" : task;
+        const customSteps = [
+          { level: 0, label: "열기만", minutes: 0.5, text: `${shortTask} 관련 파일/앱만 열기` },
+          { level: 1, label: "3분만", minutes: 3.0, text: `${shortTask} 제목 한 줄 또는 단어 3개 적기` },
+          { level: 2, label: "10분만", minutes: 10.0, text: `${shortTask} 목차나 핵심 3포인트 적기` },
+          { level: 3, label: "25분", minutes: 25.0, text: `${shortTask} 한 단락 집중해서 적기` },
+          { level: 4, label: "원래대로", minutes: 45.0, text: `${shortTask} 원래 계획대로 진행하기` }
+        ];
+
+        setExperiment(prev => ({
+          ...prev,
+          title: task,
+          no: prev.no + 1,
+          steps: customSteps,
+          ladderLevel: 1
+        }));
+        setTimeLeft(180);
+        setView('EXPERIMENT');
+      };
+
+      // 사다리 레벨 변경
+      const changeLadder = (newLevel) => {
+        if (newLevel < 0 || newLevel > 4) return;
+        playSound('pop');
+        setExperiment(prev => ({
+          ...prev,
+          ladderLevel: newLevel
+        }));
+        setTimeLeft(Math.round(experiment.steps[newLevel].minutes * 60));
+      };
+
+      // 실험 착수 (타이머 켜기)
+      const handleLockExperiment = () => {
+        playSound('pop');
+        setTimerOn(true);
+        setView('IN_PROGRESS');
+      };
+
+      // 관찰 결과 저장 (완료/미완료 없음)
+      const handleSendObservation = (outcomeType) => {
+        playSound('pop');
+
+        // 위기 언어 안전 스크리닝
+        const note = observationNote.trim();
+        if (note.includes("사라지고 싶") || note.includes("죽고 싶") || note.includes("끝내고 싶")) {
+          setView('SUPPORT');
+          return;
+        }
+
+        let msg = "";
+        if (outcomeType === 'NOT_STARTED') {
+          msg = "기록해주셔서 고마워요. 시작 못 한 것도 중요한 관찰 데이터예요. 벌 대신 새로운 발견의 힌트가 됩니다.";
+        } else if (outcomeType === 'STARTED_STOPPED') {
+          msg = "시작했다는 게 핵심이에요. 멈춘 지점이 다음 실험의 귀중한 힌트예요.";
+        } else if (outcomeType === 'DID_MINIMUM') {
+          msg = "계획한 만큼 하셨네요. 이 조합은 기록해둘 만해요!";
+          playSound('cheer');
+        } else if (outcomeType === 'WENT_LONGER') {
+          msg = "계획보다 더 하셨어요! 시작 크기가 아주 잘 맞았다는 신호예요.";
+          playSound('cheer');
+        }
+
+        setFeedbackText(msg);
+        setObservedTotal(prev => prev + 1);
+
+        // 새로운 가설 도출 시뮬레이션
+        if (outcomeType === 'NOT_STARTED') {
+          setNewHypotheses([
+            {
+              id: "h_01",
+              question: "혹시 이런 걸까요? \"나는 컨디션이 저하될 때 3분 과제도 시작을 미룬다\"",
+              evidence: "15회 관찰 중 · 해당 상황 25% vs 평소 80%"
+            }
+          ]);
+        } else {
+          setNewHypotheses([]);
+        }
+
+        setView('RESULT');
+      };
+
+      // 가설 판정 (비법서 등재)
+      const handleVerdict = (answer) => {
+        playSound('pop');
+        if (answer === 'yes') {
+          setManual(prev => ({
+            ...prev,
+            found: prev.found + 1,
+            confirmed: [
+              ...prev.confirmed,
+              {
+                no: `#0${prev.found + 1}`,
+                statement: "나는 컨디션이 저하될 때 30초 '열기만' 크기로 시작해야 한다",
+                evidence: "실험 15회로 직접 검증 및 확정"
+              }
+            ]
+          }));
+          alert("📕 사용설명서에 새로운 법칙이 등재되었습니다!");
+        }
+        setView('MANUAL');
+      };
+
+      const currentStep = experiment.steps[experiment.ladderLevel];
+
+      return (
+        <div style={{ fontSize: `${17 * fontScale}px` }}>
+          
+          {/* Header */}
+          <div className="flex items-center justify-between mb-4 pb-2 border-b border-space-800">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🧪</span>
+              <h1 className="text-lg font-bold text-slate-100 tracking-tight">3분 실험실</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setFontScale(s => Math.max(0.8, s - 0.1))} 
+                className="w-7 h-7 rounded bg-space-800 text-xs font-bold text-slate-300">A-</button>
+              <button 
+                onClick={() => setFontScale(s => Math.min(1.4, s + 0.1))} 
+                className="w-7 h-7 rounded bg-space-800 text-xs font-bold text-slate-300">A+</button>
+              <button 
+                onClick={() => { playSound('calm'); setView('SOS'); }} 
+                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">
+                🛬 비상착륙
+              </button>
+            </div>
+          </div>
+
+          {/* VIEW 1: START SCREEN */}
+          {view === 'START' && (
+            <div className="card">
+              <div className="text-base font-bold text-white mb-1.5">오늘 뭘 하려다 못 하고 있어요?</div>
+              <div className="text-xs text-slate-400 mb-4">한 줄만 적어주세요. 잘 쓸 필요 없어요.</div>
+              
+              <input
+                type="text"
+                value={taskInput}
+                onChange={(e) => setTaskInput(e.target.value)}
+                placeholder="예: 보고서 쓰기, 자격증 공부, 운동하기..."
+                className="w-full p-3.5 rounded-xl border border-slate-700 bg-space-850 text-white text-sm mb-4 focus:outline-none focus:border-cyan-400"
+              />
+
+              <div className="text-xs font-bold text-slate-400 mb-2">지금 나의 컨디션</div>
+              <div className="grid grid-cols-4 gap-2 mb-5">
+                {[
+                  { level: 1, label: "바닥 😫" },
+                  { level: 2, label: "별로 😐" },
+                  { level: 3, label: "보통 🙂" },
+                  { level: 4, label: "좋음 🔥" }
+                ].map(c => (
+                  <button
+                    key={c.level}
+                    onClick={() => { setEnergy(c.level); playSound('pop'); }}
+                    className={`py-2 rounded-xl text-xs font-bold border transition ${
+                      energy === c.level
+                        ? 'bg-cyan-500 text-black border-cyan-400 font-extrabold shadow-md'
+                        : 'bg-space-850 text-slate-300 border-slate-700 hover:border-cyan-400'
+                    }`}>
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={handleStartExperiment}
+                className="w-full py-4 rounded-xl font-bold text-sm bg-cyan-500 hover:bg-cyan-400 text-black shadow-lg shadow-cyan-500/20">
+                🧪 오늘의 실험 받기
+              </button>
+
+              <button
+                onClick={() => { playSound('pop'); setView('MANUAL'); }}
+                className="w-full py-2.5 mt-2 rounded-xl font-bold text-xs bg-transparent text-slate-400 hover:text-white border border-slate-800">
+                📕 내 사용설명서 먼저 보기 ({manual.found}/30)
+              </button>
+
+              <div className="text-[11px] text-slate-500 leading-relaxed mt-4 text-center">
+                ※ 이 앱은 행동 실험 기록 도구입니다. 심리 진단이나 치료를 제공하지 않습니다.
+              </div>
+            </div>
+          )}
+
+          {/* VIEW 2: EXPERIMENT CARD & LADDER */}
+          {view === 'EXPERIMENT' && (
+            <div className="card">
+              <div className="text-xs font-mono font-bold text-cyan-400 mb-2">
+                실험 #{experiment.no} · {experiment.variationName}
+              </div>
+
+              <div className="text-sm font-bold text-white mb-1 leading-snug">
+                가설: {experiment.hypothesis}
+              </div>
+              <div className="text-xs text-slate-400 mb-4">
+                {experiment.evidence}
+              </div>
+
+              {/* Ladder Step Box */}
+              <div className="step-box border-l-4 border-l-cyan-400">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-bold text-cyan-300">단계: {currentStep.label}</span>
+                  <span className="text-xs font-bold font-mono text-gold-300">{currentStep.minutes}분</span>
+                </div>
+                <div className="text-sm font-semibold text-slate-100">{currentStep.text}</div>
+              </div>
+
+              <div className="text-xs text-slate-400 leading-relaxed mb-5">
+                💡 <strong>실험 방법:</strong> {experiment.howto}
+              </div>
+
+              <button
+                onClick={handleLockExperiment}
+                className="w-full py-4 rounded-xl font-bold text-sm bg-cyan-500 hover:bg-cyan-400 text-black shadow-lg shadow-cyan-500/20 mb-2">
+                ⏱️ 실험 시작 ({currentStep.minutes}분)
+              </button>
+
+              {/* Ladder Controls */}
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <button
+                  disabled={experiment.ladderLevel === 0}
+                  onClick={() => changeLadder(experiment.ladderLevel - 1)}
+                  className={`py-2.5 rounded-xl text-xs font-bold border ${
+                    experiment.ladderLevel > 0 
+                      ? 'bg-space-850 text-slate-200 border-slate-700 hover:border-cyan-400' 
+                      : 'bg-space-900 text-slate-600 border-slate-800 cursor-not-allowed'
+                  }`}>
+                  🪜 너무 부담돼요 (더 작게)
+                </button>
+
+                <button
+                  disabled={experiment.ladderLevel === 4}
+                  onClick={() => changeLadder(experiment.ladderLevel + 1)}
+                  className={`py-2.5 rounded-xl text-xs font-bold border ${
+                    experiment.ladderLevel < 4 
+                      ? 'bg-space-850 text-slate-200 border-slate-700 hover:border-cyan-400' 
+                      : 'bg-space-900 text-slate-600 border-slate-800 cursor-not-allowed'
+                  }`}>
+                  더 할 수 있어요 ↑
+                </button>
+              </div>
+
+              <button
+                onClick={() => setView('START')}
+                className="w-full py-2 mt-3 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-300">
+                ← 과제 다시 입력하기
+              </button>
+            </div>
+          )}
+
+          {/* VIEW 3: IN PROGRESS TIMER */}
+          {view === 'IN_PROGRESS' && (
+            <div className="card text-center space-y-4">
+              <div className="text-xs font-mono font-bold text-cyan-400">실험 진행 중</div>
+              
+              <div className="step-box text-left">
+                <div className="text-xs text-slate-400 mb-1">지금 하고 있는 최소 행동:</div>
+                <div className="text-base font-bold text-white">{currentStep.text}</div>
+              </div>
+
+              {/* Countdown Display */}
+              <div className="bg-space-850 py-6 rounded-2xl border border-slate-700">
+                <span className="text-5xl font-black font-mono text-cyan-300 tracking-wider">
+                  {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-400 leading-relaxed">
+                시간이 끝나거나 멈췄을 때 아래 버튼을 눌러주세요. 어떤 결과든 유효한 데이터입니다.
+              </p>
+
+              <button
+                onClick={() => { setTimerOn(false); playSound('pop'); setView('OBSERVE'); }}
+                className="w-full py-4 rounded-xl font-bold text-sm bg-emerald-500 hover:bg-emerald-400 text-black shadow-lg">
+                ✓ 끝났어요 / 관찰 기록할게요
+              </button>
+            </div>
+          )}
+
+          {/* VIEW 4: OBSERVATION LOG (NO SUCCESS/FAIL) */}
+          {view === 'OBSERVE' && (
+            <div className="card">
+              <div className="text-base font-bold text-white mb-1">🔬 무슨 일이 일어났나요?</div>
+              <div className="text-xs text-slate-400 mb-4">어떤 답이든 유효한 관찰 데이터예요. 자책은 없습니다.</div>
+
+              <div className="grid grid-cols-1 gap-2.5 mb-4">
+                {[
+                  { id: 'NOT_STARTED', label: '🛑 시작도 못 함', desc: '의욕이 안 나거나 다른 짓을 함' },
+                  { id: 'STARTED_STOPPED', label: '⏸️ 시작했다 멈춤', desc: '시도하다가 중간에 멈춤' },
+                  { id: 'DID_MINIMUM', label: '✅ 계획한 만큼 함', desc: '정해진 시간 동안 완수함' },
+                  { id: 'WENT_LONGER', label: '🚀 계획보다 더 함', desc: '몰입이 붙어 더 오래 지속함' }
+                ].map(opt => (
+                  <button
+                    key={opt.id}
+                    onClick={() => handleSendObservation(opt.id)}
+                    className="p-3.5 rounded-xl bg-space-850 hover:bg-cyan-500/20 text-left border border-slate-700 hover:border-cyan-400 transition">
+                    <div className="text-sm font-bold text-slate-100">{opt.label}</div>
+                    <div className="text-[11px] text-slate-400">{opt.desc}</div>
+                  </button>
+                ))}
+              </div>
+
+              <div className="text-xs font-bold text-slate-400 mb-1.5">그때 기분 (선택 사항)</div>
+              <input
+                type="text"
+                value={observationNote}
+                onChange={(e) => setObservationNote(e.target.value)}
+                placeholder="예: '피곤해서 귀찮았음', '시작하니 수월했음'..."
+                className="w-full p-3 rounded-xl border border-slate-700 bg-space-850 text-white text-xs focus:outline-none focus:border-cyan-400"
+              />
+            </div>
+          )}
+
+          {/* VIEW 5: OBSERVATION RESULT & HYPOTHESIS MINING */}
+          {view === 'RESULT' && (
+            <div className="space-y-3">
+              <div className="card">
+                <div className="text-xs font-mono font-bold text-emerald-400 mb-1">🔬 기록 완료</div>
+                <div className="text-sm font-semibold text-slate-100 leading-relaxed mb-2">{feedbackText}</div>
+                <div className="text-xs text-slate-400">누적 관찰 {observedTotal}회 완료</div>
+              </div>
+
+              {newHypotheses.length > 0 && (
+                <div className="card border-warm-400/40">
+                  <div className="text-xs font-mono font-bold text-warm-400 mb-1">💡 새로운 가설 발견!</div>
+                  <div className="text-sm font-bold text-white mb-1">{newHypotheses[0].question}</div>
+                  <div className="text-xs text-slate-400 mb-4">{newHypotheses[0].evidence}</div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      onClick={() => handleVerdict('yes')}
+                      className="py-2.5 rounded-xl text-xs font-bold bg-warm-400 text-black">
+                      맞아요
+                    </button>
+                    <button
+                      onClick={() => handleVerdict('no')}
+                      className="py-2.5 rounded-xl text-xs font-bold bg-space-850 text-slate-300 border border-slate-700">
+                      아니에요
+                    </button>
+                    <button
+                      onClick={() => handleVerdict('later')}
+                      className="py-2.5 rounded-xl text-xs font-bold bg-space-850 text-slate-300 border border-slate-700">
+                      더 볼래요
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={() => { playSound('pop'); setView('MANUAL'); }}
+                className="w-full py-3.5 rounded-xl font-bold text-sm bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700">
+                📕 내 사용설명서 보기 ({manual.found}/{manual.total})
+              </button>
+
+              <button
+                onClick={() => setView('START')}
+                className="w-full py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white">
+                새 실험 하기 ➔
+              </button>
+            </div>
+          )}
+
+          {/* VIEW 6: MY USER MANUAL (나의 사용설명서) */}
+          {view === 'MANUAL' && (
+            <div className="card space-y-4">
+              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div>
+                  <h2 className="text-base font-bold text-white">{manual.title}</h2>
+                  <div className="text-xs text-cyan-400 font-mono">발견 {manual.found}/{manual.total}</div>
+                </div>
+                <button
+                  onClick={() => {
+                    const txt = manual.confirmed.map(c => `${c.no} ${c.statement} (${c.evidence})`).join('\n');
+                    navigator.clipboard.writeText(txt);
+                    playSound('cheer');
+                    alert("사용설명서 내용이 클립보드에 복사되었습니다!");
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-gold-500/20 text-gold-300 border border-gold-400">
+                  공유 카드 복사
+                </button>
+              </div>
+
+              <div>
+                <div className="text-xs font-bold text-emerald-400 mb-2">✅ 확정된 나의 법칙</div>
+                <div className="space-y-2">
+                  {manual.confirmed.map(c => (
+                    <div key={c.no} className="p-3 rounded-xl bg-space-850 border-l-4 border-l-cyan-400 border border-slate-800">
+                      <div className="text-xs font-bold text-white">{c.no} {c.statement}</div>
+                      <div className="text-[11px] text-slate-400 mt-0.5">{c.evidence}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {manual.testing.length > 0 && (
+                <div>
+                  <div className="text-xs font-bold text-warm-400 mb-2">🔍 검증 중인 가설</div>
+                  <div className="space-y-2">
+                    {manual.testing.map((t, idx) => (
+                      <div key={idx} className="p-3 rounded-xl bg-space-850 border-l-4 border-l-warm-400 border border-slate-800">
+                        <div className="text-xs font-bold text-slate-200">{t.statement}</div>
+                        <div className="text-[11px] text-slate-400 mt-0.5">{t.evidence}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="text-xs text-slate-500 text-center py-2">
+                🔒 아직 발견되지 않음 {manual.total - manual.found - manual.testing.length}개
+              </div>
+
+              <button
+                onClick={() => setView('START')}
+                className="w-full py-3.5 rounded-xl font-bold text-sm bg-cyan-500 hover:bg-cyan-400 text-black shadow-lg">
+                새 실험 하러 가기 ➔
+              </button>
+            </div>
+          )}
+
+          {/* VIEW 7: SOS SAFE LANDING (비상착륙) */}
+          {view === 'SOS' && (
+            <div className="card card-safe space-y-4">
+              <div className="flex items-center gap-2 text-emerald-400">
+                <span className="text-2xl">🛬</span>
+                <h2 className="text-lg font-bold">비상착륙 모드</h2>
+              </div>
+
+              <div className="text-sm font-semibold text-slate-100 leading-relaxed">
+                "실험을 잠시 멈출게요. 데이터 보니까 지금은 방법 문제가 아니라 <strong>연료 문제</strong>예요."
+              </div>
+
+              <div className="p-4 bg-space-900 rounded-xl border border-emerald-500/40 space-y-2">
+                <div className="text-xs font-bold text-emerald-300">오늘의 유일한 미션:</div>
+                <div className="text-sm font-medium text-slate-200">☑ 따뜻한 물 한 잔 마시기</div>
+                <div className="text-sm font-medium text-slate-200">☑ 7시간 푹 자기</div>
+              </div>
+
+              <div className="text-xs text-slate-400 leading-relaxed">
+                실험은 잠시 멈춰둘게요. 당신의 비법서는 그대로 있어요. 없어지지 않아요.
+              </div>
+
+              <button
+                onClick={() => setView('MANUAL')}
+                className="w-full py-3.5 rounded-xl font-bold text-sm bg-warm-400 text-black">
+                알겠어요
+              </button>
+
+              <button
+                onClick={() => { playSound('pop'); setView('START'); }}
+                className="w-full py-2.5 rounded-xl font-bold text-xs bg-transparent text-slate-300 border border-slate-700">
+                그래도 아주 작은 거 하나 할래요
+              </button>
+            </div>
+          )}
+
+          {/* VIEW 8: SAFETY SUPPORT */}
+          {view === 'SUPPORT' && (
+            <div className="card space-y-4">
+              <div className="text-base font-bold text-rose-300">지금은 실험보다 사람이 필요해요</div>
+              <div className="text-xs text-slate-300 leading-relaxed">
+                힘든 마음을 적어주셔서 고마워요. 그 얘기는 제가 아니라 훈련받은 사람에게 하는 게 맞아요. 지금 바로 통화 가능한 곳이 있어요.
+              </div>
+              <div className="p-4 bg-space-850 rounded-xl border border-rose-500/40 space-y-2">
+                <div className="text-xs font-bold text-white">· 자살예방 상담전화: <strong className="text-rose-300">109</strong> (24시간)</div>
+                <div className="text-xs font-bold text-white">· 정신건강 상담전화: <strong className="text-rose-300">1577-0199</strong> (24시간)</div>
+              </div>
+              <button
+                onClick={() => setView('START')}
+                className="w-full py-3 rounded-xl font-bold text-xs bg-space-800 text-slate-300">
+                돌아가기
+              </button>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
