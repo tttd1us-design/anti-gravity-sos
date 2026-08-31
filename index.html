@@ -122,6 +122,14 @@
       box-shadow: 0 0 16px #00F0FF;
     }
 
+    .tier-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
     ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
@@ -197,27 +205,27 @@
 
       if (t.includes('책') || t.includes('글') || t.includes('출판') || t.includes('블로그') || t.includes('원고')) {
         return [
-          { id: 'q1', slot: 'endState', pillar: '1. 본원적 가치 & 타겟 독자', title: '🎯 핵심 독자 정의', text: `이 책/글을 읽고 인생이 바뀔 '단 한 사람의 구체적인 타겟 독자(Persona)'는 누구인가요?` },
-          { id: 'q2', slot: 'bottleneck', pillar: '2. 핵심 병목 & 두려움', title: '🛑 집필 마찰 요인', text: `글쓰기를 시작하려 할 때 가장 큰 저항(완벽주의, 목차 막막함, 시간 부족)은 무엇인가요?` },
-          { id: 'q3', slot: 'leverage', pillar: '3. 차별화 레버리지', title: '💎 독점적 통찰', text: `기존 도서/콘텐츠와 차별화되는 당신만의 '실제 경험 수치 및 고유 프레임워크'는 무엇인가요?` },
-          { id: 'q4', slot: 'microAction', pillar: '4. 3분 마이크로 실행', title: '⚡ 즉시 착수 미션', text: `지금 당장 3분 안에 마찰 없이 쓸 수 있는 '프롤로그의 첫 한 줄'은 무엇인가요?` }
+          { id: 'q1', slot: 'endState', pillar: 'Tier 1. 잠재의식 & DCA (Need)', title: '🎯 핵심 독자 & 본원적 결핍', text: `이 책/글을 읽고 인생이 바뀔 '단 한 사람의 구체적인 타겟 독자(Persona)'와 그가 겪는 궁극적 결핍은 무엇인가요?` },
+          { id: 'q2', slot: 'bottleneck', pillar: 'Tier 4. 기계 피드백 & 5-Whys', title: '🛑 핵심 마찰 & 실패 편향', text: `글쓰기를 시작하려 할 때 가장 큰 저항(완벽주의, 막막함)은 무엇이며, 과거 유사 실패의 근본 원인(5-Whys)은 무엇인가요?` },
+          { id: 'q3', slot: 'leverage', pillar: 'Tier 2. 지식 구조화 (PARA)', title: '💎 지식 자산 & 레버리지', text: `기존 지식과 차별화되는 당신만의 '구조화된 핵심 경험 데이터 및 PARA Resources 자산'은 무엇인가요?` },
+          { id: 'q4', slot: 'microAction', pillar: 'Tier 3. 수직 정렬 (GTD Runway)', title: '⚡ 3분 물리적 최소 행동', text: `지금 당장 3분 안에 마찰 없이 쓸 수 있는 '프롤로그의 첫 한 줄 (Next Physical Action)'은 무엇인가요?` }
         ];
       }
 
       if (t.includes('돈') || t.includes('수익') || t.includes('사업') || t.includes('매출') || t.includes('부업') || t.includes('월')) {
         return [
-          { id: 'q1', slot: 'endState', pillar: '1. 수익 모델 & 가치 교환', title: '💰 고객의 지불 가치', text: `고객이 기꺼이 지갑을 열고 돈을 낼 수밖에 없는 '가장 절실한 고통(Pain Point)'은 무엇인가요?` },
-          { id: 'q2', slot: 'bottleneck', pillar: '2. 핵심 병목 & 전환 마찰', title: '🛑 수익화 병목', text: `첫 1원 또는 첫 결제자를 확보하는 데 가장 큰 장애물(트래픽, 상품성, 설득력)은 무엇인가요?` },
-          { id: 'q3', slot: 'leverage', pillar: '3. 레버리지 & 복리 구조', title: '📈 확장 메커니즘', text: `나의 시간을 직접 쓰지 않고도 24시간 작동할 수 있는 '자동화/시스템 레버리지'는 무엇인가요?` },
-          { id: 'q4', slot: 'microAction', pillar: '4. 3분 마이크로 실행', title: '⚡ 즉시 착수 미션', text: `오늘 당장 3분 안에 잠재 고객에게 보여줄 수 있는 '한 줄 가치 제안(Value Proposition)'은 무엇인가요?` }
+          { id: 'q1', slot: 'endState', pillar: 'Tier 1. 잠재의식 & DCA (Need)', title: '💰 고객의 지불 가치 (Need)', text: `고객이 기꺼이 지갑을 열고 돈을 낼 수밖에 없는 '가장 절실한 고통(Pain Point)'과 내가 제공할 단 하나의 정량적 가치는?` },
+          { id: 'q2', slot: 'bottleneck', pillar: 'Tier 4. 기계 피드백 & 5-Whys', title: '🛑 수익화 병목 & 편향 진단', text: `첫 1원 또는 첫 결제자를 확보하는 데 가장 큰 장애물은 무엇이며, 이를 차단할 If-Then 방어 원칙은 무엇인가요?` },
+          { id: 'q3', slot: 'leverage', pillar: 'Tier 2. 지식 구조화 (PARA)', title: '📈 확장 엔진 & CODE 증류', text: `나의 시간을 직접 쓰지 않고도 24시간 작동할 수 있는 'PARA Projects 및 자동화 지식 DB'는 무엇인가요?` },
+          { id: 'q4', slot: 'microAction', pillar: 'Tier 3. 수직 정렬 (GTD Runway)', title: '⚡ 3분 물리적 최소 행동', text: `오늘 당장 3분 안에 잠재 고객에게 보여줄 수 있는 '한 줄 가치 제안 (Next Physical Action)'은 무엇인가요?` }
         ];
       }
 
       return [
-        { id: 'q1', slot: 'endState', pillar: '1. 본원적 열망 (End-State)', title: '🎯 달성 후의 본질적 가치', text: `[${userText.substring(0, 15)}]이(가) 완벽히 실현되었을 때, 삶에서 얻게 되는 '가장 핵심적인 변화'는 무엇인가요?` },
-        { id: 'q2', slot: 'bottleneck', pillar: '2. 심리적 저항 (Gravity Friction)', title: '🛑 시작을 막는 진짜 이유', text: `이 일을 시작하거나 지속하려 할 때, 무의식적으로 뒤로 미루게 만드는 '마음속 브레이크'는 무엇인가요?` },
-        { id: 'q3', slot: 'leverage', pillar: '3. 전략적 레버리지 (Leverage)', title: '💎 성공 확률을 3배 높일 지렛대', text: `의지력에 의존하지 않고 환경과 시스템으로 자동 실행되게 만들 '단 하나의 안전장치'는 무엇인가요?` },
-        { id: 'q4', slot: 'microAction', pillar: '4. 마이크로 실행 (Runway Action)', title: '⚡ 3분 활성화 미션', text: `실패가 물리적으로 불가능할 정도로 작은, '지금 당장 3분 안에 할 수 있는 최소 행동'은 무엇인가요?` }
+        { id: 'q1', slot: 'endState', pillar: 'Tier 1. 잠재의식 & DCA (Need)', title: '🎯 본원적 열망 (Subconscious)', text: `[${userText.substring(0, 15)}]이(가) 완벽히 실현되었을 때, 삶에서 얻게 되는 '가장 핵심적인 변화(Need)'와 명확한 북극성 지표는?` },
+        { id: 'q2', slot: 'bottleneck', pillar: 'Tier 4. 기계 피드백 & 5-Whys', title: '🛑 마찰 요인 & 의사결정 규칙', text: `이 일을 시작하거나 지속하려 할 때 나를 멈추게 만드는 '마찰 요인'과 이를 자동 해결할 If-Then 원칙은 무엇인가요?` },
+        { id: 'q3', slot: 'leverage', pillar: 'Tier 2. 지식 구조화 (PARA)', title: '💎 PARA 지식 자산화 (CODE)', text: `이 목표를 달성하기 위해 장기적으로 구축·관리해야 할 '핵심 프로젝트(Projects)와 지식 자산(Resources)'은 무엇인가요?` },
+        { id: 'q4', slot: 'microAction', pillar: 'Tier 3. 수직 정렬 (GTD Runway)', title: '⚡ 3분 물리적 최소 행동', text: `실패가 물리적으로 불가능할 정도로 작은, '지금 당장 3분 안에 할 수 있는 최소 물리적 행동(Runway Action)'은 무엇인가요?` }
       ];
     };
 
@@ -239,9 +247,13 @@
       const [mainNavTab, setMainNavTab] = useState('WORKSPACE');
       const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
 
-      // 시스템 구축 진행 단계 (1단계: 탐색, 2단계: 5대 거장 패턴화, 3단계: 행동엔진 합성)
+      // 4단계 계층 시스템 활성 탭 (우측 상단 뷰 필터: 'ALL' | 'TIER1' | 'TIER2' | 'TIER3' | 'TIER4')
+      const [tierFilter, setTierFilter] = useState('ALL');
+
+      // 시스템 구축 진행 단계 (1단계 탐색 -> 2단계 체계화 -> 3단계 구체화 -> 4단계 최적화)
       const [buildStep, setBuildStep] = useState(() => parseInt(localStorage.getItem('AG_BUILD_STEP') || '2', 10));
-      const [buildProgressPercent, setBuildProgressPercent] = useState(() => parseInt(localStorage.getItem('AG_BUILD_PROGRESS') || '68', 10));
+      const [buildProgressPercent, setBuildProgressPercent] = useState(() => parseInt(localStorage.getItem('AG_BUILD_PROGRESS') || '72', 10));
+      const [dialogueCount, setDialogueCount] = useState(() => parseInt(localStorage.getItem('AG_DIALOGUE_COUNT') || '3', 10));
 
       // 소셜 알람 설정 상태
       const [socialAlarmSettings, setSocialAlarmSettings] = useState(() => {
@@ -264,7 +276,7 @@
       // 4대 질문 목록
       const [activeQuestions, setActiveQuestions] = useState(() => generateSocratic4Questions("월 100만 원 부업 수익 만들기"));
 
-      // 5대 거장 심층 분석 데이터
+      // 5대 거장 심층 분석 데이터 (4대 Tier 구조로 고도화)
       const [fiveMastersData, setFiveMastersData] = useState(() => {
         const saved = localStorage.getItem('AG_FIVE_MASTERS_V4');
         return saved ? JSON.parse(saved) : {
@@ -346,7 +358,7 @@
           {
             id: 1,
             type: 'GOAL',
-            question: '🎯 나의 핵심 목표',
+            question: '🎯 나의 핵심 목표 (DCA 북극성 지표)',
             answer: '월 100만 원 부업 수익 만들기',
             time: '기본 등록'
           }
@@ -363,7 +375,7 @@
         {
           id: 1,
           sender: 'coach',
-          text: `안녕하세요! 반갑습니다 😊\n\n작성자님의 대화와 질문 답변을 실시간으로 분석하여, 우측에 **5대 거장의 프레임워크가 결합된 [AI 통합 성공관리시스템]이 구축되어 가는 과정**을 실시간 파이프라인으로 시각화해 드립니다! 👇`,
+          text: `안녕하세요! 반갑습니다 😊\n\n대화를 나눌수록 작성자님의 생각이 **[Tier 1 잠재의식 & DCA] ➔ [Tier 2 PARA 지식구조화] ➔ [Tier 3 GTD 수직정렬] ➔ [Tier 4 If-Then 원칙진화]**의 4대 메커니즘으로 체계화되며 명확한 성공시스템으로 진화합니다. 지금 떠오르는 생각을 편하게 적거나 마이크로 말씀해 주세요! 👇`,
           time: '지금'
         }
       ]);
@@ -385,6 +397,7 @@
         localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V1', JSON.stringify(socialAlarmSettings));
         localStorage.setItem('AG_BUILD_STEP', buildStep.toString());
         localStorage.setItem('AG_BUILD_PROGRESS', buildProgressPercent.toString());
+        localStorage.setItem('AG_DIALOGUE_COUNT', dialogueCount.toString());
         localStorage.setItem('AG_SPLIT_PERCENT', leftWidthPercent.toString());
         localStorage.setItem('AG_FONT_CHAT', chatFontSize.toString());
         localStorage.setItem('AG_FONT_SYSTEM', systemFontSize.toString());
@@ -396,7 +409,7 @@
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, fiveMastersData, qaBackupLogs, socialAlarmSettings, buildStep, buildProgressPercent, leftWidthPercent, chatFontSize, systemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis]);
+      }, [messages, fiveMastersData, qaBackupLogs, socialAlarmSettings, buildStep, buildProgressPercent, dialogueCount, leftWidthPercent, chatFontSize, systemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, isRecording, recordDuration, selectedQuestion, inputHeightPx, mainNavTab, selectedMasterInAnalysis, tierFilter]);
 
       useEffect(() => {
         let timer = null;
@@ -520,6 +533,7 @@
         }
 
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setDialogueCount(c => c + 1);
 
         if (selectedQuestion) {
           const qObj = selectedQuestion;
@@ -555,7 +569,7 @@
               next.dalio.diagnosis5Why = `표면 저항: [${text}] ➔ 마찰 최소화 필요`;
               next.robbins.painOfFailure = `${text}를 극복하지 못할 경우 정체되는 고통`;
             } else if (qObj.slot === 'leverage') {
-              next.dalio.ifThenRule = `IF [${text}] 레버리지 가동 시, THEN 실행 마찰을 제로화한다.`;
+              next.dalio.ifThenRule = `IF [${text}] 마찰 발생 시, THEN 감정에 휘둘리지 않고 사전 프로토콜을 즉시 실행한다.`;
               next.forte.distilledEssence = `핵심 레버리지: ${text}`;
               next.gtd.altitude10k = `10,000ft 프로젝트: ${text} 기반 스프린트`;
             } else if (qObj.slot === 'microAction') {
@@ -567,8 +581,8 @@
           });
 
           // 진행도 상승
-          setBuildStep(3);
-          setBuildProgressPercent(prev => Math.min(100, prev + 12));
+          setBuildStep(4);
+          setBuildProgressPercent(prev => Math.min(100, prev + 10));
 
           setInputMsg("");
           setSelectedQuestion(null);
@@ -579,7 +593,7 @@
             const coachMsg = {
               id: Date.now() + 1,
               sender: 'coach',
-              text: `✅ **"${qObj.title}"**에 대한 분석이 완료되어 우측의 **[AI 통합 성공관리시스템]**에 즉시 반영되었습니다! 🌟`,
+              text: `✨ **"${qObj.title}"**에 대한 답변이 분석되어 **4대 계층 성공관리시스템 (Tier 1~4)**에 즉시 동기화되었습니다! 목표의 명확도가 한 단계 더 진화했습니다 🚀`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
             setMessages(prev => [...prev, coachMsg]);
@@ -603,15 +617,14 @@
           {
             id: Date.now(),
             type: 'STATEMENT',
-            question: '💬 자유 발언 / 목표 기획',
+            question: '💬 자유 발언 / 목표 탐색',
             answer: text,
             time: timeStr
           }
         ]);
 
-        // 진행도 업데이트
-        setBuildStep(2);
-        setBuildProgressPercent(prev => Math.min(95, Math.max(50, prev + 10)));
+        setBuildStep(3);
+        setBuildProgressPercent(prev => Math.min(95, Math.max(60, prev + 8)));
 
         setInputMsg("");
         playSound('pop');
@@ -626,23 +639,23 @@
             dalio: {
               ...prev.dalio,
               goals: text,
-              ifThenRule: `IF [${text}] 시작이 망설여질 때, THEN 3분 마이크로 액션을 먼저 수행한다.`
+              ifThenRule: `IF [${text}] 시작이 망설여질 때, THEN 감정을 배제하고 3분 마이크로 액션을 먼저 실행한다.`
             },
             robbins: {
               ...prev.robbins,
-              coreDriver: `${text}을 통한 자기 결정권과 성장`
+              coreDriver: `${text}을 통한 자기 결정권 확보와 본원적 자아실현`
             },
             forte: {
               ...prev.forte,
-              projects: `[진행 중] ${text} 완성 프로젝트`
+              projects: `[진행 중] ${text} 완성 프로젝트 (스프린트)`
             },
             hill: {
               ...prev.hill,
-              definiteChiefAim: `나는 2026년까지 [${text}]을(를) 완벽히 달성하여 가치를 창출한다.`
+              definiteChiefAim: `나는 2026년까지 [${text}]을(를) 완벽히 달성하여 대체 불가능한 가치를 창출한다.`
             },
             gtd: {
               ...prev.gtd,
-              altitude30k: `30,000ft 중단기 목표: ${text}`,
+              altitude30k: `30,000ft 핵심 성과: ${text}`,
               runway: `지상 Runway: ${text.substring(0, 15)} 3분 즉시 착수`
             }
           }));
@@ -650,7 +663,7 @@
           const coachMsg = {
             id: Date.now() + 1,
             sender: 'coach',
-            text: `작성해 주신 대화 내용을 바탕으로 우측의 **[AI 종합 성공관리시스템 구축 파이프라인]**이 진화되었습니다! 👇`,
+            text: `작성자님의 대화 로그가 분석되어 우측의 **[4대 계층 종합 성공시스템]**이 진화되었습니다. 이제 방향성 질문에 답변하여 시스템을 더욱 견고하게 구축해 보세요! 👇`,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
 
@@ -725,7 +738,7 @@
                     안티그레비티 (AG-SMS)
                   </h1>
                   <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                    5대 거장 성공관리시스템
+                    4대 계층 AI 종합 성공관리시스템
                   </span>
                 </div>
               </div>
@@ -733,18 +746,16 @@
 
             <button
               onClick={() => {
-                const doc = `# 🌌 [Anti-Gravity 5대 거장 성공관리시스템 종합 분석 보고서]\n\n` +
-                  `## 1. 레이 달리오 《원칙》\n- If-Then: ${fiveMastersData.dalio.ifThenRule}\n\n` +
-                  `## 2. 토니 로빈스 《거인을 깨워라 (NAC)》\n- 핵심 동기: ${fiveMastersData.robbins.coreDriver}\n\n` +
-                  `## 3. 티아고 포르테 《세컨드 브레인》\n- PARA: ${fiveMastersData.forte.projects}\n\n` +
-                  `## 4. 나폴레온 힐 《생각하라 부자가 되어라》\n- DCA: ${fiveMastersData.hill.definiteChiefAim}\n\n` +
-                  `## 5. 데이비드 앨런 《GTD》\n- 고도: ${fiveMastersData.gtd.altitude50k} ~ ${fiveMastersData.gtd.runway}\n\n` +
-                  `## 6. 소셜 알람 & 파트너 서약\n- 파트너: ${socialAlarmSettings.partnerName} (${socialAlarmSettings.partnerPhone})\n- 미완수 벌금: ${socialAlarmSettings.penaltyPerMiss}원`;
-                downloadTextFile('5대_거장_성공관리_소셜알람_보고서.md', doc);
+                const doc = `# 🌌 [Anti-Gravity 4대 계층 종합 성공관리시스템 아키텍처 보고서]\n\n` +
+                  `## 1. Tier 1. 잠재의식 발굴 계층 (Cognitive & Subconscious Layer)\n- 결합: 토니 로빈스(NAC) + 나폴레온 힐(DCA)\n- 중심목표(DCA): ${fiveMastersData.hill.definiteChiefAim}\n- 심층동기(Core Driver): ${fiveMastersData.robbins.coreDriver}\n\n` +
+                  `## 2. Tier 2. 지식 및 맥락 구조화 계층 (Knowledge Architecture)\n- 결합: 티아고 포르테(CODE & PARA)\n- Projects: ${fiveMastersData.forte.projects}\n- Areas: ${fiveMastersData.forte.areas}\n- Resources: ${fiveMastersData.forte.resources}\n- Distilled Essence: ${fiveMastersData.forte.distilledEssence}\n\n` +
+                  `## 3. Tier 3. 수직적 행동 정렬 계층 (Vertical Alignment Layer)\n- 결합: 데이비드 앨런(GTD Horizons of Focus)\n- 50,000ft: ${fiveMastersData.gtd.altitude50k}\n- Runway (Ground Action): ${fiveMastersData.gtd.runway}\n\n` +
+                  `## 4. Tier 4. 원칙화 및 진화 계층 (Algorithmic Principles)\n- 결합: 레이 달리오(Machine Feedback & If-Then)\n- 의사결정 규칙: ${fiveMastersData.dalio.ifThenRule}\n- 5-Whys 진단: ${fiveMastersData.dalio.diagnosis5Why}`;
+                downloadTextFile('4대계층_AI종합성공관리시스템_보고서.md', doc);
               }}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30">
               <i data-lucide="download" className="w-3.5 h-3.5"></i>
-              <span>전체 보고서 다운로드 (.md)</span>
+              <span>전체 시스템 보고서 (.md)</span>
             </button>
           </header>
 
@@ -827,7 +838,7 @@
                   <div className="px-4 py-2 bg-space-900/90 border-b border-cyan-500/20 flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm">🌱</span>
-                      <span className="text-xs font-bold text-cyan-300">대화 & 질문 답변 창</span>
+                      <span className="text-xs font-bold text-cyan-300">대화 & 소크라테스 질의 탐색</span>
                     </div>
                     <FontController label="대화 글씨:" value={chatFontSize} onChange={setChatFontSize} />
                   </div>
@@ -851,7 +862,7 @@
                     {isThinking && (
                       <div className="flex items-center space-x-2 text-cyan-300 text-xs font-medium p-2.5 glass-box rounded-xl w-fit">
                         <i data-lucide="loader-2" className="w-3.5 h-3.5 animate-spin"></i>
-                        <span>5대 거장 프레임워크로 실시간 종합 분석 중...</span>
+                        <span>4대 계층 아키텍처(Tier 1~4)로 대화 데이터를 정밀 구조화하고 있어요...</span>
                       </div>
                     )}
                     <div ref={chatEndRef} />
@@ -861,10 +872,10 @@
                   <div className="px-4 py-2.5 bg-space-900/95 border-t border-b border-cyan-500/20 shadow-md max-h-[42%] overflow-y-auto">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs md:text-sm font-bold text-cyan-300 flex items-center gap-1.5">
-                        <span>🧭</span> 4대 전문 방향성 질문 (클릭하여 아래 답변 작성):
+                        <span>🧭</span> 4대 계층 심층 방향성 질문 (클릭하여 아래 답변 작성):
                       </span>
                       <span className="text-[10px] font-mono text-gold-300 bg-space-850 px-2.5 py-0.5 rounded-full">
-                        Vertical Socratic Cards
+                        Tier 1~4 Deep Probing
                       </span>
                     </div>
 
@@ -939,7 +950,7 @@
                         placeholder={
                           selectedQuestion 
                             ? `[${selectedQuestion.title}]에 대한 나의 생각을 작성하거나 음성으로 말씀하세요...`
-                            : (isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "하고 싶은 말이나 목표를 적거나 위 4개 질문 중 하나를 클릭하세요...")
+                            : (isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "목표나 고민을 편하게 말씀하세요. 대화할수록 목표가 정밀하게 구조화됩니다...")
                         }
                         className="w-full bg-space-950 border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none resize-y font-sans leading-relaxed min-h-[55px] max-h-[350px]"
                       />
@@ -970,7 +981,7 @@
                           className={`px-5 py-1.5 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1.5 transition shadow-md ${
                             inputMsg.trim() && !isThinking ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:scale-105 shadow-cyan-500/40' : 'bg-space-800 text-slate-500 cursor-not-allowed border border-slate-750'
                           }`}>
-                          <span>{selectedQuestion ? '답변 저장' : '전송'}</span>
+                          <span>{selectedQuestion ? '시스템 동기화' : '전송'}</span>
                           <i data-lucide="send" className="w-3.5 h-3.5"></i>
                         </button>
                       </div>
@@ -982,97 +993,191 @@
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-slate-600 rounded-full"></div>
                 </div>
 
-                {/* 🌟 우측 시스템 및 백업 영역 (AI 5대 종합 성공관리시스템 구축 파이프라인) */}
+                {/* 🌟 우측 시스템 및 백업 영역 (4대 계층 AI 종합 성공관리시스템 아키텍처) */}
                 <aside className="flex-1 flex flex-col bg-space-950/95 overflow-hidden" style={{ width: `${100 - leftWidthPercent}%` }}>
                   
-                  {/* 🌟 우측 상단: AI 5대 거장 종합 분석 시스템 & 구축 파이프라인 */}
-                  <div className="h-[62%] border-b-2 border-slate-800 p-4 flex flex-col overflow-hidden space-y-3">
+                  {/* 🌟 우측 상단: 4대 계층 세부 작동 메커니즘 & 실시간 진화 파이프라인 */}
+                  <div className="h-[65%] border-b-2 border-slate-800 p-3.5 md:p-4 flex flex-col overflow-hidden space-y-2.5">
                     
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
                       <div>
                         <h2 className="text-xs md:text-sm font-black text-white flex items-center gap-1.5">
-                          <span>⚙️</span> AI 종합 분석 성공관리시스템
+                          <span>🏛️</span> AI 4대 계층 성공관리시스템 (4-Tier Architecture)
                         </h2>
-                        <span className="text-[10.5px] text-cyan-300">내 대화를 5대 거장 시스템으로 융합 분석한 결과</span>
+                        <span className="text-[10.5px] text-cyan-300">대화가 누적될수록 목표와 행동 규칙이 정밀하게 진화합니다 (대화 {dialogueCount}회 축적)</span>
                       </div>
                       <FontController label="시스템:" value={systemFontSize} onChange={setSystemFontSize} />
                     </div>
 
-                    {/* 🌟 3단계 실시간 성공시스템 구축 파이프라인 바 */}
-                    <div className="bg-space-900/90 rounded-xl p-2.5 border border-cyan-500/30 space-y-1.5">
+                    {/* 🌟 4단계 통합 데이터 흐름 파이프라인 (탐색 ➔ 체계화 ➔ 구체화 ➔ 최적화) */}
+                    <div className="bg-space-900/90 rounded-2xl p-2.5 border border-cyan-500/30 space-y-1.5">
                       <div className="flex items-center justify-between text-[11px] font-bold">
-                        <span className="text-slate-300">🏗️ 시스템 구축 파이프라인:</span>
-                        <span className="text-gold-300 font-mono font-black">{buildProgressPercent}% 구축 완료</span>
+                        <span className="text-slate-300 flex items-center gap-1">
+                          <span>🔄</span> 시스템 아키텍처 데이터 흐름:
+                        </span>
+                        <span className="text-gold-300 font-mono font-black">
+                          단계 {buildStep}/4 ({buildProgressPercent}% 구축 완료)
+                        </span>
                       </div>
 
                       {/* 게이지 바 */}
                       <div className="w-full h-2 bg-space-950 rounded-full overflow-hidden border border-slate-800">
                         <div 
-                          className="h-full bg-gradient-to-r from-cyan-400 via-purple-400 to-gold-400 transition-all duration-500"
+                          className="h-full bg-gradient-to-r from-cyan-400 via-purple-400 via-pink-400 to-gold-400 transition-all duration-500 shadow-lg shadow-cyan-500/50"
                           style={{ width: `${buildProgressPercent}%` }}></div>
                       </div>
 
-                      {/* 3단계 인디케이터 */}
-                      <div className="grid grid-cols-3 gap-1 pt-1 text-[10px] text-center font-bold">
+                      {/* 4대 파이프라인 단계 인디케이터 */}
+                      <div className="grid grid-cols-4 gap-1 pt-0.5 text-[9.5px] text-center font-bold">
                         <div className={`p-1 rounded ${buildStep >= 1 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-space-800 text-slate-500'}`}>
-                          ① 소크라테스 탐색 ✓
+                          1. 탐색(DCA) ✓
                         </div>
                         <div className={`p-1 rounded ${buildStep >= 2 ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'bg-space-800 text-slate-500'}`}>
-                          ② 5대 거장 패턴화 ✓
+                          2. 체계화(PARA) ✓
                         </div>
-                        <div className={`p-1 rounded ${buildStep >= 3 ? 'bg-gold-500/20 text-gold-300 border border-gold-500/40' : 'bg-space-800 text-slate-500'}`}>
-                          ③ 행동엔진 구축 ⚡
+                        <div className={`p-1 rounded ${buildStep >= 3 ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40' : 'bg-space-800 text-slate-500'}`}>
+                          3. 구체화(GTD) ✓
+                        </div>
+                        <div className={`p-1 rounded ${buildStep >= 4 ? 'bg-gold-500/20 text-gold-300 border border-gold-500/40' : 'bg-space-800 text-slate-500'}`}>
+                          4. 최적화(원칙) ⚡
                         </div>
                       </div>
                     </div>
 
-                    {/* 🌟 5개 시스템이 AI에 의해 종합 분석된 카드 스트림 */}
+                    {/* Tier 필터 탭 */}
+                    <div className="flex items-center gap-1 overflow-x-auto pb-0.5 text-xs font-bold">
+                      <button onClick={() => setTierFilter('ALL')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'ALL' ? 'bg-cyan-500 text-black font-black' : 'bg-space-900 text-slate-400 hover:text-white'}`}>전체 보기</button>
+                      <button onClick={() => setTierFilter('TIER1')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'TIER1' ? 'bg-gold-500 text-black font-black' : 'bg-space-900 text-gold-300 hover:text-white'}`}>Tier 1 (잠재의식/DCA)</button>
+                      <button onClick={() => setTierFilter('TIER2')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'TIER2' ? 'bg-purple-500 text-white font-black' : 'bg-space-900 text-purple-300 hover:text-white'}`}>Tier 2 (지식/PARA)</button>
+                      <button onClick={() => setTierFilter('TIER3')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'TIER3' ? 'bg-emerald-500 text-black font-black' : 'bg-space-900 text-emerald-300 hover:text-white'}`}>Tier 3 (수직정렬/GTD)</button>
+                      <button onClick={() => setTierFilter('TIER4')} className={`px-2 py-0.5 rounded-lg transition ${tierFilter === 'TIER4' ? 'bg-cyan-400 text-black font-black' : 'bg-space-900 text-cyan-300 hover:text-white'}`}>Tier 4 (원칙진화/If-Then)</button>
+                    </div>
+
+                    {/* 🌟 4대 계층별 세부 작동 메커니즘 카드 스트림 */}
                     <div className="flex-1 overflow-y-auto space-y-2.5 pr-1" style={{ fontSize: `${systemPx}px` }}>
                       
-                      {/* 1. 핵심 방향 및 중심 목표 (Hill DCA + Robbins NAC) */}
-                      <div className="glass-box-active rounded-xl p-3 border border-gold-400/50 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-gold-300 font-bold text-xs flex items-center gap-1">
-                            <span>🧭</span> [목표 & 동기] DCA & NAC 융합
-                          </span>
-                          <span className="text-[10px] text-slate-400">힐 × 로빈스</span>
-                        </div>
-                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">
-                          "{fiveMastersData.hill.definiteChiefAim}"
-                        </p>
-                        <span className="text-[11px] text-slate-300 block pl-1">
-                          ↳ <strong>심층 동기:</strong> {fiveMastersData.robbins.coreDriver}
-                        </span>
-                      </div>
+                      {/* 🌟 Tier 1. 잠재의식 발굴 계층 (Cognitive & Subconscious Layer) */}
+                      {(tierFilter === 'ALL' || tierFilter === 'TIER1') && (
+                        <div className="glass-box-active rounded-2xl p-3.5 border-2 border-gold-400/50 space-y-2 shadow-lg">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <span className="tier-badge bg-gold-400/20 text-gold-300 border border-gold-400/40">Tier 1</span>
+                              <strong className="text-gold-300 font-bold text-xs md:text-sm">잠재의식 발굴 계층 (Cognitive & Subconscious)</strong>
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-mono">로빈스(NAC) + 힐(DCA)</span>
+                          </div>
+                          
+                          <div className="p-2.5 bg-space-950 rounded-xl border border-gold-500/30 space-y-1">
+                            <span className="text-[11px] text-gold-400 font-black block">🎯 DCA 단 하나의 북극성 지표 (Definite Chief Aim):</span>
+                            <p className="text-white font-extrabold text-xs md:text-sm leading-relaxed">"{fiveMastersData.hill.definiteChiefAim}"</p>
+                          </div>
 
-                      {/* 2. 자동 의사결정 알고리즘 (Ray Dalio If-Then) */}
-                      <div className="glass-box rounded-xl p-3 border border-cyan-400/40 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-cyan-300 font-bold text-xs flex items-center gap-1">
-                            <span>⚡</span> [의사결정 OS] Ray Dalio If-Then 규칙
-                          </span>
-                          <span className="text-[10px] text-slate-400">달리오 5-Step</span>
+                          <div className="grid grid-cols-2 gap-2 text-[11px]">
+                            <div className="p-2 bg-space-900 rounded-lg">
+                              <span className="text-slate-400 block font-bold">✨ 본원적 핵심 동기(Need):</span>
+                              <p className="text-white font-bold">{fiveMastersData.robbins.coreDriver}</p>
+                            </div>
+                            <div className="p-2 bg-space-900 rounded-lg">
+                              <span className="text-rose-400 block font-bold">🛑 실패 시 최악의 고통:</span>
+                              <p className="text-slate-200 font-medium line-clamp-2">{fiveMastersData.robbins.painOfFailure}</p>
+                            </div>
+                          </div>
                         </div>
-                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">
-                          {fiveMastersData.dalio.ifThenRule}
-                        </p>
-                      </div>
+                      )}
 
-                      {/* 3. 즉시 3분 실행 착수 (David Allen GTD + Forte PARA) */}
-                      <div className="glass-box rounded-xl p-3 border border-emerald-400/40 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-emerald-300 font-bold text-xs flex items-center gap-1">
-                            <span>🚀</span> [실행 & 지식 엔진] GTD Runway & PARA
-                          </span>
-                          <span className="text-[10px] text-slate-400">앨런 × 포르테</span>
+                      {/* 🌟 Tier 2. 지식 및 맥락 구조화 계층 (Knowledge & Architecture Layer) */}
+                      {(tierFilter === 'ALL' || tierFilter === 'TIER2') && (
+                        <div className="glass-box rounded-2xl p-3.5 border border-purple-500/40 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <span className="tier-badge bg-purple-500/20 text-purple-300 border border-purple-500/40">Tier 2</span>
+                              <strong className="text-purple-300 font-bold text-xs md:text-sm">지식 및 맥락 구조화 계층 (Knowledge & Architecture)</strong>
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-mono">포르테(CODE & PARA)</span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+                            <div className="p-2 bg-space-900 rounded-lg border-l-2 border-purple-400">
+                              <strong className="text-purple-300 block mb-0.5">📁 Projects (구체적 목표)</strong>
+                              <p className="text-white font-bold line-clamp-2">{fiveMastersData.forte.projects}</p>
+                            </div>
+                            <div className="p-2 bg-space-900 rounded-lg border-l-2 border-slate-600">
+                              <strong className="text-slate-300 block mb-0.5">📂 Areas (지속 관리 영역)</strong>
+                              <p className="text-white font-bold line-clamp-2">{fiveMastersData.forte.areas}</p>
+                            </div>
+                            <div className="p-2 bg-space-900 rounded-lg border-l-2 border-cyan-600">
+                              <strong className="text-cyan-300 block mb-0.5">📚 Resources (참조 데이터)</strong>
+                              <p className="text-white font-bold line-clamp-2">{fiveMastersData.forte.resources}</p>
+                            </div>
+                            <div className="p-2 bg-space-900 rounded-lg border-l-2 border-slate-700">
+                              <strong className="text-slate-400 block mb-0.5">🗄️ Archives (보관 기록)</strong>
+                              <p className="text-slate-300 line-clamp-2">{fiveMastersData.forte.archives}</p>
+                            </div>
+                          </div>
+
+                          <div className="p-2 bg-space-950 rounded-xl border border-purple-500/30 text-[11px]">
+                            <span className="text-purple-300 font-bold block mb-0.5">💎 증류된 본질 (Distilled Essence):</span>
+                            <p className="text-white font-bold">{fiveMastersData.forte.distilledEssence}</p>
+                          </div>
                         </div>
-                        <p className="text-white font-bold bg-space-900 p-2 rounded-lg leading-relaxed">
-                          {fiveMastersData.gtd.runway}
-                        </p>
-                        <span className="text-[11px] text-slate-300 block pl-1">
-                          ↳ <strong>핵심 프로젝트:</strong> {fiveMastersData.forte.projects}
-                        </span>
-                      </div>
+                      )}
+
+                      {/* 🌟 Tier 3. 수직적 행동 정렬 계층 (Vertical Alignment Layer) */}
+                      {(tierFilter === 'ALL' || tierFilter === 'TIER3') && (
+                        <div className="glass-box rounded-2xl p-3.5 border border-emerald-500/40 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <span className="tier-badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Tier 3</span>
+                              <strong className="text-emerald-300 font-bold text-xs md:text-sm">수직적 행동 정렬 계층 (Vertical Alignment Layer)</strong>
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-mono">앨런(GTD 6 Altitudes)</span>
+                          </div>
+
+                          <div className="space-y-1 text-[11px]">
+                            <div className="p-1.5 bg-space-900 rounded-lg border-l-2 border-purple-400 flex justify-between">
+                              <span className="text-purple-300 font-bold">50,000ft (존재목적):</span>
+                              <span className="text-white font-bold truncate max-w-[70%]">{fiveMastersData.gtd.altitude50k}</span>
+                            </div>
+                            <div className="p-1.5 bg-space-900 rounded-lg border-l-2 border-cyan-400 flex justify-between">
+                              <span className="text-cyan-300 font-bold">10,000ft (프로젝트):</span>
+                              <span className="text-white font-bold truncate max-w-[70%]">{fiveMastersData.gtd.altitude10k}</span>
+                            </div>
+                          </div>
+
+                          <div className="p-2.5 bg-emerald-950/80 rounded-xl border-2 border-emerald-400 flex items-center justify-between">
+                            <div>
+                              <span className="text-emerald-400 font-bold text-[11px] block">⚡ Runway (지금 당장 3분 최소 물리 행동):</span>
+                              <p className="text-white font-black text-xs md:text-sm">{fiveMastersData.gtd.runway}</p>
+                            </div>
+                            <button onClick={() => { setTimeLeft(180); setTimerOn(true); playSound('pop'); }} className="px-3 py-1.5 rounded-lg bg-emerald-400 text-black font-black text-xs shadow-md">
+                              ⏱️ 3분 착수
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 🌟 Tier 4. 원칙화 및 진화 계층 (Algorithmic Principles & Evolution Layer) */}
+                      {(tierFilter === 'ALL' || tierFilter === 'TIER4') && (
+                        <div className="glass-box rounded-2xl p-3.5 border border-cyan-400/50 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <span className="tier-badge bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">Tier 4</span>
+                              <strong className="text-cyan-300 font-bold text-xs md:text-sm">원칙화 및 진화 계층 (Principles & Evolution)</strong>
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-mono">달리오(Machine Feedback)</span>
+                          </div>
+
+                          <div className="p-2.5 bg-space-950 rounded-xl border border-cyan-500/30 space-y-1">
+                            <span className="text-cyan-400 font-black text-[11px] block">⚡ 개인 의사결정 헌법 (If-Then Rule DB):</span>
+                            <p className="text-white font-black text-xs md:text-sm leading-relaxed">{fiveMastersData.dalio.ifThenRule}</p>
+                          </div>
+
+                          <div className="p-2 bg-space-900 rounded-lg text-[11px]">
+                            <span className="text-slate-400 font-bold block mb-0.5">🔍 5-Whys 구조적 편향 진단:</span>
+                            <p className="text-slate-200">{fiveMastersData.dalio.diagnosis5Why}</p>
+                          </div>
+                        </div>
+                      )}
 
                     </div>
                   </div>
@@ -1130,31 +1235,31 @@
                     <tbody className="divide-y divide-slate-800">
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">《원칙》<br/><span className="text-slate-400 font-normal text-xs">(레이 달리오)</span></td>
-                        <td className="p-4 text-cyan-300 font-bold border-r border-slate-800">5단계 피드백 루프</td>
+                        <td className="p-4 text-cyan-300 font-bold border-r border-slate-800">Tier 4. 기계 피드백 루프</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.dalio.socraticQuestion}"</td>
                         <td className="p-4 bg-space-900/40"><strong className="text-cyan-300 block mb-1 text-xs">의사결정 규칙 DB:</strong><p className="text-white font-bold">{fiveMastersData.dalio.ifThenRule}</p></td>
                       </tr>
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">《거인을 깨워라》<br/><span className="text-slate-400 font-normal text-xs">(토니 로빈스)</span></td>
-                        <td className="p-4 text-rose-300 font-bold border-r border-slate-800">NAC / 파워 질문</td>
+                        <td className="p-4 text-rose-300 font-bold border-r border-slate-800">Tier 1. NAC / 파워 질문</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.robbins.socraticQuestion}"</td>
                         <td className="p-4 bg-space-900/40"><strong className="text-rose-300 block mb-1 text-xs">가치 우선순위 맵:</strong><p className="text-white font-bold">심층 동기: {fiveMastersData.robbins.coreDriver}</p></td>
                       </tr>
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">《세컨드 브레인》<br/><span className="text-slate-400 font-normal text-xs">(티아고 포르테)</span></td>
-                        <td className="p-4 text-purple-300 font-bold border-r border-slate-800">CODE / PARA</td>
+                        <td className="p-4 text-purple-300 font-bold border-r border-slate-800">Tier 2. CODE / PARA</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.forte.socraticQuestion}"</td>
                         <td className="p-4 bg-space-900/40"><strong className="text-purple-300 block mb-1 text-xs">PARA 지식 저장소:</strong><p className="text-white font-bold">{fiveMastersData.forte.projects}</p></td>
                       </tr>
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">《생각하라 부자가 되어라》<br/><span className="text-slate-400 font-normal text-xs">(나폴레온 힐)</span></td>
-                        <td className="p-4 text-gold-300 font-bold border-r border-slate-800">DCA (중심 목표)</td>
+                        <td className="p-4 text-gold-300 font-bold border-r border-slate-800">Tier 1. DCA (중심 목표)</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.hill.socraticQuestion}"</td>
                         <td className="p-4 bg-space-900/40"><strong className="text-gold-300 block mb-1 text-xs">6단계 확약 진술문:</strong><p className="text-white font-bold">"{fiveMastersData.hill.definiteChiefAim}"</p></td>
                       </tr>
                       <tr className="hover:bg-space-900/60 transition">
                         <td className="p-4 font-black text-white border-r border-slate-800">《GTD》<br/><span className="text-slate-400 font-normal text-xs">(데이비드 앨런)</span></td>
-                        <td className="p-4 text-cyan-300 font-bold border-r border-slate-800">Horizons of Focus</td>
+                        <td className="p-4 text-cyan-300 font-bold border-r border-slate-800">Tier 3. Horizons of Focus</td>
                         <td className="p-4 text-slate-100 border-r border-slate-800 leading-relaxed">"{fiveMastersData.gtd.socraticQuestion}"</td>
                         <td className="p-4 bg-space-900/40"><strong className="text-cyan-300 block mb-1 text-xs">6단계 수직적 정렬:</strong><p className="text-white font-bold">{fiveMastersData.gtd.runway}</p></td>
                       </tr>
@@ -1190,7 +1295,7 @@
                       }`}>
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-black text-cyan-300 text-sm">① 레이 달리오 《원칙》</span>
-                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-cyan-400 font-mono">5-Step Loop</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-cyan-400 font-mono">Tier 4. If-Then</span>
                       </div>
                       <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
                         <strong>규칙:</strong> {fiveMastersData.dalio.ifThenRule}
@@ -1206,7 +1311,7 @@
                       }`}>
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-black text-rose-300 text-sm">② 토니 로빈스 《거인을 깨워라》</span>
-                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-rose-400 font-mono">NAC Driver</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-rose-400 font-mono">Tier 1. NAC</span>
                       </div>
                       <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
                         <strong>동기:</strong> {fiveMastersData.robbins.coreDriver}
@@ -1222,7 +1327,7 @@
                       }`}>
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-black text-purple-300 text-sm">③ 티아고 포르테 《세컨드 브레인》</span>
-                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-purple-400 font-mono">PARA Model</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-purple-400 font-mono">Tier 2. PARA</span>
                       </div>
                       <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
                         <strong>프로젝트:</strong> {fiveMastersData.forte.projects}
@@ -1238,7 +1343,7 @@
                       }`}>
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-black text-gold-300 text-sm">④ 나폴레온 힐 《생각하라 부자가 되어라》</span>
-                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-gold-400 font-mono">DCA Target</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-gold-400 font-mono">Tier 1. DCA</span>
                       </div>
                       <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
                         <strong>중심목표:</strong> {fiveMastersData.hill.definiteChiefAim}
@@ -1254,7 +1359,7 @@
                       }`}>
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-black text-cyan-300 text-sm">⑤ 데이비드 앨런 《GTD》</span>
-                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-cyan-400 font-mono">6 Altitudes</span>
+                        <span className="text-[10.5px] px-2 py-0.5 rounded bg-space-900 text-cyan-400 font-mono">Tier 3. 6 Altitudes</span>
                       </div>
                       <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
                         <strong>Runway:</strong> {fiveMastersData.gtd.runway}
@@ -1268,7 +1373,7 @@
                   {selectedMasterInAnalysis === 'DALIO' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <h2 className="text-xl md:text-2xl font-black text-cyan-300">① 레이 달리오 《원칙》 심층 분석</h2>
+                        <h2 className="text-xl md:text-2xl font-black text-cyan-300">① 레이 달리오 《원칙》 심층 분석 (Tier 4)</h2>
                         <span className="text-xs font-mono text-slate-400">Machine-like OS</span>
                       </div>
                       <div className="glass-box-active rounded-3xl p-6 border-2 border-cyan-400 space-y-3">
@@ -1293,7 +1398,7 @@
                   {selectedMasterInAnalysis === 'ROBBINS' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <h2 className="text-xl md:text-2xl font-black text-rose-300">② 토니 로빈스 《거인을 깨워라 (NAC)》 심층 분석</h2>
+                        <h2 className="text-xl md:text-2xl font-black text-rose-300">② 토니 로빈스 《거인을 깨워라 (NAC)》 심층 분석 (Tier 1)</h2>
                         <span className="text-xs font-mono text-slate-400">Power Questions</span>
                       </div>
                       <div className="glass-box-active rounded-3xl p-6 border-2 border-rose-500/50 space-y-3">
@@ -1317,7 +1422,7 @@
                   {selectedMasterInAnalysis === 'FORTE' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <h2 className="text-xl md:text-2xl font-black text-purple-300">③ 티아고 포르테 《세컨드 브레인》 심층 분석</h2>
+                        <h2 className="text-xl md:text-2xl font-black text-purple-300">③ 티아고 포르테 《세컨드 브레인》 심층 분석 (Tier 2)</h2>
                         <span className="text-xs font-mono text-slate-400">PARA Framework</span>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1333,7 +1438,7 @@
                   {selectedMasterInAnalysis === 'HILL' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <h2 className="text-xl md:text-2xl font-black text-gold-300">④ 나폴레온 힐 《생각하라 그리고 부자가 되어라》 심층 분석</h2>
+                        <h2 className="text-xl md:text-2xl font-black text-gold-300">④ 나폴레온 힐 《생각하라 그리고 부자가 되어라》 심층 분석 (Tier 1)</h2>
                         <span className="text-xs font-mono text-slate-400">DCA Protocol</span>
                       </div>
                       <div className="glass-box-active rounded-3xl p-7 border-2 border-gold-400 shadow-2xl space-y-3">
@@ -1352,7 +1457,7 @@
                   {selectedMasterInAnalysis === 'GTD' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <h2 className="text-xl md:text-2xl font-black text-cyan-300">⑤ 데이비드 앨런 《GTD》 심층 분석</h2>
+                        <h2 className="text-xl md:text-2xl font-black text-cyan-300">⑤ 데이비드 앨런 《GTD》 심층 분석 (Tier 3)</h2>
                         <span className="text-xs font-mono text-slate-400">Horizons of Focus</span>
                       </div>
                       <div className="glass-box rounded-3xl p-6 border border-cyan-500/40 space-y-3">
@@ -1611,7 +1716,7 @@
                 <h3 className="text-2xl font-black text-white mb-2">3분 미션 성공 완료!</h3>
                 <p className="text-sm text-slate-200 mb-6 leading-relaxed">
                   오늘의 귀차니즘을 멋지게 이겨내셨어요!<br/>
-                  <strong>5대 마스터 시스템 & 소셜 알람 센터</strong>에 실행 데이터가 안전하게 누적되었습니다.
+                  <strong>4대 계층 AI 종합 성공시스템</strong>에 실행 데이터가 안전하게 누적되었습니다.
                 </p>
                 <button
                   onClick={() => setShowStampPopup(false)}
