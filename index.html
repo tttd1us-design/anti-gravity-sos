@@ -74,9 +74,13 @@
       color: #F8FAFC;
       font-family: 'Pretendard', sans-serif;
       overflow-x: hidden;
-      font-size: 16px;
+      font-size: 10pt;
       line-height: 1.75;
       user-select: none;
+    }
+
+    * {
+      min-font-size: 10pt;
     }
     
     .bg-soft-pattern {
@@ -1044,43 +1048,43 @@
         playSound('cheer');
       };
 
-      // 🌟 [8pt 최소 보장 폰트 스케일링 엔진: 8pt = 10.7px]
-      const MIN_8PT = 10.7; // 8pt 기준 절대 최소 하한선
+      // 🌟 [10pt 최소 보장 폰트 스케일링 엔진: 10pt = 13.33px ~ 13.5px]
+      const MIN_10PT = 13.5; // 10pt 기준 절대 최소 하한선 (10pt = 13.33px)
 
-      const questionsPx = Math.max(MIN_8PT, Math.round(14.5 * questionsFontSize));
-      const set2Px = Math.max(MIN_8PT, Math.round(14.5 * set2FontSize)); // 🌟 세트 2 메인 글씨 (8pt 이상 보장)
-      const set2SubPx = Math.max(MIN_8PT, Math.round(12.5 * set2FontSize)); // 🌟 처방전/통찰 내용 (8pt 이상 보장)
-      const set2HeaderPx = Math.max(MIN_8PT, Math.round(11.5 * set2FontSize)); // 🌟 처방전 헤더 (8pt 이상 보장)
-      const inputBoxPx = Math.max(MIN_8PT, Math.round(15.5 * inputBoxFontSize));
-      const tierSystemPx = Math.max(MIN_8PT, Math.round(15.5 * tierSystemFontSize));
-      const tierH1Px = Math.max(16, Math.round(19 * tierSystemFontSize));
-      const tierH2Px = Math.max(14, Math.round(16.5 * tierSystemFontSize));
-      const tierTitlePx = Math.max(12, Math.round(14.5 * tierSystemFontSize));
-      const tierBodyPx = Math.max(MIN_8PT, Math.round(13.5 * tierSystemFontSize));
-      const tierSmallPx = Math.max(MIN_8PT, Math.round(11.5 * tierSystemFontSize));
+      const questionsPx = Math.max(MIN_10PT, Math.round(15 * questionsFontSize));
+      const set2Px = Math.max(MIN_10PT, Math.round(15.5 * set2FontSize)); // 🌟 세트 2 메인 글씨 (10pt 이상 보장)
+      const set2SubPx = Math.max(MIN_10PT, Math.round(13.5 * set2FontSize)); // 🌟 처방전/통찰 내용 (10pt 이상 보장)
+      const set2HeaderPx = Math.max(MIN_10PT, Math.round(13.5 * set2FontSize)); // 🌟 처방전 헤더 (10pt 이상 보장)
+      const inputBoxPx = Math.max(MIN_10PT, Math.round(15.5 * inputBoxFontSize));
+      const tierSystemPx = Math.max(MIN_10PT, Math.round(15.5 * tierSystemFontSize));
+      const tierH1Px = Math.max(16.5, Math.round(19.5 * tierSystemFontSize));
+      const tierH2Px = Math.max(15, Math.round(17.5 * tierSystemFontSize));
+      const tierTitlePx = Math.max(14, Math.round(15.5 * tierSystemFontSize));
+      const tierBodyPx = Math.max(MIN_10PT, Math.round(14 * tierSystemFontSize));
+      const tierSmallPx = Math.max(MIN_10PT, Math.round(13.5 * tierSystemFontSize));
 
-      const backupPx = Math.max(MIN_8PT, Math.round(15 * backupFontSize));
-      const backupQuestionPx = Math.max(MIN_8PT, Math.round(13.5 * backupFontSize));
-      const backupAnswerPx = Math.max(MIN_8PT, Math.round(15.5 * backupFontSize));
-      const backupMetaPx = Math.max(MIN_8PT, Math.round(11 * backupFontSize));
-      const analysisPx = Math.max(MIN_8PT, Math.round(15.5 * analysisFontSize));
-      const analysisH1Px = Math.max(16, Math.round(22 * analysisFontSize));
-      const analysisH2Px = Math.max(13, Math.round(17 * analysisFontSize));
-      const analysisTitlePx = Math.max(12, Math.round(15 * analysisFontSize));
-      const analysisBodyPx = Math.max(MIN_8PT, Math.round(14 * analysisFontSize));
-      const analysisSmallPx = Math.max(MIN_8PT, Math.round(11 * analysisFontSize));
-      const actionPx = Math.max(15, Math.round(17 * actionFontSize));
-      const actionH1Px = Math.max(16, Math.round(22 * actionFontSize));
-      const actionH2Px = Math.max(13, Math.round(17 * actionFontSize));
-      const actionTitlePx = Math.max(12, Math.round(15 * actionFontSize));
-      const actionBodyPx = Math.max(MIN_8PT, Math.round(14 * actionFontSize));
-      const actionSmallPx = Math.max(MIN_8PT, Math.round(11 * actionFontSize));
-      const alarmPx = Math.max(MIN_8PT, Math.round(15.5 * alarmFontSize));
-      const alarmH1Px = Math.max(16, Math.round(22 * alarmFontSize));
-      const alarmH2Px = Math.max(13, Math.round(17 * alarmFontSize));
-      const alarmTitlePx = Math.max(12, Math.round(15 * alarmFontSize));
-      const alarmBodyPx = Math.max(MIN_8PT, Math.round(14 * alarmFontSize));
-      const alarmSmallPx = Math.max(MIN_8PT, Math.round(11 * alarmFontSize));
+      const backupPx = Math.max(MIN_10PT, Math.round(15 * backupFontSize));
+      const backupQuestionPx = Math.max(MIN_10PT, Math.round(14 * backupFontSize));
+      const backupAnswerPx = Math.max(MIN_10PT, Math.round(15.5 * backupFontSize));
+      const backupMetaPx = Math.max(MIN_10PT, Math.round(13.5 * backupFontSize));
+      const analysisPx = Math.max(MIN_10PT, Math.round(15.5 * analysisFontSize));
+      const analysisH1Px = Math.max(17, Math.round(23 * analysisFontSize));
+      const analysisH2Px = Math.max(15, Math.round(18 * analysisFontSize));
+      const analysisTitlePx = Math.max(14, Math.round(16 * analysisFontSize));
+      const analysisBodyPx = Math.max(MIN_10PT, Math.round(14.5 * analysisFontSize));
+      const analysisSmallPx = Math.max(MIN_10PT, Math.round(13.5 * analysisFontSize));
+      const actionPx = Math.max(16, Math.round(17.5 * actionFontSize));
+      const actionH1Px = Math.max(17, Math.round(23 * actionFontSize));
+      const actionH2Px = Math.max(15, Math.round(18 * actionFontSize));
+      const actionTitlePx = Math.max(14, Math.round(16 * actionFontSize));
+      const actionBodyPx = Math.max(MIN_10PT, Math.round(14.5 * actionFontSize));
+      const actionSmallPx = Math.max(MIN_10PT, Math.round(13.5 * actionFontSize));
+      const alarmPx = Math.max(MIN_10PT, Math.round(15.5 * alarmFontSize));
+      const alarmH1Px = Math.max(17, Math.round(23 * alarmFontSize));
+      const alarmH2Px = Math.max(15, Math.round(18 * alarmFontSize));
+      const alarmTitlePx = Math.max(14, Math.round(16 * alarmFontSize));
+      const alarmBodyPx = Math.max(MIN_10PT, Math.round(14.5 * alarmFontSize));
+      const alarmSmallPx = Math.max(MIN_10PT, Math.round(13.5 * alarmFontSize));
 
       const FontController = ({ label, value, onChange }) => (
         <div className="flex items-center space-x-1 bg-space-900 border border-slate-700 rounded-xl px-2 py-0.5 shadow-sm">
