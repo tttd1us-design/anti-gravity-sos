@@ -1053,6 +1053,11 @@
       const set2HeaderPx = Math.max(MIN_8PT, Math.round(11.5 * set2FontSize)); // 🌟 처방전 헤더 (8pt 이상 보장)
       const inputBoxPx = Math.max(MIN_8PT, Math.round(15.5 * inputBoxFontSize));
       const tierSystemPx = Math.max(MIN_8PT, Math.round(15.5 * tierSystemFontSize));
+      const tierH1Px = Math.max(16, Math.round(19 * tierSystemFontSize));
+      const tierH2Px = Math.max(14, Math.round(16.5 * tierSystemFontSize));
+      const tierTitlePx = Math.max(12, Math.round(14.5 * tierSystemFontSize));
+      const tierBodyPx = Math.max(MIN_8PT, Math.round(13.5 * tierSystemFontSize));
+      const tierSmallPx = Math.max(MIN_8PT, Math.round(11.5 * tierSystemFontSize));
 
       const backupPx = Math.max(MIN_8PT, Math.round(15 * backupFontSize));
       const backupQuestionPx = Math.max(MIN_8PT, Math.round(13.5 * backupFontSize));
@@ -1635,22 +1640,22 @@
                       </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto space-y-3 pr-1" style={{ fontSize: `${tierSystemPx}px` }}>
+                    <div className="flex-1 overflow-y-auto space-y-3 pr-1">
                       
                       {/* [1단계: 잠재의식 발굴 계층] (토니 로빈스 & 나폴레온 힐) */}
                       <div className="glass-box-active rounded-3xl p-5 border-2 border-gold-400/60 space-y-3.5 shadow-xl bg-gradient-to-br from-space-950 via-amber-950/20 to-space-950">
                         <div className="flex items-center justify-between border-b border-gold-500/30 pb-2">
                           <div className="flex items-center gap-2">
-                            <span className="tier-badge bg-gold-400/20 text-gold-300 border border-gold-400/40">Tier 1</span>
-                            <strong className="text-gold-300 font-black text-sm md:text-base">
+                            <span style={{ fontSize: `${tierSmallPx}px` }} className="tier-badge bg-gold-400/20 text-gold-300 border border-gold-400/40">Tier 1</span>
+                            <strong style={{ fontSize: `${tierH2Px}px` }} className="text-gold-300 font-black">
                               [1단계: 잠재의식 발굴 계층]
                             </strong>
                           </div>
-                          <span className="text-xs text-gold-300 font-mono font-bold">토니 로빈스 & 나폴레온 힐</span>
+                          <span style={{ fontSize: `${tierSmallPx}px` }} className="text-gold-300 font-mono font-bold">토니 로빈스 & 나폴레온 힐</span>
                         </div>
 
                         {/* 프로세스 변환 흐름 바 */}
-                        <div className="p-2 bg-space-900/90 rounded-xl border border-gold-500/20 text-slate-300 text-xs flex items-center justify-between font-mono">
+                        <div style={{ fontSize: `${tierSmallPx}px` }} className="p-2 bg-space-900/90 rounded-xl border border-gold-500/20 text-slate-300 flex items-center justify-between font-mono">
                           <span className="text-cyan-300">💬 파워 질문</span>
                           <span className="text-slate-500">➔</span>
                           <span className="text-amber-300">💎 핵심 가치 추출</span>
@@ -1660,33 +1665,33 @@
                         
                         {/* DCA 단 하나의 북극성 지표 */}
                         <div className="p-3.5 bg-space-950 rounded-2xl border border-gold-500/40 space-y-1 shadow-md">
-                          <span className="text-xs text-gold-400 font-black flex items-center gap-1">
+                          <span style={{ fontSize: `${tierTitlePx}px` }} className="text-gold-400 font-black flex items-center gap-1">
                             <span>🎯</span> DCA 명확한 중심 목표 (Definite Chief Aim):
                           </span>
-                          <p className="text-white font-extrabold text-sm md:text-base leading-relaxed">
+                          <p style={{ fontSize: `${tierH1Px}px` }} className="text-white font-extrabold leading-relaxed">
                             "{fiveMastersData.hill.definiteChiefAim}"
                           </p>
                         </div>
 
                         {/* 신경학적 지렛대 (Pain vs Pleasure) */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                           <div className="p-3 bg-space-900/90 rounded-xl border border-emerald-500/30 space-y-1">
-                            <span className="text-emerald-400 block font-bold flex items-center gap-1">
+                            <span style={{ fontSize: `${tierSmallPx}px` }} className="text-emerald-400 block font-bold flex items-center gap-1">
                               <span>✨</span> 본원적 핵심 동기 (Pleasure Need):
                             </span>
-                            <p className="text-slate-100 font-medium leading-snug">{fiveMastersData.robbins.coreDriver}</p>
+                            <p style={{ fontSize: `${tierBodyPx}px` }} className="text-slate-100 font-medium leading-snug">{fiveMastersData.robbins.coreDriver}</p>
                           </div>
                           <div className="p-3 bg-space-900/90 rounded-xl border border-rose-500/30 space-y-1">
-                            <span className="text-rose-400 block font-bold flex items-center gap-1">
+                            <span style={{ fontSize: `${tierSmallPx}px` }} className="text-rose-400 block font-bold flex items-center gap-1">
                               <span>🛑</span> 실패/나태 시 최악의 고통 (Pain):
                             </span>
-                            <p className="text-slate-200 font-medium leading-snug">{fiveMastersData.robbins.painOfFailure}</p>
+                            <p style={{ fontSize: `${tierBodyPx}px` }} className="text-slate-200 font-medium leading-snug">{fiveMastersData.robbins.painOfFailure}</p>
                           </div>
                         </div>
                       </div>
 
                       {/* 1단계 ➔ 2단계 파이프라인 연결선 */}
-                      <div className="text-center font-mono text-xs text-gold-400/80 py-0.5 flex items-center justify-center gap-2">
+                      <div style={{ fontSize: `${tierSmallPx}px` }} className="text-center font-mono text-gold-400/80 py-0.5 flex items-center justify-center gap-2">
                         <span>│ 1단계 발굴된 가치·목표가 지식 및 맥락 자산으로 구조화 ▼</span>
                       </div>
 
@@ -1694,16 +1699,16 @@
                       <div className="glass-box rounded-3xl p-5 border border-purple-500/40 space-y-3.5 shadow-lg bg-gradient-to-br from-space-950 via-purple-950/20 to-space-950">
                         <div className="flex items-center justify-between border-b border-purple-500/30 pb-2">
                           <div className="flex items-center gap-2">
-                            <span className="tier-badge bg-purple-500/20 text-purple-300 border border-purple-500/40">Tier 2</span>
-                            <strong className="text-purple-300 font-black text-sm md:text-base">
+                            <span style={{ fontSize: `${tierSmallPx}px` }} className="tier-badge bg-purple-500/20 text-purple-300 border border-purple-500/40">Tier 2</span>
+                            <strong style={{ fontSize: `${tierH2Px}px` }} className="text-purple-300 font-black">
                               [2단계: 지식 및 맥락 구조화 계층]
                             </strong>
                           </div>
-                          <span className="text-xs text-purple-300 font-mono font-bold">티아고 포르테 (CODE & PARA)</span>
+                          <span style={{ fontSize: `${tierSmallPx}px` }} className="text-purple-300 font-mono font-bold">티아고 포르테 (CODE & PARA)</span>
                         </div>
 
                         {/* CODE 프로세스 변환 흐름 바 */}
-                        <div className="p-2 bg-space-900/90 rounded-xl border border-purple-500/20 text-slate-300 text-xs flex items-center justify-between font-mono">
+                        <div style={{ fontSize: `${tierSmallPx}px` }} className="p-2 bg-space-900/90 rounded-xl border border-purple-500/20 text-slate-300 flex items-center justify-between font-mono">
                           <span className="text-pink-300">📥 캡처(C)</span>
                           <span className="text-slate-500">➔</span>
                           <span className="text-purple-300">🗂️ PARA 분류(O)</span>
@@ -1715,37 +1720,37 @@
 
                         {/* 증류된 본질 & PARA 바구니 */}
                         <div className="p-3.5 bg-space-950 rounded-2xl border border-purple-500/30 space-y-1 shadow-md">
-                          <span className="text-xs text-purple-300 font-black flex items-center gap-1">
+                          <span style={{ fontSize: `${tierTitlePx}px` }} className="text-purple-300 font-black flex items-center gap-1">
                             <span>💎</span> 1문장 본질 증류 (Distilled Essence):
                           </span>
-                          <p className="text-white font-bold text-sm leading-relaxed">
+                          <p style={{ fontSize: `${tierH2Px}px` }} className="text-white font-bold leading-relaxed">
                             "{fiveMastersData.forte.distilledEssence}"
                           </p>
                         </div>
 
                         {/* PARA 4대 바구니 분류 */}
-                        <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="grid grid-cols-2 gap-2">
                           <div className="p-2.5 bg-space-900 rounded-xl border border-slate-800">
-                            <strong className="text-pink-300 block mb-0.5">🎯 [P] Projects:</strong>
-                            <span className="text-slate-300">첫 지식 가이드북 2주 스프린트</span>
+                            <strong style={{ fontSize: `${tierSmallPx}px` }} className="text-pink-300 block mb-0.5">🎯 [P] Projects:</strong>
+                            <span style={{ fontSize: `${tierBodyPx}px` }} className="text-slate-300">첫 지식 가이드북 2주 스프린트</span>
                           </div>
                           <div className="p-2.5 bg-space-900 rounded-xl border border-slate-800">
-                            <strong className="text-purple-300 block mb-0.5">🏛️ [A] Areas:</strong>
-                            <span className="text-slate-300">데일리 3분 실행 & 파트너 서약</span>
+                            <strong style={{ fontSize: `${tierSmallPx}px` }} className="text-purple-300 block mb-0.5">🏛️ [A] Areas:</strong>
+                            <span style={{ fontSize: `${tierBodyPx}px` }} className="text-slate-300">데일리 3분 실행 & 파트너 서약</span>
                           </div>
                           <div className="p-2.5 bg-space-900 rounded-xl border border-slate-800">
-                            <strong className="text-indigo-300 block mb-0.5">📚 [R] Resources:</strong>
-                            <span className="text-slate-300">노션 템플릿 & 프롬프트 아카이브</span>
+                            <strong style={{ fontSize: `${tierSmallPx}px` }} className="text-indigo-300 block mb-0.5">📚 [R] Resources:</strong>
+                            <span style={{ fontSize: `${tierBodyPx}px` }} className="text-slate-300">노션 템플릿 & 프롬프트 아카이브</span>
                           </div>
                           <div className="p-2.5 bg-space-900 rounded-xl border border-slate-800">
-                            <strong className="text-cyan-300 block mb-0.5">📦 [A] Archives:</strong>
-                            <span className="text-slate-300">대화 로그 #{dialogueCount}건 영구 보존</span>
+                            <strong style={{ fontSize: `${tierSmallPx}px` }} className="text-cyan-300 block mb-0.5">📦 [A] Archives:</strong>
+                            <span style={{ fontSize: `${tierBodyPx}px` }} className="text-slate-300">대화 로그 #{dialogueCount}건 영구 보존</span>
                           </div>
                         </div>
                       </div>
 
                       {/* 2단계 ➔ 3단계 파이프라인 연결선 */}
-                      <div className="text-center font-mono text-xs text-purple-400/80 py-0.5 flex items-center justify-center gap-2">
+                      <div style={{ fontSize: `${tierSmallPx}px` }} className="text-center font-mono text-purple-400/80 py-0.5 flex items-center justify-center gap-2">
                         <span>│ 2단계 구조화된 지식이 50,000ft ~ Runway 수직 행동으로 정렬 ▼</span>
                       </div>
 
@@ -1753,16 +1758,16 @@
                       <div className="glass-box rounded-3xl p-5 border border-emerald-500/40 space-y-3.5 shadow-lg bg-gradient-to-br from-space-950 via-emerald-950/20 to-space-950">
                         <div className="flex items-center justify-between border-b border-emerald-500/30 pb-2">
                           <div className="flex items-center gap-2">
-                            <span className="tier-badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Tier 3</span>
-                            <strong className="text-emerald-300 font-black text-sm md:text-base">
+                            <span style={{ fontSize: `${tierSmallPx}px` }} className="tier-badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Tier 3</span>
+                            <strong style={{ fontSize: `${tierH2Px}px` }} className="text-emerald-300 font-black">
                               [3단계: 수직적 행동 정렬 계층]
                             </strong>
                           </div>
-                          <span className="text-xs text-emerald-300 font-mono font-bold">데이비드 앨런 (GTD Horizons)</span>
+                          <span style={{ fontSize: `${tierSmallPx}px` }} className="text-emerald-300 font-mono font-bold">데이비드 앨런 (GTD Horizons)</span>
                         </div>
 
                         {/* 수직 고도 프로세스 변환 흐름 바 */}
-                        <div className="p-2 bg-space-900/90 rounded-xl border border-emerald-500/20 text-slate-300 text-xs flex items-center justify-between font-mono">
+                        <div style={{ fontSize: `${tierSmallPx}px` }} className="p-2 bg-space-900/90 rounded-xl border border-emerald-500/20 text-slate-300 flex items-center justify-between font-mono">
                           <span className="text-indigo-300">🌌 50kft 존재이유</span>
                           <span className="text-slate-500">➔</span>
                           <span className="text-teal-300">⚡ 10kft 프로젝트</span>
@@ -1771,35 +1776,36 @@
                         </div>
 
                         {/* GTD 6대 고도 수직 정렬 체인 */}
-                        <div className="space-y-1.5 text-xs bg-space-900/80 p-3 rounded-2xl border border-slate-800">
+                        <div className="space-y-1.5 bg-space-900/80 p-3 rounded-2xl border border-slate-800">
                           <div className="flex items-center justify-between border-b border-slate-800/80 pb-1 text-slate-300">
-                            <span className="text-indigo-300 font-mono font-bold">🌌 50,000ft (존재 이유):</span>
-                            <span className="truncate max-w-[260px] text-slate-200">{fiveMastersData.gtd.altitude50k}</span>
+                            <span style={{ fontSize: `${tierSmallPx}px` }} className="text-indigo-300 font-mono font-bold">🌌 50,000ft (존재 이유):</span>
+                            <span style={{ fontSize: `${tierBodyPx}px` }} className="truncate max-w-[260px] text-slate-200">{fiveMastersData.gtd.altitude50k}</span>
                           </div>
                           <div className="flex items-center justify-between border-b border-slate-800/80 pb-1 text-slate-300">
-                            <span className="text-teal-300 font-mono font-bold">⚡ 10,000ft (현재 프로젝트):</span>
-                            <span className="truncate max-w-[260px] text-slate-200">{fiveMastersData.gtd.altitude10k}</span>
+                            <span style={{ fontSize: `${tierSmallPx}px` }} className="text-teal-300 font-mono font-bold">⚡ 10,000ft (현재 프로젝트):</span>
+                            <span style={{ fontSize: `${tierBodyPx}px` }} className="truncate max-w-[260px] text-slate-200">{fiveMastersData.gtd.altitude10k}</span>
                           </div>
                         </div>
 
                         {/* Runway 지상 3분 실행 미션 박스 */}
                         <div className="p-4 bg-emerald-950/80 rounded-2xl border-2 border-emerald-400 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-lg">
                           <div>
-                            <span className="text-emerald-400 font-bold text-xs block mb-0.5">🎯 Runway (오늘의 3분 최소 물리 행동):</span>
-                            <p className="text-white font-black text-sm md:text-base leading-relaxed">
+                            <span style={{ fontSize: `${tierTitlePx}px` }} className="text-emerald-400 font-bold block mb-0.5">🎯 Runway (오늘의 3분 최소 물리 행동):</span>
+                            <p style={{ fontSize: `${tierH1Px}px` }} className="text-white font-black leading-relaxed">
                               "{fiveMastersData.gtd.runway}"
                             </p>
                           </div>
                           <button
                             onClick={() => { setTimeLeft(180); setTimerOn(true); playSound('pop'); }}
-                            className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black font-black text-xs shadow-md shrink-0 hover:scale-105 transition">
+                            style={{ fontSize: `${tierSmallPx}px` }}
+                            className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-black font-black shadow-md shrink-0 hover:scale-105 transition">
                             ⏱️ 3분 착수
                           </button>
                         </div>
                       </div>
 
                       {/* 3단계 ➔ 4단계 파이프라인 연결선 */}
-                      <div className="text-center font-mono text-xs text-emerald-400/80 py-0.5 flex items-center justify-center gap-2">
+                      <div style={{ fontSize: `${tierSmallPx}px` }} className="text-center font-mono text-emerald-400/80 py-0.5 flex items-center justify-center gap-2">
                         <span>│ 3단계 지상 실행 데이터가 원칙화 및 5-Whys 피드백 루프로 진화 ▼</span>
                       </div>
 
@@ -1807,16 +1813,16 @@
                       <div className="glass-box rounded-3xl p-5 border border-cyan-400/50 space-y-3.5 shadow-lg bg-gradient-to-br from-space-950 via-cyan-950/20 to-space-950">
                         <div className="flex items-center justify-between border-b border-cyan-500/30 pb-2">
                           <div className="flex items-center gap-2">
-                            <span className="tier-badge bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">Tier 4</span>
-                            <strong className="text-cyan-300 font-black text-sm md:text-base">
+                            <span style={{ fontSize: `${tierSmallPx}px` }} className="tier-badge bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">Tier 4</span>
+                            <strong style={{ fontSize: `${tierH2Px}px` }} className="text-cyan-300 font-black">
                               [4단계: 원칙화 및 피드백 루프 계층]
                             </strong>
                           </div>
-                          <span className="text-xs text-cyan-300 font-mono font-bold">레이 달리오 (Machine OS)</span>
+                          <span style={{ fontSize: `${tierSmallPx}px` }} className="text-cyan-300 font-mono font-bold">레이 달리오 (Machine OS)</span>
                         </div>
 
                         {/* 기계론적 루프 프로세스 변환 흐름 바 */}
-                        <div className="p-2 bg-space-900/90 rounded-xl border border-cyan-500/20 text-slate-300 text-xs flex items-center justify-between font-mono">
+                        <div style={{ fontSize: `${tierSmallPx}px` }} className="p-2 bg-space-900/90 rounded-xl border border-cyan-500/20 text-slate-300 flex items-center justify-between font-mono">
                           <span className="text-amber-300">🎯 목표(Goals)</span>
                           <span className="text-slate-500">➔</span>
                           <span className="text-rose-300">🛑 병목(5-Whys)</span>
@@ -1825,29 +1831,29 @@
                         </div>
 
                         {/* 5-Whys 근본 진단 & 시스템 설계 */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           <div className="p-2.5 bg-space-900 rounded-xl border border-rose-500/30">
-                            <strong className="text-rose-400 block mb-0.5">🔍 5-Whys 근본 원인:</strong>
-                            <p className="text-slate-200 leading-snug">{fiveMastersData.dalio.diagnosis5Why}</p>
+                            <strong style={{ fontSize: `${tierSmallPx}px` }} className="text-rose-400 block mb-0.5">🔍 5-Whys 근본 원인:</strong>
+                            <p style={{ fontSize: `${tierBodyPx}px` }} className="text-slate-200 leading-snug">{fiveMastersData.dalio.diagnosis5Why}</p>
                           </div>
                           <div className="p-2.5 bg-space-900 rounded-xl border border-cyan-500/30">
-                            <strong className="text-cyan-300 block mb-0.5">⚙️ 기계론적 시스템 설계:</strong>
-                            <p className="text-slate-200 leading-snug">{fiveMastersData.dalio.systemDesign}</p>
+                            <strong style={{ fontSize: `${tierSmallPx}px` }} className="text-cyan-300 block mb-0.5">⚙️ 기계론적 시스템 설계:</strong>
+                            <p style={{ fontSize: `${tierBodyPx}px` }} className="text-slate-200 leading-snug">{fiveMastersData.dalio.systemDesign}</p>
                           </div>
                         </div>
 
                         {/* If-Then 의사결정 알고리즘 헌법 */}
                         <div className="p-3.5 bg-space-950 rounded-2xl border border-cyan-500/40 space-y-1 shadow-md">
-                          <span className="text-cyan-400 font-black text-xs flex items-center gap-1">
+                          <span style={{ fontSize: `${tierTitlePx}px` }} className="text-cyan-400 font-black flex items-center gap-1">
                             <span>📜</span> 개인 의사결정 헌법 (Deterministic If-Then Algorithm):
                           </span>
-                          <p className="text-white font-black text-sm md:text-base leading-relaxed">
+                          <p style={{ fontSize: `${tierH1Px}px` }} className="text-white font-black leading-relaxed">
                             "{fiveMastersData.dalio.ifThenRule}"
                           </p>
                         </div>
 
                         {/* 선순환 피드백 배너 */}
-                        <div className="p-2.5 rounded-2xl bg-cyan-950/50 border border-cyan-500/40 text-center font-mono text-xs text-cyan-300 leading-relaxed shadow-inner">
+                        <div style={{ fontSize: `${tierSmallPx}px` }} className="p-2.5 rounded-2xl bg-cyan-950/50 border border-cyan-500/40 text-center font-mono text-cyan-300 leading-relaxed shadow-inner">
                           🔄 <strong>선순환 루프:</strong> └─ (누적된 원칙이 다시 1단계 꼬꼬무 질문 엔진을 자동 고도화) ─┘
                         </div>
                       </div>
