@@ -315,7 +315,7 @@
       const [alarmFontSize, setAlarmFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ALARM') || '1.10'));
 
       const [mainNavTab, setMainNavTab] = useState('ACTION'); // 6대 탭
-      const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
+      const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('dalio');
 
       // 세트1 / 세트2 접기·펴기 상태
       const [set1Collapsed, setSet1Collapsed] = useState(() => localStorage.getItem('AG_SET1_COLLAPSED') === 'true');
@@ -531,6 +531,8 @@
       const completedCount = Object.values(masterActionChecks).filter(Boolean).length;
       const routineCompletedCount = Object.values(dailyRoutineChecks).filter(Boolean).length;
       const totalScorePercent = Math.round(((completedCount + routineCompletedCount) / 8) * 100);
+      const actionPx = Math.max(14, 15 * actionFontSize);
+      const alarmPx = Math.max(14, 15 * alarmFontSize);
 
       const FontController = ({ label, value, onChange }) => (
         <div className="flex items-center space-x-1 bg-space-900 border border-slate-700 rounded-xl px-2 py-0.5 shadow-sm">
@@ -1429,7 +1431,7 @@
                           <span className="text-[10px] px-2 py-0.2 rounded bg-purple-500/20 text-purple-300 font-mono">Social Pledge</span>
                         </div>
                         <p className="text-xs text-slate-200 font-medium">
-                          <strong>유도 메시지:</strong> "오늘 3분 미션을 완수하셨나요? 미완수 시 파트너 ${socialAlarmSettings.partnerName}님에게 ${socialAlarmSettings.penaltyPerMiss}원이 청구됩니다."
+                          <strong>유도 메시지:</strong> "오늘 3분 미션을 완수하셨나요? 미완수 시 파트너 {socialAlarmSettings.partnerName}님에게 {socialAlarmSettings.penaltyPerMiss}원이 청구됩니다."
                         </p>
                       </div>
                       <button
