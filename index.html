@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>안티그레비티 - 눈이 편안한 3분 성공 습관 (30분 연속 음성 인식 지원)</title>
+  <title>안티그레비티 - 실시간 성공관리시스템(SMS) 파이프라인 구축</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React 18 & ReactDOM -->
@@ -49,6 +49,14 @@
               400: '#FB7185',
               500: '#F43F5E',
               600: '#E11D48',
+            },
+            emerald: {
+              400: '#34D399',
+              500: '#10B981',
+            },
+            purple: {
+              400: '#C084FC',
+              500: '#A855F7',
             }
           },
           fontFamily: {
@@ -67,6 +75,7 @@
       overflow-x: hidden;
       font-size: 18px;
       line-height: 1.7;
+      user-select: none;
       transition: font-size 0.15s ease;
     }
     
@@ -91,20 +100,32 @@
       box-shadow: 0 0 35px rgba(0, 240, 255, 0.18);
     }
 
+    .pipeline-step-active {
+      border-left: 4px solid #00F0FF;
+      background: rgba(34, 211, 238, 0.08);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+    }
+
     .mic-pulse {
       animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
     }
 
     @keyframes pulse-ring {
-      0% {
-        box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7);
-      }
-      70% {
-        box-shadow: 0 0 0 14px rgba(244, 63, 94, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(244, 63, 94, 0);
-      }
+      0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
+      70% { box-shadow: 0 0 0 14px rgba(244, 63, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+    }
+
+    .resizer-bar {
+      width: 8px;
+      cursor: col-resize;
+      background: #141E33;
+      transition: background 0.2s ease;
+      position: relative;
+    }
+    .resizer-bar:hover, .resizer-bar.dragging {
+      background: #00F0FF;
+      box-shadow: 0 0 15px #00F0FF;
     }
 
     ::-webkit-scrollbar {
@@ -179,34 +200,58 @@
     ];
 
     function App() {
-      // 폰트 배율 (기본 1.6 = 눈이 편안한 큼직한 글씨)
+      // 폰트 크기 배율 (기본 1.6)
       const [fontSize, setFontSize] = useState(() => {
         return parseFloat(localStorage.getItem('AG_EASY_FONT') || '1.6');
       });
 
+      // 좌우 화면 분할 비율 (기본 55% 채팅창 / 45% 시스템 파이프라인)
+      const [leftWidthPercent, setLeftWidthPercent] = useState(() => {
+        return parseFloat(localStorage.getItem('AG_SPLIT_PERCENT') || '55');
+      });
+      const [isDragging, setIsDragging] = useState(false);
+
       const [activeTab, setActiveTab] = useState('COACH');
 
-      const [myProgress, setMyProgress] = useState(() => {
-        const saved = localStorage.getItem('AG_EASY_PROGRESS_V1');
+      // --- 성공관리시스템(SMS) 3단계 파이프라인 실시간 데이터 상태 ---
+      const [smsPipeline, setSmsPipeline] = useState(() => {
+        const saved = localStorage.getItem('AG_SMS_PIPELINE_V1');
         return saved ? JSON.parse(saved) : {
-          streakDays: 3,
-          stampCount: 7,
-          targetGoal: '월 100만 원 부업 수익 만들기',
-          fearReason: '완벽하게 하려다 시작을 못 하는 마음',
-          easyMission: '스마트폰 메모장을 켜고 아이디어 단어 3개만 적기',
-          lazinessScore: 20
+          // 1단계: 소크라테스식 탐색 (질문-성찰)
+          step1: {
+            surfaceGoal: "월 100만 원 부업 수익 만들기",
+            latentDesire: "회사에 종속되지 않는 경제적 자립과 자아실현",
+            gravityFriction: "완벽주의에 의한 평가 공포 및 시작 지연",
+            ladderLevel: "Level 2 (3분 초간단 미션)"
+          },
+          // 2단계: 데이터 축적 및 패턴화 (구조화)
+          step2: {
+            dca: "2026년 1인 지식 엔터프라이즈 기반 월 100만 원 자동화 파이프라인 확립",
+            radarWeights: { independence: 92, competence: 88, stability: 75, freedom: 95 },
+            paraCategory: "Projects (진행 중인 핵심 프로젝트)",
+            accumulatedDataCount: 18
+          },
+          // 3단계: 행동 원칙 및 실행 엔진 (알고리즘화)
+          step3: {
+            ifThenRule: "IF 새로운 기획을 앞두고 미루고 싶을 때, THEN 비공개 메모장에 단어 3개만 적는다.",
+            crucialAction: "스마트폰 메모장을 켜고 아이디어 단어 3개만 적기",
+            activationEnergy: "0.85 (매우 가벼움 - 중력 탈출 성공)",
+            momentumScore: 78
+          }
         };
       });
 
+      // 3분 미션 타이머
       const [timeLeft, setTimeLeft] = useState(180);
       const [timerOn, setTimerOn] = useState(false);
       const [showStampPopup, setShowStampPopup] = useState(false);
 
+      // 메시지
       const [messages, setMessages] = useState([
         {
           id: 1,
           sender: 'coach',
-          text: `안녕하세요! 반갑습니다 😊\n\n저는 당신이 **'귀찮음과 두려움'을 이겨내고 원하는 것을 쉽게 이루도록 돕는 AI 성공 친구**예요.\n\n거창한 계획을 세워도 자꾸 미루게 되는 건 당신이 게을러서가 아니에요. 시작할 때 마음에 너무 큰 부담을 느끼기 때문이에요!\n\n현재 가장 이루고 싶은 목표는 무엇인가요? 아래 버튼을 누르거나 **🎙️ 음성 마이크 버튼**을 눌러 편하게 말씀해 보세요 👇`,
+          text: `안녕하세요! 반갑습니다 😊\n\n저는 당신이 **'귀찮음과 두려움'을 이겨내고 원하는 것을 쉽게 이루도록 돕는 AI 성공 파트너**예요.\n\n대화를 나누거나 **🎙️ 음성 버튼**으로 말씀하시면, **오른쪽 화면에서 '소크라테스 탐색 ➔ 데이터 구조화 ➔ 행동 알고리즘'의 3단계 성공관리시스템(SMS)이 실시간으로 구축**됩니다!\n\n현재 가장 이루고 싶은 목표는 무엇인가요? 👇`,
           time: '지금'
         }
       ]);
@@ -214,23 +259,23 @@
       const [isThinking, setIsThinking] = useState(false);
       const chatEndRef = useRef(null);
 
-      // --- 30분 이상 연속 음성 인식(STT) 엔진 상태 ---
+      // 30분 연속 음성 인식 상태
       const [isRecording, setIsRecording] = useState(false);
       const [recordDuration, setRecordDuration] = useState(0);
-      const [speechSupported, setSpeechSupported] = useState(true);
       const recognitionRef = useRef(null);
       const isExplicitStopRef = useRef(false);
       const recordTimerRef = useRef(null);
 
       useEffect(() => {
-        localStorage.setItem('AG_EASY_PROGRESS_V1', JSON.stringify(myProgress));
+        localStorage.setItem('AG_SMS_PIPELINE_V1', JSON.stringify(smsPipeline));
+        localStorage.setItem('AG_SPLIT_PERCENT', leftWidthPercent.toString());
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, myProgress, activeTab, fontSize, isRecording, recordDuration]);
+      }, [messages, smsPipeline, leftWidthPercent, activeTab, fontSize, isRecording, recordDuration]);
 
-      // 3분 미션 타이머
+      // 타이머 카운트다운
       useEffect(() => {
         let timer = null;
         if (timerOn && timeLeft > 0) {
@@ -241,11 +286,12 @@
           if (window.confetti) {
             window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
           }
-          setMyProgress(prev => ({
+          setSmsPipeline(prev => ({
             ...prev,
-            stampCount: prev.stampCount + 1,
-            streakDays: prev.streakDays + 1,
-            lazinessScore: 10
+            step3: {
+              ...prev.step3,
+              momentumScore: Math.min(100, prev.step3.momentumScore + 10)
+            }
           }));
           setShowStampPopup(true);
         }
@@ -265,17 +311,44 @@
         return () => clearInterval(recordTimerRef.current);
       }, [isRecording]);
 
-      // --- Web Speech API 초기화 & 30분+ 무한 연속 자동 재연결 로직 ---
+      // 가로 리사이징 마우스 드래그 핸들러
+      const handleMouseDown = (e) => {
+        setIsDragging(true);
+      };
+
+      useEffect(() => {
+        const handleMouseMove = (e) => {
+          if (!isDragging) return;
+          const containerWidth = window.innerWidth;
+          const newPercent = (e.clientX / containerWidth) * 100;
+          if (newPercent >= 30 && newPercent <= 75) {
+            setLeftWidthPercent(parseFloat(newPercent.toFixed(1)));
+          }
+        };
+
+        const handleMouseUp = () => {
+          setIsDragging(false);
+        };
+
+        if (isDragging) {
+          window.addEventListener('mousemove', handleMouseMove);
+          window.addEventListener('mouseup', handleMouseUp);
+        }
+        return () => {
+          window.removeEventListener('mousemove', handleMouseMove);
+          window.removeEventListener('mouseup', handleMouseUp);
+        };
+      }, [isDragging]);
+
+      // Web Speech API 30분 연속 음성 인식
       const toggleVoiceRecording = () => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
-          alert("현재 브라우저가 음성 인식을 지원하지 않습니다. Chrome, Edge 또는 Safari 최신 버전을 사용해 주세요.");
-          setSpeechSupported(false);
+          alert("현재 브라우저가 음성 인식을 지원하지 않습니다. Chrome 또는 Edge 브라우저를 사용해 주세요.");
           return;
         }
 
         if (isRecording) {
-          // 녹음 중지
           isExplicitStopRef.current = true;
           setIsRecording(false);
           if (recognitionRef.current) {
@@ -283,7 +356,6 @@
           }
           playSound('pop');
         } else {
-          // 30분 연속 녹음 시작
           isExplicitStopRef.current = false;
           playSound('pop');
 
@@ -291,56 +363,36 @@
           recognition.lang = 'ko-KR';
           recognition.continuous = true;
           recognition.interimResults = true;
-          recognition.maxAlternatives = 1;
 
           recognition.onstart = () => {
             setIsRecording(true);
           };
 
           recognition.onresult = (event) => {
-            let currentTranscript = "";
             for (let i = event.resultIndex; i < event.results.length; ++i) {
               if (event.results[i].isFinal) {
                 const finalPiece = event.results[i][0].transcript.trim();
-                setInputMsg(prev => {
-                  const prefix = prev ? prev + " " : "";
-                  return prefix + finalPiece;
-                });
+                setInputMsg(prev => (prev ? prev + " " : "") + finalPiece);
               }
             }
           };
 
           recognition.onerror = (event) => {
-            console.warn("음성 인식 이벤트 알림:", event.error);
             if (event.error === 'not-allowed') {
-              alert("마이크 사용 권한이 필요합니다. 브라우저 주소창 좌측 자물쇠 아이콘에서 마이크 권한을 허용해 주세요.");
+              alert("마이크 권한을 허용해 주세요.");
               setIsRecording(false);
               isExplicitStopRef.current = true;
             }
           };
 
-          // 30분 이상 유지를 위한 자동 재연결(Keep-Alive) 메커니즘
           recognition.onend = () => {
             if (!isExplicitStopRef.current) {
-              // 브라우저 세션 타임아웃 발생 시 즉시 자동 재연결하여 끊김 없이 30분 이상 계속 작성
-              try {
-                recognition.start();
-              } catch (e) {
-                setTimeout(() => {
-                  if (!isExplicitStopRef.current) {
-                    try { recognition.start(); } catch (err) {}
-                  }
-                }, 300);
-              }
+              try { recognition.start(); } catch (e) {}
             }
           };
 
           recognitionRef.current = recognition;
-          try {
-            recognition.start();
-          } catch (e) {
-            console.error("음성 인식 시작 오류:", e);
-          }
+          try { recognition.start(); } catch (e) {}
         }
       };
 
@@ -355,13 +407,10 @@
         const text = (presetText || inputMsg).trim();
         if (!text || isThinking) return;
 
-        // 전송 시 녹음 종료
         if (isRecording) {
           isExplicitStopRef.current = true;
           setIsRecording(false);
-          if (recognitionRef.current) {
-            recognitionRef.current.stop();
-          }
+          if (recognitionRef.current) recognitionRef.current.stop();
         }
 
         const userMsg = {
@@ -379,17 +428,45 @@
         setTimeout(() => {
           let reply = "";
           if (messages.length === 1) {
-            reply = `정말 좋은 목표네요! 👏\n\n그런데 이 목표를 시작하려고 할 때, 마음에 브레이크가 걸리거나 자꾸 미루게 만드는 **'진짜 속마음'**은 무엇인가요?\n\n솔직한 내 마음을 아래에서 골라보거나 음성 마이크로 편하게 털어놓아 보세요.`;
-            setMyProgress(prev => ({ ...prev, targetGoal: text }));
+            reply = `알려주셔서 고마워요! 👏\n\n오른편 화면을 보시면 **1단계 '소크라테스식 탐색'에 표면 목표가 등록되고 2단계 'DCA'가 실시간으로 조립**되었습니다!\n\n그런데 이 목표를 시작하려고 할 때, 마음에 브레이크가 걸리는 **'진짜 속마음(심리적 저항)'**은 무엇인가요?`;
+            
+            // 실시간 파이프라인 1, 2단계 업데이트
+            setSmsPipeline(prev => ({
+              ...prev,
+              step1: {
+                ...prev.step1,
+                surfaceGoal: text,
+                latentDesire: "내 삶의 주도권 확보 및 성장 실현"
+              },
+              step2: {
+                ...prev.step2,
+                dca: `2026년 확실한 중심 목표: [${text}] 완성`,
+                accumulatedDataCount: prev.step2.accumulatedDataCount + 1
+              }
+            }));
           } else if (messages.length === 3) {
-            reply = `맞아요, 정말 많은 분들이 똑같은 고민을 해요.\n\n완벽하게 잘하고 싶은 마음이 크다 보니 뇌가 너무 큰 에너지가 든다고 착각해서 시작을 망설이는 거예요.\n\n그래서 지금 이 순간, **'마음 편한 3분 초간단 미션'**을 드릴게요!\n\n오늘 딱 3분만 **"${myProgress.easyMission}"** 해보는 거예요. 3분만 하고 바로 그만두셔도 돼요!\n\n상단의 **[⏱️ 3분 타이머]** 탭을 누르고 함께 3분을 시작해 볼까요?`;
-            setMyProgress(prev => ({ ...prev, fearReason: text, lazinessScore: 20 }));
+            reply = `맞아요, 정말 많은 분들이 똑같은 고민을 해요.\n\n완벽하게 잘하고 싶은 마음이 크다 보니 뇌가 너무 큰 에너지가 든다고 착각해서 시작을 망설이는 거예요.\n\n오른편 **3단계 '행동 원칙 및 실행 엔진'에 당신만의 레이 달리오 If-Then 알고리즘과 3분 마이크로 미션이 완성**되었습니다!\n\n오늘 딱 3분만 **"${smsPipeline.step3.crucialAction}"** 해보는 거예요. 상단의 **[⏱️ 3분 타이머]**를 눌러 함께 시작해 볼까요?`;
+            
+            // 실시간 파이프라인 3단계 업데이트
+            setSmsPipeline(prev => ({
+              ...prev,
+              step1: {
+                ...prev.step1,
+                gravityFriction: text
+              },
+              step3: {
+                ...prev.step3,
+                ifThenRule: `IF [${text}] 망설임이 들 때, THEN 비공개 3분 초간단 미션을 먼저 수행한다.`,
+                crucialAction: "스마트폰 메모장을 켜고 아이디어 단어 3개만 적기"
+              }
+            }));
+
             playSound('cheer');
             if (window.confetti) {
               window.confetti({ particleCount: 70, spread: 60, origin: { y: 0.65 } });
             }
           } else {
-            reply = `정말 훌륭해요! 3분의 작은 성공이 뇌를 깨우고 기분 좋은 도파민을 만들어냅니다. 오늘 해낸 성공을 기록장에 잘 보관했어요! 🌟`;
+            reply = `정말 훌륭해요! 3분의 작은 성공이 뇌의 저항을 부수고 기분 좋은 도파민을 만듭니다. 오른편 성공관리시스템에 모든 백데이터가 안전하게 저장되었습니다! 🌟`;
           }
 
           const coachMsg = {
@@ -425,385 +502,343 @@
               <div>
                 <div className="flex items-center gap-2.5">
                   <h1 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-gold-300 tracking-tight">
-                    안티그레비티
+                    안티그레비티 (AG-SMS)
                   </h1>
                   <span className="text-sm font-bold px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                    쉬운 성공 습관
+                    성공관리시스템 구축형
                   </span>
                 </div>
-                <p className="text-sm md:text-base text-slate-300 font-medium">30분 연속 음성 작성 & 3분 성공 실천</p>
+                <p className="text-sm md:text-base text-slate-300 font-medium">소크라테스 탐색 ➔ 데이터 구조화 ➔ 행동 알고리즘 3단계 파이프라인</p>
               </div>
             </div>
 
-            {/* Navigation Tabs */}
-            <nav className="hidden md:flex items-center space-x-2 bg-space-900 border border-slate-800 rounded-2xl p-1.5">
-              {[
-                { id: 'COACH', label: '💬 AI 성공 대화', icon: 'message-circle' },
-                { id: 'TIMER', label: '⏱️ 3분 시작 타이머', icon: 'zap' },
-                { id: 'RECORD', label: '📒 나의 성공 기록장', icon: 'book-open' }
-              ].map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => { setActiveTab(tab.id); playSound('pop'); }}
-                  className={`px-4 py-2.5 rounded-xl text-sm md:text-base font-bold flex items-center gap-2 transition ${
-                    activeTab === tab.id
-                      ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-md shadow-cyan-500/30'
-                      : 'text-slate-300 hover:text-white hover:bg-space-800'
-                  }`}>
-                  <i data-lucide={tab.icon} className="w-5 h-5"></i>
-                  <span>{tab.label}</span>
-                </button>
-              ))}
-            </nav>
+            {/* Split Size Controls */}
+            <div className="hidden lg:flex items-center gap-1.5 bg-space-900 border border-slate-800 rounded-2xl p-1.5 text-xs font-bold text-slate-300">
+              <span className="text-slate-400 px-1.5">화면 분할:</span>
+              <button 
+                onClick={() => setLeftWidthPercent(70)}
+                className={`px-2.5 py-1 rounded-xl transition ${leftWidthPercent === 70 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
+                채팅 70%
+              </button>
+              <button 
+                onClick={() => setLeftWidthPercent(50)}
+                className={`px-2.5 py-1 rounded-xl transition ${leftWidthPercent === 50 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
+                50 : 50
+              </button>
+              <button 
+                onClick={() => setLeftWidthPercent(35)}
+                className={`px-2.5 py-1 rounded-xl transition ${leftWidthPercent === 35 ? 'bg-cyan-500 text-black font-extrabold' : 'hover:text-white'}`}>
+                시스템 65%
+              </button>
+            </div>
 
             {/* Font Controller */}
             <div className="flex items-center space-x-2 bg-space-900 border border-slate-700 rounded-2xl px-3 py-1.5 shadow-md">
               <span className="text-sm font-bold text-slate-300 mr-1 hidden sm:inline">글씨 크기:</span>
-              
               <button
                 onClick={() => changeFontSize(fontSize - 0.2)}
-                title="글씨 작게"
-                className="w-9 h-9 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 font-bold text-base flex items-center justify-center transition border border-slate-700">
+                className="w-9 h-9 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 font-bold text-base flex items-center justify-center border border-slate-700">
                 A-
               </button>
-              
               <span className="text-sm md:text-base font-bold font-mono text-cyan-300 px-2 min-w-[55px] text-center">
                 {Math.round(fontSize * 100)}%
               </span>
-              
               <button
                 onClick={() => changeFontSize(fontSize + 0.2)}
-                title="글씨 크게"
-                className="w-9 h-9 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 font-bold text-base flex items-center justify-center transition border border-slate-700">
+                className="w-9 h-9 rounded-xl bg-space-800 hover:bg-space-700 text-slate-200 font-bold text-base flex items-center justify-center border border-slate-700">
                 A+
               </button>
-
-              <div className="hidden lg:flex items-center gap-1.5 border-l border-slate-800 pl-2 ml-1">
-                {[
-                  { label: '보통', scale: 1.3 },
-                  { label: '크게', scale: 1.6 },
-                  { label: '아주크게', scale: 2.0 }
-                ].map(p => (
-                  <button
-                    key={p.scale}
-                    onClick={() => changeFontSize(p.scale)}
-                    className={`px-2.5 py-1 text-sm font-bold rounded-lg transition ${
-                      Math.abs(fontSize - p.scale) < 0.15 ? 'bg-cyan-400 text-black font-extrabold' : 'text-slate-300 hover:text-white bg-space-800'
-                    }`}>
-                    {p.label}
-                  </button>
-                ))}
-              </div>
             </div>
 
           </header>
 
-          {/* Main Layout */}
-          <div className="flex-1 flex overflow-hidden">
+          {/* Main Split Layout */}
+          <div className="flex-1 flex overflow-hidden relative">
             
-            {/* TAB 1: COACH CHAT WITH 30-MIN VOICE INPUT */}
-            {activeTab === 'COACH' && (
-              <div className="flex-1 flex overflow-hidden">
-                
-                {/* Chat Area */}
-                <section className="flex-1 flex flex-col bg-space-950/80 border-r border-cyan-500/10 relative">
-                  
-                  {/* Status Bar */}
-                  <div className="bg-space-900/95 border-b border-cyan-500/10 px-6 py-3 flex items-center justify-between text-sm md:text-base font-medium">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gold-300 font-bold flex items-center gap-1.5">
-                        🔥 <strong>{myProgress.streakDays}일 연속</strong> 목표 달성 중!
-                      </span>
-                    </div>
-                    <div className="text-slate-300">
-                      참 잘했어요 도장: <strong className="text-cyan-300 text-base">{myProgress.stampCount}개</strong>
-                    </div>
-                  </div>
-
-                  {/* Messages */}
-                  <div className="flex-1 overflow-y-auto p-5 md:p-8 space-y-7">
-                    {messages.map(m => (
-                      <div key={m.id} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
-                        <div className="flex items-center gap-2 mb-1.5 px-1">
-                          <span className="text-sm font-bold text-cyan-400">
-                            {m.sender === 'coach' ? '🌱 안티그레비티 AI 코치' : '👤 나'}
-                          </span>
-                          <span className="text-xs text-slate-400">{m.time}</span>
-                        </div>
-
-                        <div className={`max-w-[94%] md:max-w-[88%] rounded-3xl p-6 leading-relaxed shadow-lg ${
-                          m.sender === 'user'
-                            ? 'bg-gradient-to-r from-cyan-950/90 to-indigo-950/95 border-2 border-cyan-500/40 text-white rounded-tr-none'
-                            : 'glass-box-active text-slate-100 border-l-[6px] border-l-cyan-400 rounded-tl-none'
-                        }`} style={{ fontSize: `${currentFontPx}px`, lineHeight: '1.75' }}>
-                          <p className="whitespace-pre-line font-medium">{m.text}</p>
-                        </div>
-                      </div>
-                    ))}
-
-                    {isThinking && (
-                      <div className="flex items-center space-x-3 text-cyan-300 text-base font-medium p-4 glass-box rounded-2xl w-fit">
-                        <i data-lucide="loader-2" className="w-5 h-5 animate-spin"></i>
-                        <span>마음 편한 방법을 생각하고 있어요...</span>
-                      </div>
-                    )}
-                    <div ref={chatEndRef} />
-                  </div>
-
-                  {/* Quick Goal Buttons (Turn 1) */}
-                  {messages.length === 1 && (
-                    <div className="px-5 md:px-8 py-4 bg-space-900/95 border-t border-cyan-500/20">
-                      <span className="text-sm font-bold text-slate-300 block mb-2.5">👇 아래에서 원하는 목표를 누르거나 마이크로 말씀하세요:</span>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
-                        {EASY_GOALS.map(g => (
-                          <button
-                            key={g.id}
-                            onClick={() => sendChat(g.text)}
-                            className="p-3.5 rounded-2xl bg-space-800 hover:bg-cyan-500/20 text-left border border-slate-700 hover:border-cyan-400 transition shadow-md">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xl">{g.icon}</span>
-                              <span className="text-sm md:text-base font-bold text-slate-100">{g.title}</span>
-                            </div>
-                            <span className="text-xs md:text-sm text-slate-300 truncate block">{g.text}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Quick Reason Buttons (Turn 2) */}
-                  {messages.length === 2 && (
-                    <div className="px-5 md:px-8 py-4 bg-space-900/95 border-t border-cyan-500/20">
-                      <span className="text-sm font-bold text-slate-300 block mb-2.5">👇 왜 시작이 망설여지시나요?</span>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                        {EASY_REASONS.map((r, i) => (
-                          <button
-                            key={i}
-                            onClick={() => sendChat(r.text)}
-                            className="p-4 rounded-2xl bg-space-800 hover:bg-rose-500/20 text-left border border-slate-700 hover:border-rose-400 transition shadow-md">
-                            <span className="text-sm md:text-base font-semibold text-rose-200 block leading-snug">{r.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Voice Recording Live Floating Banner */}
-                  {isRecording && (
-                    <div className="px-6 py-2.5 bg-rose-950/90 border-t border-rose-500/40 flex items-center justify-between text-sm md:text-base font-bold text-rose-200 animate-pulse">
-                      <div className="flex items-center gap-2.5">
-                        <span className="w-3 h-3 rounded-full bg-rose-500 mic-pulse inline-block"></span>
-                        <span>🎙️ 30분 연속 음성 인식 중... (말씀하시면 실시간 입력됩니다)</span>
-                      </div>
-                      <div className="font-mono text-gold-300 bg-space-900 px-3 py-1 rounded-xl border border-rose-500/30">
-                        ⏱️ {formatTime(recordDuration)} / 30:00+
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Input Box with 30-Minute Continuous Mic Button */}
-                  <div className="p-5 md:p-6 bg-space-900/95 border-t border-cyan-500/20">
-                    <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="relative flex items-center gap-3">
-                      
-                      <div className="relative flex-1">
-                        <textarea
-                          rows="2"
-                          value={inputMsg}
-                          onChange={(e) => setInputMsg(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              sendChat();
-                            }
-                          }}
-                          placeholder={isRecording ? "마이크로 편하게 계속 말씀하세요 (실시간 30분 작성 가능)..." : "하고 싶은 말이나 고민을 편하게 적거나 마이크를 누르세요..."}
-                          className={`w-full bg-space-950 border-2 rounded-2xl px-6 py-4 text-white placeholder-slate-400 focus:outline-none resize-none pr-36 font-sans leading-relaxed transition ${
-                            isRecording ? 'border-rose-500 ring-2 ring-rose-500/30' : 'border-slate-700 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400'
-                          }`}
-                          style={{ fontSize: `${currentFontPx}px` }}
-                        />
-
-                        {/* 🎙️ 30분 연속 음성 마이크 버튼 */}
-                        <button
-                          type="button"
-                          onClick={toggleVoiceRecording}
-                          title={isRecording ? "음성 인식 중지" : "30분 연속 음성 작성 시작"}
-                          className={`absolute right-20 bottom-3.5 px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-1.5 transition ${
-                            isRecording
-                              ? 'bg-rose-600 text-white mic-pulse shadow-lg shadow-rose-600/50 hover:bg-rose-500'
-                              : 'bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700 hover:border-cyan-400'
-                          }`}>
-                          <i data-lucide={isRecording ? "mic-off" : "mic"} className="w-5 h-5"></i>
-                          <span className="hidden sm:inline">{isRecording ? "중지" : "음성"}</span>
-                        </button>
-
-                        {/* 전송 버튼 */}
-                        <button
-                          type="submit"
-                          disabled={!inputMsg.trim() || isThinking}
-                          className={`absolute right-3.5 bottom-3.5 px-5 py-3 rounded-xl font-bold text-base flex items-center gap-1.5 transition ${
-                            inputMsg.trim() && !isThinking
-                              ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg shadow-cyan-500/40 hover:scale-105'
-                              : 'bg-space-800 text-slate-500 cursor-not-allowed'
-                          }`}>
-                          <span>전송</span>
-                          <i data-lucide="send" className="w-4 h-4"></i>
-                        </button>
-                      </div>
-
-                    </form>
-                  </div>
-                </section>
-
-                {/* Right Side Panel */}
-                <aside className="hidden lg:flex w-4/12 flex-col bg-space-950/90 p-7 space-y-7 overflow-y-auto">
-                  
-                  {/* Mission Card */}
-                  <div className="glass-box-active rounded-3xl p-7 border-2 border-cyan-400/40 text-center">
-                    <span className="inline-block text-sm font-bold text-cyan-300 bg-cyan-500/20 px-3.5 py-1.5 rounded-full mb-3.5">
-                      ⚡ 부담 없는 오늘의 3분 미션
-                    </span>
-                    <p className="text-lg md:text-xl font-bold text-white mb-5 leading-snug">
-                      "{myProgress.easyMission}"
-                    </p>
-                    <button
-                      onClick={() => { setActiveTab('TIMER'); playSound('pop'); }}
-                      className="w-full py-4 rounded-2xl font-black text-base bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg hover:scale-105 transition flex items-center justify-center gap-2">
-                      <i data-lucide="play" className="w-5 h-5"></i>
-                      <span>지금 3분 타이머 켜기</span>
-                    </button>
-                  </div>
-
-                  {/* 30-Min Voice Assistant Guide */}
-                  <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-2.5">
-                    <span className="text-xs font-bold text-rose-300 block font-mono">🎙️ 30분 연속 음성 작성 팁</span>
-                    <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-                      타이핑할 필요 없이 마이크 버튼을 켜두고 생각을 30분 동안 자유롭게 말씀하세요. 중간에 쉬어가도 자동으로 끊김 없이 글자로 적어줍니다!
-                    </p>
-                  </div>
-
-                  {/* Gauge */}
-                  <div className="glass-box rounded-3xl p-6 border border-slate-800 space-y-3.5">
-                    <div className="flex justify-between items-center text-sm md:text-base font-bold">
-                      <span className="text-slate-300">내 마음의 시작 부담감</span>
-                      <span className="text-cyan-300 font-extrabold">{myProgress.lazinessScore}점 (매우 가벼움)</span>
-                    </div>
-                    <div className="w-full bg-space-900 h-3 rounded-full overflow-hidden border border-slate-800">
-                      <div className="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full transition-all duration-500" style={{ width: `${myProgress.lazinessScore}%` }}></div>
-                    </div>
-                  </div>
-
-                  {/* Badges */}
-                  <div className="glass-box rounded-3xl p-6 border border-slate-800 text-center">
-                    <span className="text-sm font-bold text-slate-300 block mb-3.5">🏅 나의 연속 달성 도장</span>
-                    <div className="flex justify-center gap-2.5 text-3xl">
-                      {['🔥', '⭐', '🏆', '🎯', '👑'].map((icon, i) => (
-                        <div key={i} className="w-12 h-12 rounded-2xl bg-space-900 border border-gold-500/40 flex items-center justify-center shadow-inner">
-                          {icon}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                </aside>
-
-              </div>
-            )}
-
-            {/* TAB 2: 3-MINUTE TIMER */}
-            {activeTab === 'TIMER' && (
-              <section className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-space-950/90">
-                <div className="max-w-lg w-full glass-box-active rounded-3xl p-10 border-2 border-cyan-400/50 shadow-2xl">
-                  
-                  <span className="inline-block text-sm font-bold text-cyan-300 bg-cyan-500/20 px-4 py-1.5 rounded-full mb-4">
-                    ⏱️ 딱 3분만 해보기
+            {/* LEFT PANE: CHAT & VOICE INTERFACE (Resizable) */}
+            <section 
+              className="flex flex-col bg-space-950/80 border-r border-cyan-500/10 relative overflow-hidden"
+              style={{ width: `${leftWidthPercent}%` }}>
+              
+              {/* Status Bar */}
+              <div className="bg-space-900/95 border-b border-cyan-500/10 px-6 py-3 flex items-center justify-between text-sm md:text-base font-medium">
+                <div className="flex items-center gap-2">
+                  <span className="text-gold-300 font-bold flex items-center gap-1.5">
+                    🔥 <strong>{smsPipeline.step3.momentumScore}%</strong> 실행 모멘텀
                   </span>
+                </div>
+                <div className="text-slate-300 text-xs md:text-sm">
+                  백데이터 구축 수: <strong className="text-cyan-300 font-mono text-base">{smsPipeline.step2.accumulatedDataCount}건</strong>
+                </div>
+              </div>
 
-                  <h2 className="text-xl md:text-2xl font-black text-white mb-3 leading-relaxed">
-                    "{myProgress.easyMission}"
-                  </h2>
-                  <p className="text-sm md:text-base text-slate-300 mb-8">
-                    완벽하게 하려고 애쓰지 말고, 3분 동안 이것만 가볍게 해보세요!
-                  </p>
-
-                  {/* Clock */}
-                  <div className="bg-space-900 py-8 rounded-3xl border-2 border-cyan-500/30 mb-8 shadow-inner">
-                    <span className="text-6xl md:text-7xl font-black font-mono text-cyan-300 tracking-wider">
-                      {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-                    </span>
-                  </div>
-
-                  {!timerOn ? (
-                    <button
-                      onClick={() => { setTimerOn(true); playSound('pop'); }}
-                      className="w-full py-4 rounded-2xl font-black text-lg bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 text-white shadow-xl shadow-cyan-500/40 hover:scale-105 transition flex items-center justify-center gap-2">
-                      <i data-lucide="play" className="w-6 h-6"></i>
-                      <span>⏱️ 3분 타이머 시작하기</span>
-                    </button>
-                  ) : (
-                    <div className="flex gap-4">
-                      <button
-                        onClick={() => { setTimerOn(false); playSound('pop'); }}
-                        className="flex-1 py-4 rounded-2xl font-bold text-base bg-space-800 hover:bg-space-700 text-slate-200 border border-slate-700 transition">
-                        잠깐 멈춤
-                      </button>
-                      <button
-                        onClick={() => setTimeLeft(0)}
-                        className="flex-1 py-4 rounded-2xl font-bold text-base bg-emerald-600 hover:bg-emerald-500 text-white transition">
-                        ✓ 다 했어요!
-                      </button>
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-5 md:p-8 space-y-7">
+                {messages.map(m => (
+                  <div key={m.id} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                    <div className="flex items-center gap-2 mb-1.5 px-1">
+                      <span className="text-sm font-bold text-cyan-400">
+                        {m.sender === 'coach' ? '🌱 안티그레비티 AI 코치' : '👤 나'}
+                      </span>
+                      <span className="text-xs text-slate-400">{m.time}</span>
                     </div>
-                  )}
-                </div>
-              </section>
-            )}
 
-            {/* TAB 3: NOTEBOOK */}
-            {activeTab === 'RECORD' && (
-              <section className="flex-1 overflow-y-auto p-6 md:p-12 max-w-5xl mx-auto space-y-7">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h2 className="text-2xl md:text-3xl font-black text-white">📒 나의 성공 기록장</h2>
-                    <p className="text-sm md:text-base text-slate-300 mt-1">내가 원하는 목표와 오늘 해낸 작은 실천들이 저장되어 있어요.</p>
+                    <div className={`max-w-[94%] md:max-w-[88%] rounded-3xl p-6 leading-relaxed shadow-lg ${
+                      m.sender === 'user'
+                        ? 'bg-gradient-to-r from-cyan-950/90 to-indigo-950/95 border-2 border-cyan-500/40 text-white rounded-tr-none'
+                        : 'glass-box-active text-slate-100 border-l-[6px] border-l-cyan-400 rounded-tl-none'
+                    }`} style={{ fontSize: `${currentFontPx}px`, lineHeight: '1.75' }}>
+                      <p className="whitespace-pre-line font-medium">{m.text}</p>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      const doc = `# 🌟 나의 3분 성공 습관 기록장\n\n- 내가 원하는 목표: ${myProgress.targetGoal}\n- 극복한 망설임: ${myProgress.fearReason}\n- 오늘 해낸 3분 미션: ${myProgress.easyMission}\n- 연속 성공 기록: ${myProgress.streakDays}일 연속\n- 모은 성공 도장: ${myProgress.stampCount}개`;
-                      const blob = new Blob([doc], { type: 'text/markdown;charset=utf-8;' });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement('a');
-                      a.href = url;
-                      a.download = `나의_성공기록장.md`;
-                      a.click();
-                      playSound('cheer');
-                    }}
-                    className="px-5 py-3 rounded-xl font-bold text-sm md:text-base bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 flex items-center gap-2 shadow-md">
-                    <i data-lucide="download" className="w-5 h-5"></i>
-                    <span>기록장 파일로 저장하기</span>
-                  </button>
+                ))}
+
+                {isThinking && (
+                  <div className="flex items-center space-x-3 text-cyan-300 text-base font-medium p-4 glass-box rounded-2xl w-fit">
+                    <i data-lucide="loader-2" className="w-5 h-5 animate-spin"></i>
+                    <span>오른편 파이프라인에 데이터를 구조화하고 있어요...</span>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              {/* Turn 1 Quick Goals */}
+              {messages.length === 1 && (
+                <div className="px-5 md:px-8 py-3.5 bg-space-900/95 border-t border-cyan-500/20">
+                  <span className="text-sm font-bold text-slate-300 block mb-2">👇 아래에서 원하는 목표를 누르거나 마이크로 말씀하세요:</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {EASY_GOALS.map(g => (
+                      <button
+                        key={g.id}
+                        onClick={() => sendChat(g.text)}
+                        className="p-3 rounded-2xl bg-space-800 hover:bg-cyan-500/20 text-left border border-slate-700 hover:border-cyan-400 transition">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className="text-lg">{g.icon}</span>
+                          <span className="text-xs md:text-sm font-bold text-slate-100">{g.title}</span>
+                        </div>
+                        <span className="text-xs text-slate-400 truncate block">{g.text}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Turn 2 Quick Reasons */}
+              {messages.length === 2 && (
+                <div className="px-5 md:px-8 py-3.5 bg-space-900/95 border-t border-cyan-500/20">
+                  <span className="text-sm font-bold text-slate-300 block mb-2">👇 왜 시작이 망설여지시나요?</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {EASY_REASONS.map((r, i) => (
+                      <button
+                        key={i}
+                        onClick={() => sendChat(r.text)}
+                        className="p-3.5 rounded-2xl bg-space-800 hover:bg-rose-500/20 text-left border border-slate-700 hover:border-rose-400 transition">
+                        <span className="text-xs md:text-sm font-semibold text-rose-200 block">{r.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Voice Floating Banner */}
+              {isRecording && (
+                <div className="px-6 py-2 bg-rose-950/90 border-t border-rose-500/40 flex items-center justify-between text-xs md:text-sm font-bold text-rose-200 animate-pulse">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 mic-pulse inline-block"></span>
+                    <span>🎙️ 30분 연속 음성 인식 중... (말씀하시면 실시간 입력됩니다)</span>
+                  </div>
+                  <div className="font-mono text-gold-300 bg-space-900 px-2.5 py-0.5 rounded-xl border border-rose-500/30">
+                    ⏱️ {formatTime(recordDuration)} / 30:00+
+                  </div>
+                </div>
+              )}
+
+              {/* Input Box with 30-Min Mic */}
+              <div className="p-5 md:p-6 bg-space-900/95 border-t border-cyan-500/20">
+                <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="relative flex items-center gap-3">
+                  <div className="relative flex-1">
+                    <textarea
+                      rows="2"
+                      value={inputMsg}
+                      onChange={(e) => setInputMsg(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          sendChat();
+                        }
+                      }}
+                      placeholder={isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "하고 싶은 말이나 고민을 적거나 마이크를 누르세요..."}
+                      className="w-full bg-space-950 border-2 border-slate-700 focus:border-cyan-400 rounded-2xl px-6 py-4 text-white placeholder-slate-400 focus:outline-none resize-none pr-36 font-sans leading-relaxed"
+                      style={{ fontSize: `${currentFontPx}px` }}
+                    />
+
+                    {/* Mic Button */}
+                    <button
+                      type="button"
+                      onClick={toggleVoiceRecording}
+                      title={isRecording ? "음성 인식 중지" : "30분 연속 음성 작성 시작"}
+                      className={`absolute right-20 bottom-3.5 px-3 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 transition ${
+                        isRecording
+                          ? 'bg-rose-600 text-white mic-pulse shadow-lg'
+                          : 'bg-space-800 hover:bg-space-700 text-cyan-300 border border-slate-700'
+                      }`}>
+                      <i data-lucide={isRecording ? "mic-off" : "mic"} className="w-4 h-4"></i>
+                      <span className="hidden sm:inline">{isRecording ? "중지" : "음성"}</span>
+                    </button>
+
+                    {/* Send Button */}
+                    <button
+                      type="submit"
+                      disabled={!inputMsg.trim() || isThinking}
+                      className="absolute right-3.5 bottom-3.5 px-4 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg flex items-center gap-1.5">
+                      <span>전송</span>
+                      <i data-lucide="send" className="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+            </section>
+
+            {/* RESIZER DRAG HANDLE */}
+            <div 
+              onMouseDown={handleMouseDown}
+              className={`resizer-bar ${isDragging ? 'dragging' : ''}`}
+              title="좌우 드래그하여 채팅창 폭 조절">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-slate-600 rounded-full"></div>
+            </div>
+
+            {/* RIGHT PANE: 3-STAGE SUCCESS MANAGEMENT PIPELINE (실시간 시각화) */}
+            <aside 
+              className="flex-1 flex flex-col bg-space-950/95 p-6 md:p-8 space-y-6 overflow-y-auto"
+              style={{ width: `${100 - leftWidthPercent}%` }}>
+              
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">📊</span>
+                  <h2 className="text-lg md:text-xl font-black text-white">성공관리시스템 (SMS) 구축 엔진</h2>
+                </div>
+                <button
+                  onClick={() => {
+                    const doc = `# 🌌 [Anti-Gravity SMS 실시간 구축 백데이터]\n\n## 1단계: 소크라테스식 탐색 (질문-성찰)\n- 표면 목표: ${smsPipeline.step1.surfaceGoal}\n- 본원적 욕망: ${smsPipeline.step1.latentDesire}\n- 심리적 저항: ${smsPipeline.step1.gravityFriction}\n\n## 2단계: 데이터 축적 및 패턴화 (구조화)\n- Definite Chief Aim (DCA): ${smsPipeline.step2.dca}\n- 지식 분류: ${smsPipeline.step2.paraCategory}\n\n## 3단계: 행동 원칙 및 실행 엔진 (알고리즘화)\n- Ray Dalio If-Then 원칙: ${smsPipeline.step3.ifThenRule}\n- 당장 착수할 3분 미션: ${smsPipeline.step3.crucialAction}\n- 활성화 에너지 지수: ${smsPipeline.step3.activationEnergy}`;
+                    const blob = new Blob([doc], { type: 'text/markdown;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `성공관리시스템_SMS_백데이터.md`;
+                    a.click();
+                    playSound('cheer');
+                  }}
+                  className="px-3 py-1.5 rounded-xl font-bold text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-400 hover:bg-cyan-500/30 flex items-center gap-1.5 shadow-md">
+                  <i data-lucide="download" className="w-4 h-4"></i>
+                  <span>SMS 파일 백업</span>
+                </button>
+              </div>
+
+              {/* PIPELINE STEP 1: 소크라테스식 탐색 */}
+              <div className="glass-box rounded-3xl p-5 border border-cyan-500/30 space-y-3 relative overflow-hidden pipeline-step-active">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-cyan-300 font-black text-sm">
+                    <span className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-xs">1</span>
+                    <span>1단계: 소크라테스식 탐색 (질문-성찰)</span>
+                  </div>
+                  <span className="text-[11px] font-mono text-cyan-400 bg-space-900 px-2 py-0.5 rounded-full border border-cyan-500/30 animate-pulse">
+                    ● 실시간 마이닝
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="glass-box rounded-3xl p-7 border border-slate-800">
-                    <span className="text-sm font-bold text-cyan-400 block mb-1.5">🎯 내가 이루고 싶은 목표</span>
-                    <p className="text-lg md:text-xl font-bold text-white leading-relaxed">{myProgress.targetGoal}</p>
+                <div className="space-y-2 text-xs md:text-sm">
+                  <div className="p-3 bg-space-900 rounded-xl border border-slate-800">
+                    <span className="text-slate-400 block mb-0.5">🎯 표면적 목표 (Surface Goal)</span>
+                    <p className="font-bold text-slate-100">{smsPipeline.step1.surfaceGoal}</p>
                   </div>
-                  <div className="glass-box rounded-3xl p-7 border border-slate-800">
-                    <span className="text-sm font-bold text-rose-400 block mb-1.5">🛑 내가 극복한 망설임</span>
-                    <p className="text-lg md:text-xl font-medium text-rose-200 leading-relaxed">{myProgress.fearReason}</p>
+
+                  <div className="p-3 bg-space-900 rounded-xl border border-slate-800">
+                    <span className="text-cyan-400 block mb-0.5">💎 본원적 열망 (Core Latent Desire)</span>
+                    <p className="font-semibold text-cyan-200">{smsPipeline.step1.latentDesire}</p>
                   </div>
+
+                  <div className="p-3 bg-space-900 rounded-xl border border-slate-800">
+                    <span className="text-rose-400 block mb-0.5">🛑 내면의 심리적 저항 (Gravity Friction)</span>
+                    <p className="font-medium text-rose-200">{smsPipeline.step1.gravityFriction}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* PIPELINE STEP 2: 데이터 축적 및 패턴화 */}
+              <div className="glass-box rounded-3xl p-5 border border-purple-500/30 space-y-3 relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-purple-300 font-black text-sm">
+                    <span className="w-6 h-6 rounded-full bg-purple-500/20 border border-purple-400 flex items-center justify-center text-xs">2</span>
+                    <span>2단계: 데이터 축적 및 패턴화 (구조화)</span>
+                  </div>
+                  <span className="text-[11px] font-mono text-purple-400 bg-space-900 px-2 py-0.5 rounded-full border border-purple-500/30">
+                    Vault Synced
+                  </span>
                 </div>
 
-                <div className="glass-box-active rounded-3xl p-7 border-2 border-emerald-500/30">
-                  <span className="text-sm font-bold text-emerald-400 block mb-1.5">⚡ 오늘 당장 해낸 3분 미션</span>
-                  <p className="text-xl md:text-2xl font-bold text-emerald-200 leading-relaxed">"{myProgress.easyMission}"</p>
+                <div className="space-y-2 text-xs md:text-sm">
+                  <div className="p-3.5 bg-space-900 rounded-xl border border-purple-500/30">
+                    <span className="text-purple-300 block mb-1 font-bold">🧭 나폴레온 힐 중심 목표 (DCA)</span>
+                    <p className="font-bold text-white leading-snug">{smsPipeline.step2.dca}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="p-2.5 bg-space-900 rounded-xl border border-slate-800">
+                      <span className="text-slate-400 block mb-1">본원 열망 레이더</span>
+                      <span className="text-cyan-300 font-mono font-bold">독립성 92% / 자유 95%</span>
+                    </div>
+                    <div className="p-2.5 bg-space-900 rounded-xl border border-slate-800">
+                      <span className="text-slate-400 block mb-1">PARA 지식 분류</span>
+                      <span className="text-emerald-300 font-mono font-bold">Active Projects</span>
+                    </div>
+                  </div>
                 </div>
-              </section>
-            )}
+              </div>
+
+              {/* PIPELINE STEP 3: 행동 원칙 및 실행 엔진 */}
+              <div className="glass-box-active rounded-3xl p-5 border-2 border-gold-400/50 space-y-3 relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-gold-300 font-black text-sm">
+                    <span className="w-6 h-6 rounded-full bg-gold-500/20 border border-gold-400 flex items-center justify-center text-xs">3</span>
+                    <span>3단계: 행동 원칙 및 실행 엔진 (알고리즘화)</span>
+                  </div>
+                  <span className="text-[11px] font-mono text-gold-300 bg-space-900 px-2 py-0.5 rounded-full border border-gold-500/30">
+                    Engine Ready
+                  </span>
+                </div>
+
+                <div className="space-y-2.5 text-xs md:text-sm">
+                  <div className="p-3.5 bg-space-900 rounded-xl border border-gold-500/40">
+                    <span className="text-gold-400 block mb-1 font-bold">⚡ 레이 달리오 If-Then 의사결정 원칙</span>
+                    <p className="font-bold text-gold-100 leading-snug">{smsPipeline.step3.ifThenRule}</p>
+                  </div>
+
+                  <div className="p-3.5 bg-space-900 rounded-xl border border-cyan-400/40 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-cyan-300 font-bold">🚀 당장 착수할 3분 마이크로 미션</span>
+                      <span className="text-[11px] font-mono text-emerald-300">E_act: 0.85 (최소)</span>
+                    </div>
+                    <p className="font-extrabold text-white text-sm md:text-base leading-snug">"{smsPipeline.step3.crucialAction}"</p>
+                    
+                    <button
+                      onClick={() => {
+                        setTimerOn(true);
+                        playSound('pop');
+                      }}
+                      className="w-full py-2.5 rounded-xl font-black text-xs md:text-sm bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-md hover:scale-105 transition flex items-center justify-center gap-1.5">
+                      <i data-lucide="play" className="w-4 h-4"></i>
+                      <span>3분 실행 타이머 즉시 시작</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </aside>
 
           </div>
 
-          {/* Stamp Popup */}
+          {/* 3-Minute Stamp Complete Modal */}
           {showStampPopup && (
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
               <div className="glass-box-active rounded-3xl max-w-md w-full p-8 text-center border-2 border-cyan-400 shadow-2xl">
@@ -813,7 +848,7 @@
                 <h3 className="text-2xl font-black text-white mb-2">3분 미션 성공 완료!</h3>
                 <p className="text-base text-slate-200 mb-6 leading-relaxed">
                   오늘의 귀차니즘을 멋지게 이겨내셨어요!<br/>
-                  <strong>참 잘했어요 도장 1개</strong>가 추가되었습니다.
+                  오른편 <strong>성공관리시스템 모멘텀 +10%</strong>가 적립되었습니다.
                 </p>
 
                 <button
