@@ -2,8 +2,9 @@
 from __future__ import annotations
 from datetime import datetime, date
 from collections import Counter
+from typing import Dict, Any
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -15,6 +16,7 @@ from app.models import (User, Experiment, Rule, SafetyEvent,
                         Outcome, RuleStatus)
 from app.core import ladder as ladder_mod
 from app.core import designer, miner, sos, safety, manual as manual_mod
+from app.adapters.kakao import handle_kakao_message
 
 app = FastAPI(title="3분 실험실 (AG Lab)", version="2.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -86,7 +88,15 @@ def _open_hypotheses(db: Session, user_id: str) -> list[Rule]:
         .order_by(desc(Rule.evidence_n))))
 
 
-# ---------- 엔드포인트 ----------
+# ---------- 카카오톡 i-Builder 웹훅 엔드포인트 ----------
+@app.post("/api/kakao/webhook")
+async def kakao_webhook(request: Request, db: Session = Depends(get_db)):
+    """카카오톡 오픈빌더 스킬 웹훅 엔드포인트"""
+    payload = await request.json()
+    return handle_kakao_message(db, payload)
+
+
+# ---------- 웹 REST 엔드포인트 ----------
 @app.post("/api/users")
 def create_user(payload: UserCreate, db: Session = Depends(get_db)):
     u = User(nickname=payload.nickname, consent_emotion_log=payload.consent_emotion_log)
