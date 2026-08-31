@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>안티그레비티 - 실시간 성공관리시스템(SMS) 파이프라인 구축</title>
+  <title>안티그레비티 - 4대 소크라테스 질문 기반 성공관리시스템(SMS)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React 18 & ReactDOM -->
@@ -184,20 +184,45 @@
       } catch (e) {}
     };
 
-    const EASY_GOALS = [
-      { id: 'diet', icon: '🏃', title: '운동 & 건강 관리', text: '매일 15분씩 가볍게 운동하고 건강한 몸을 만들고 싶어요.' },
-      { id: 'money', icon: '💰', title: '월 100만원 더 벌기', text: '월급 외에 부업이나 온라인 수익으로 월 100만 원을 더 벌고 싶어요.' },
-      { id: 'study', icon: '📖', title: '자격증 / 시험 합격', text: '미루지 않고 꾸준히 공부해서 목표 시험에 꼭 합격하고 싶어요.' },
-      { id: 'book', icon: '✍️', title: '책 쓰기 / 블로그 시작', text: '나만의 생각과 경험을 정리해서 책이나 블로그를 운영하고 싶어요.' },
-      { id: 'habit', icon: '✨', title: '아침 기상 & 좋은 습관', text: '아침에 상쾌하게 일어나서 나만의 알찬 하루를 시작하고 싶어요.' }
-    ];
+    // 전문적 4대 소크라테스 질문 생성기 (사용자 입력 텍스트 심층 분석)
+    const generateSocratic4Questions = (userText) => {
+      const t = userText.toLowerCase();
 
-    const EASY_REASONS = [
-      { label: '잘하려다 보니 시작이 무서워요', text: '완벽하게 잘하고 싶은 마음에 자꾸 망설이다가 시작을 못 해요.' },
-      { label: '해야 할 양이 너무 많아 막막해요', text: '양이 너무 방대해서 어디서부터 손대야 할지 엄두가 안 나요.' },
-      { label: '퇴근하면 피곤해서 폰만 보게 돼요', text: '하루 종일 일하고 오면 기운이 빠져서 유튜브만 보며 시간을 보내요.' },
-      { label: '실패하면 속상할까 봐 걱정돼요', text: '열심히 했는데 결과가 안 좋을까 봐 불안해서 피하게 돼요.' }
-    ];
+      if (t.includes('책') || t.includes('글') || t.includes('출판') || t.includes('블로그') || t.includes('원고')) {
+        return [
+          { id: 'q1', pillar: '본원적 가치 & 타겟 독자', title: '🎯 핵심 독자 정의', text: `이 책/글을 읽고 인생이 바뀔 '단 한 사람의 구체적인 타겟 독자(Persona)'는 누구인가요?` },
+          { id: 'q2', pillar: '핵심 병목 & 두려움', title: '🛑 집필 마찰 요인', text: `글쓰기를 시작하려 할 때 가장 큰 저항(완벽주의, 목차 막막함, 시간 부족)은 무엇인가요?` },
+          { id: 'q3', pillar: '차별화 레버리지', title: '💎 독점적 통찰', text: `기존 도서/콘텐츠와 차별화되는 당신만의 '실제 경험 수치 및 고유 프레임워크'는 무엇인가요?` },
+          { id: 'q4', pillar: '3분 마이크로 실행', title: '⚡ 즉시 착수 미션', text: `지금 당장 3분 안에 마찰 없이 쓸 수 있는 '프롤로그의 첫 한 줄'은 무엇인가요?` }
+        ];
+      }
+
+      if (t.includes('돈') || t.includes('수익') || t.includes('사업') || t.includes('매출') || t.includes('부업') || t.includes('월')) {
+        return [
+          { id: 'q1', pillar: '수익 모델 & 가치 교환', title: '💰 고객의 지불 가치', text: `고객이 기꺼이 지갑을 열고 돈을 낼 수밖에 없는 '가장 절실한 고통(Pain Point)'은 무엇인가요?` },
+          { id: 'q2', pillar: '핵심 병목 & 전환 마찰', title: '🛑 수익화 병목', text: `첫 1원 또는 첫 결제자를 확보하는 데 가장 큰 장애물(트래픽, 상품성, 설득력)은 무엇인가요?` },
+          { id: 'q3', pillar: '레버리지 & 복리 구조', title: '📈 확장 메커니즘', text: `나의 시간을 직접 쓰지 않고도 24시간 작동할 수 있는 '자동화/시스템 레버리지'는 무엇인가요?` },
+          { id: 'q4', pillar: '3분 마이크로 실행', title: '⚡ 즉시 착수 미션', text: `오늘 당장 3분 안에 잠재 고객에게 보여줄 수 있는 '한 줄 가치 제안(Value Proposition)'은 무엇인가요?` }
+        ];
+      }
+
+      if (t.includes('공부') || t.includes('시험') || t.includes('자격증') || t.includes('합격') || t.includes('영어') || t.includes('개발')) {
+        return [
+          { id: 'q1', pillar: '합격 기준 & 최종 상태', title: '🏆 목표 합격선', text: `합격을 위해 반드시 넘어야 하는 '가장 취약한 과목/파트'와 목표 점수는 몇 점인가요?` },
+          { id: 'q2', pillar: '학습 저항 & 망각 곡선', title: '🛑 학습 몰입 병목', text: `책상 앞에 앉았을 때 스마트폰이나 딴짓으로 빠지게 만드는 '환경적 유혹'은 무엇인가요?` },
+          { id: 'q3', pillar: '메타인지 & 오답 전략', title: '🧠 고효율 학습법', text: `단순 암기가 아닌, 틀린 문제를 시스템적으로 정복할 '나만의 오답 루프(Retrospective Loop)'는 무엇인가요?` },
+          { id: 'q4', pillar: '3분 마이크로 실행', title: '⚡ 즉시 착수 미션', text: `지금 당장 3분 동안 교재를 펴고 확인할 '핵심 개념 1단락'은 무엇인가요?` }
+        ];
+      }
+
+      // 범용 고도화 프레임워크 (목표, 습관, 프로젝트 전반)
+      return [
+        { id: 'q1', pillar: '1. 본원적 열망 (End-State)', title: '🎯 달성 후의 본질적 가치', text: `[${userText.substring(0, 15)}]이(가) 완벽히 실현되었을 때, 삶에서 얻게 되는 '가장 핵심적인 변화'는 무엇인가요?` },
+        { id: 'q2', pillar: '2. 심리적 저항 (Gravity Friction)', title: '🛑 시작을 막는 진짜 이유', text: `이 일을 시작하거나 지속하려 할 때, 무의식적으로 뒤로 미루게 만드는 '마음속 브레이크'는 무엇인가요?` },
+        { id: 'q3', pillar: '3. 전략적 레버리지 (Leverage)', title: '💎 성공 확률을 3배 높일 지렛대', text: `의지력에 의존하지 않고 환경과 시스템으로 자동 실행되게 만들 '단 하나의 안전장치'는 무엇인가요?` },
+        { id: 'q4', pillar: '4. 마이크로 실행 (Runway Action)', title: '⚡ 3분 활성화 미션', text: `실패가 물리적으로 불가능할 정도로 작은, '지금 당장 3분 안에 할 수 있는 최소 행동'은 무엇인가요?` }
+      ];
+    };
 
     function App() {
       // 폰트 크기 배율 (기본 1.6)
@@ -214,8 +239,13 @@
       // 입력창 높이 (줄 수: 2, 4, 6)
       const [inputRows, setInputRows] = useState(2);
 
-      // 하단 선택 옵션 접기/펼치기
-      const [optionsExpanded, setOptionsExpanded] = useState(true);
+      // 하단 4대 질문 패널 접기/펼치기
+      const [questionsExpanded, setQuestionsExpanded] = useState(true);
+
+      // 현재 활성화된 4대 소크라테스 질문 목록
+      const [activeQuestions, setActiveQuestions] = useState(() => {
+        return generateSocratic4Questions("월 100만 원 부업 수익 만들기");
+      });
 
       // --- 성공관리시스템(SMS) 3단계 파이프라인 실시간 데이터 상태 ---
       const [smsPipeline, setSmsPipeline] = useState(() => {
@@ -252,11 +282,11 @@
         {
           id: 1,
           sender: 'coach',
-          text: `안녕하세요! 반갑습니다 😊\n\n저는 당신이 **'귀찮음과 두려움'을 이겨내고 원하는 것을 쉽게 이루도록 돕는 AI 성공 파트너**예요.\n\n대화를 나누거나 **🎙️ 음성 버튼**으로 말씀하시면, **오른쪽 화면에서 '소크라테스 탐색 ➔ 데이터 구조화 ➔ 행동 알고리즘'의 3단계 성공관리시스템(SMS)이 실시간으로 구축**됩니다!\n\n현재 가장 이루고 싶은 목표는 무엇인가요?`,
+          text: `안녕하세요! 반갑습니다 😊\n\n저는 당신의 생각을 분석하여 **최적의 전략 방향성을 설계해 드리는 AI 성공 파트너**예요.\n\n하고 싶은 일, 풀고 싶은 고민, 사업/학습 계획을 적거나 **🎙️ 음성 마이크**로 말씀해 주세요.\n\n말씀해 주신 내용에 맞춰 **구체적이고 전문적인 '4대 소크라테스 방향성 질문'**을 즉시 생성하여 오른편 성공관리시스템(SMS)에 구조화해 드립니다! 👇`,
           time: '지금'
         }
       ]);
-      const [currentStage, setCurrentStage] = useState('GOALS'); // 'GOALS' | 'REASONS' | 'COMPLETED'
+
       const [inputMsg, setInputMsg] = useState("");
       const [isThinking, setIsThinking] = useState(false);
       const chatEndRef = useRef(null);
@@ -275,7 +305,7 @@
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [messages, smsPipeline, leftWidthPercent, fontSize, isRecording, recordDuration, optionsExpanded, inputRows]);
+      }, [messages, smsPipeline, leftWidthPercent, fontSize, isRecording, recordDuration, questionsExpanded, inputRows]);
 
       // 타이머 카운트다운
       useEffect(() => {
@@ -403,6 +433,7 @@
         playSound('pop');
       };
 
+      // 사용자가 챗을 보냈을 때 ➔ 4대 질문 실시간 생성 및 답변 도출
       const sendChat = (presetText) => {
         const text = (presetText || inputMsg).trim();
         if (!text || isThinking) return;
@@ -426,49 +457,31 @@
         setIsThinking(true);
 
         setTimeout(() => {
-          let reply = "";
+          // 4대 소크라테스 전문 질문 동적 생성
+          const questions = generateSocratic4Questions(text);
+          setActiveQuestions(questions);
 
-          if (currentStage === 'GOALS') {
-            reply = `알려주셔서 고마워요! 👏\n\n오른편 화면을 보시면 **1단계 '소크라테스식 탐색'에 표면 목표가 등록되고 2단계 'DCA'가 실시간으로 조립**되었습니다!\n\n그런데 이 목표를 시작하려고 할 때, 마음에 브레이크가 걸리는 **'진짜 속마음(심리적 저항)'**은 무엇인가요?`;
-            setCurrentStage('REASONS');
+          const reply = `말씀해 주신 내용(**"${text.length > 25 ? text.substring(0, 25) + '…' : text}"**)을 정밀 분석하여, 실행 전략의 방향성을 확립할 **'4대 소크라테스 심층 질문'**을 대화창 아래에 준비했습니다!\n\n오른편 화면에는 **1단계 본원적 열망 분석과 2단계 DCA 중심 목표**가 실시간으로 동기화되었습니다.\n\n아래 4개 질문 중 하나를 클릭하거나 자유롭게 생각을 이어서 말씀해 주세요 👇`;
 
-            setSmsPipeline(prev => ({
-              ...prev,
-              step1: {
-                ...prev.step1,
-                surfaceGoal: text,
-                latentDesire: "내 삶의 주도권 확보 및 성장 실현"
-              },
-              step2: {
-                ...prev.step2,
-                dca: `2026년 확실한 중심 목표: [${text}] 완성`,
-                accumulatedDataCount: prev.step2.accumulatedDataCount + 1
-              }
-            }));
-          } else if (currentStage === 'REASONS') {
-            reply = `맞아요, 정말 많은 분들이 똑같은 고민을 해요.\n\n완벽하게 잘하고 싶은 마음이 크다 보니 뇌가 너무 큰 에너지가 든다고 착각해서 시작을 망설이는 거예요.\n\n오른편 **3단계 '행동 원칙 및 실행 엔진'에 당신만의 레이 달리오 If-Then 알고리즘과 3분 마이크로 미션이 완성**되었습니다!\n\n오늘 딱 3분만 **"${smsPipeline.step3.crucialAction}"** 해보는 거예요. 우측 상단의 **[3분 실행 타이머]**를 눌러 함께 시작해 볼까요?`;
-            setCurrentStage('COMPLETED');
-
-            setSmsPipeline(prev => ({
-              ...prev,
-              step1: {
-                ...prev.step1,
-                gravityFriction: text
-              },
-              step3: {
-                ...prev.step3,
-                ifThenRule: `IF [${text}] 망설임이 들 때, THEN 비공개 3분 초간단 미션을 먼저 수행한다.`,
-                crucialAction: "스마트폰 메모장을 켜고 아이디어 단어 3개만 적기"
-              }
-            }));
-
-            playSound('cheer');
-            if (window.confetti) {
-              window.confetti({ particleCount: 70, spread: 60, origin: { y: 0.65 } });
+          // 실시간 파이프라인 동기화
+          setSmsPipeline(prev => ({
+            ...prev,
+            step1: {
+              ...prev.step1,
+              surfaceGoal: text,
+              latentDesire: `${text}을 통한 독점적 가치 실현 및 주도권 확보`
+            },
+            step2: {
+              ...prev.step2,
+              dca: `2026년 전략적 중심 과제: [${text}] 완성`,
+              accumulatedDataCount: prev.step2.accumulatedDataCount + 1
+            },
+            step3: {
+              ...prev.step3,
+              ifThenRule: `IF [${text}] 실행 중 막힘이 발생하면, THEN 최소 단위 마이크로 미션을 우선 수행한다.`,
+              crucialAction: `${text.substring(0, 15)} 관련 최소 실행 단위 3분 시작`
             }
-          } else {
-            reply = `정말 훌륭해요! 3분의 작은 성공이 뇌의 저항을 부수고 기분 좋은 도파민을 만듭니다. 오른편 성공관리시스템에 모든 백데이터가 안전하게 저장되었습니다! 🌟`;
-          }
+          }));
 
           const coachMsg = {
             id: Date.now() + 1,
@@ -479,7 +492,14 @@
 
           setMessages(prev => [...prev, coachMsg]);
           setIsThinking(false);
-        }, 450);
+          playSound('cheer');
+        }, 500);
+      };
+
+      // 4대 질문 중 하나를 클릭하여 즉시 답변 트리거
+      const handleQuestionClick = (q) => {
+        setInputMsg(`[${q.title} 답변]: `);
+        playSound('pop');
       };
 
       const formatTime = (seconds) => {
@@ -505,11 +525,11 @@
                   <h1 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-gold-300 tracking-tight">
                     안티그레비티 (AG-SMS)
                   </h1>
-                  <span className="text-sm font-bold px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                    성공관리시스템 구축형
+                  <span className="text-sm font-bold px-3 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                    4대 질문 방향성 구축형
                   </span>
                 </div>
-                <p className="text-sm md:text-base text-slate-300 font-medium">소크라테스 탐색 ➔ 데이터 구조화 ➔ 행동 알고리즘 3단계 파이프라인</p>
+                <p className="text-sm md:text-base text-slate-300 font-medium">사용자 발언 정밀 분석 ➔ 4대 소크라테스 질문 ➔ 성공관리시스템(SMS) 파이프라인</p>
               </div>
             </div>
 
@@ -556,7 +576,7 @@
           {/* Main Split Layout */}
           <div className="flex-1 flex overflow-hidden relative">
             
-            {/* LEFT PANE: CHAT & VOICE INTERFACE (Resizable Width) */}
+            {/* LEFT PANE: CHAT & 4-QUESTION DIRECTION ENGINE */}
             <section 
               className="flex flex-col bg-space-950/80 border-r border-cyan-500/10 relative overflow-hidden"
               style={{ width: `${leftWidthPercent}%` }}>
@@ -564,8 +584,8 @@
               {/* Status Bar */}
               <div className="bg-space-900/95 border-b border-cyan-500/10 px-6 py-3 flex items-center justify-between text-sm md:text-base font-medium">
                 <div className="flex items-center gap-2">
-                  <span className="text-gold-300 font-bold flex items-center gap-1.5">
-                    🔥 <strong>{smsPipeline.step3.momentumScore}%</strong> 실행 모멘텀
+                  <span className="text-cyan-300 font-bold flex items-center gap-1.5">
+                    🧭 <strong>4대 소크라테스 방향성 엔진</strong> 가동 중
                   </span>
                 </div>
                 
@@ -604,62 +624,53 @@
                 {isThinking && (
                   <div className="flex items-center space-x-3 text-cyan-300 text-base font-medium p-4 glass-box rounded-2xl w-fit">
                     <i data-lucide="loader-2" className="w-5 h-5 animate-spin"></i>
-                    <span>오른편 파이프라인에 데이터를 구조화하고 있어요...</span>
+                    <span>말씀하신 내용에서 4대 방향성 질문과 전략을 도출하고 있어요...</span>
                   </div>
                 )}
                 <div ref={chatEndRef} />
               </div>
 
-              {/* 🌟 대화창 아래(하단)에 위치하는 추천 선택 옵션 영역 (접기/펼치기 가능) */}
-              {currentStage !== 'COMPLETED' && (
-                <div className="px-5 md:px-7 py-3 bg-space-900/95 border-t border-cyan-500/20">
-                  <div className="flex items-center justify-between mb-2">
+              {/* 🌟 4대 소크라테스 전문 질문 패널 (대화창 아래에 배치 & 클릭 시 즉시 답변 연동) */}
+              <div className="px-5 md:px-7 py-3.5 bg-space-900/95 border-t border-cyan-500/20">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
                     <span className="text-xs md:text-sm font-bold text-cyan-300 flex items-center gap-1.5">
-                      <span>👇</span>
-                      {currentStage === 'GOALS' ? '아래 버튼을 누르거나 마이크로 편하게 말씀하세요:' : '왜 시작이 망설여지시나요?'}
+                      <span>💡</span> 내가 말한 내용에 대한 4대 전문 방향성 질문:
                     </span>
-                    <button
-                      onClick={() => setOptionsExpanded(e => !e)}
-                      className="text-xs text-slate-400 hover:text-slate-200 px-2 py-0.5 rounded bg-space-800">
-                      {optionsExpanded ? '접기 ▲' : '펼치기 ▼'}
-                    </button>
+                    <span className="text-[11px] font-mono text-gold-300 bg-space-850 px-2 py-0.5 rounded-full border border-gold-500/30">
+                      Socratic Engine
+                    </span>
                   </div>
-
-                  {optionsExpanded && (
-                    <div>
-                      {currentStage === 'GOALS' && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                          {EASY_GOALS.map(g => (
-                            <button
-                              key={g.id}
-                              onClick={() => sendChat(g.text)}
-                              className="p-3 rounded-2xl bg-space-800 hover:bg-cyan-500/20 text-left border border-slate-700 hover:border-cyan-400 transition shadow-md">
-                              <div className="flex items-center gap-1.5 mb-1">
-                                <span className="text-lg">{g.icon}</span>
-                                <span className="text-xs md:text-sm font-bold text-slate-100">{g.title}</span>
-                              </div>
-                              <span className="text-[11px] md:text-xs text-slate-300 line-clamp-1 block">{g.text}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-
-                      {currentStage === 'REASONS' && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {EASY_REASONS.map((r, i) => (
-                            <button
-                              key={i}
-                              onClick={() => sendChat(r.text)}
-                              className="p-3 rounded-2xl bg-space-800 hover:bg-rose-500/20 text-left border border-slate-700 hover:border-rose-400 transition shadow-md">
-                              <span className="text-xs md:text-sm font-semibold text-rose-200 block">{r.label}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <button
+                    onClick={() => setQuestionsExpanded(e => !e)}
+                    className="text-xs text-slate-400 hover:text-slate-200 px-2 py-0.5 rounded bg-space-800">
+                    {questionsExpanded ? '질문 접기 ▲' : '질문 펼치기 ▼'}
+                  </button>
                 </div>
-              )}
+
+                {questionsExpanded && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                    {activeQuestions.map((q, idx) => (
+                      <button
+                        key={q.id}
+                        onClick={() => handleQuestionClick(q)}
+                        className="p-3.5 rounded-2xl bg-space-800 hover:bg-cyan-500/15 text-left border border-slate-700 hover:border-cyan-400 transition shadow-md group">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-bold text-cyan-300 font-mono">
+                            Q{idx + 1}. {q.title}
+                          </span>
+                          <span className="text-[10px] text-slate-400 px-1.5 py-0.5 rounded bg-space-900">
+                            {q.pillar}
+                          </span>
+                        </div>
+                        <p className="text-xs md:text-sm text-slate-200 font-medium leading-relaxed group-hover:text-white">
+                          {q.text}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               {/* Voice Floating Banner */}
               {isRecording && (
@@ -674,11 +685,11 @@
                 </div>
               )}
 
-              {/* Clean Bottom Input Bar */}
+              {/* Clean Bottom Input Bar with Height Control */}
               <div className="p-5 md:p-6 bg-space-900/95 border-t border-cyan-500/20">
                 <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="flex flex-col gap-3">
                   
-                  {/* Textarea (높이 조절 연동) */}
+                  {/* Textarea */}
                   <textarea
                     rows={inputRows}
                     value={inputMsg}
@@ -689,7 +700,7 @@
                         sendChat();
                       }
                     }}
-                    placeholder={isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "하고 싶은 말이나 목표를 편하게 적거나 아래 음성 마이크를 누르세요..."}
+                    placeholder={isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "하고 싶은 말, 사업 계획, 목표를 자유롭게 적거나 위 질문에 답해보세요..."}
                     className="w-full bg-space-950 border-2 border-slate-700 focus:border-cyan-400 rounded-2xl p-4 text-white placeholder-slate-400 focus:outline-none resize-y font-sans leading-relaxed transition-all"
                     style={{ fontSize: `${currentFontPx}px` }}
                   />
