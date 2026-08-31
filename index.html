@@ -199,46 +199,186 @@
       } catch (e) {}
     };
 
-    // 4대 소크라테스 질문 생성기
+    // 4대 소크라테스 질문 및 4가지 객관식/단축 추천 답변 셋
     const generateSocratic4Questions = (userText) => {
       const t = userText.toLowerCase();
 
       if (t.includes('책') || t.includes('글') || t.includes('출판') || t.includes('블로그') || t.includes('원고')) {
         return [
-          { id: 'q1', slot: 'endState', pillar: 'Tier 1. 잠재의식 & DCA (Need)', title: '🎯 핵심 독자 & 본원적 결핍', text: `이 책/글을 읽고 인생이 바뀔 '단 한 사람의 구체적인 타겟 독자(Persona)'와 그가 겪는 궁극적 결핍은 무엇인가요?` },
-          { id: 'q2', slot: 'bottleneck', pillar: 'Tier 4. 기계 피드백 & 5-Whys', title: '🛑 핵심 마찰 & 실패 편향', text: `글쓰기를 시작하려 할 때 가장 큰 저항(완벽주의, 막막함)은 무엇이며, 과거 유사 실패의 근본 원인(5-Whys)은 무엇인가요?` },
-          { id: 'q3', slot: 'leverage', pillar: 'Tier 2. 지식 구조화 (PARA)', title: '💎 지식 자산 & 레버리지', text: `기존 지식과 차별화되는 당신만의 '구조화된 핵심 경험 데이터 및 PARA Resources 자산'은 무엇인가요?` },
-          { id: 'q4', slot: 'microAction', pillar: 'Tier 3. 수직 정렬 (GTD Runway)', title: '⚡ 3분 물리적 최소 행동', text: `지금 당장 3분 안에 마찰 없이 쓸 수 있는 '프롤로그의 첫 한 줄 (Next Physical Action)'은 무엇인가요?` }
+          {
+            id: 'q1',
+            slot: 'endState',
+            pillar: 'Tier 1. 잠재의식 & DCA (Need)',
+            title: '🎯 핵심 독자 & 본원적 결핍',
+            text: `이 책/글을 읽고 인생이 바뀔 '단 한 사람의 구체적인 타겟 독자(Persona)'와 그가 겪는 궁극적 결핍은 무엇인가요?`,
+            options: [
+              "1인 기업 및 직장인 부업을 준비하며 시작이 막막한 초보 창업자",
+              "자신만의 전문 지식을 책/전자책으로 출판해 브랜드 가치를 높이고 싶은 전문가",
+              "시간에 쫓기며 퇴근 후 지친 일상에서 확실한 루틴과 성과를 내고 싶은 직장인",
+              "어디서도 배울 수 없었던 실전 문제 해결 노하우와 시스템을 갈망하는 독자"
+            ]
+          },
+          {
+            id: 'q2',
+            slot: 'bottleneck',
+            pillar: 'Tier 4. 기계 피드백 & 5-Whys',
+            title: '🛑 핵심 마찰 & 실패 편향',
+            text: `글쓰기를 시작하려 할 때 가장 큰 저항(완벽주의, 막막함)은 무엇이며, 과거 유사 실패의 근본 원인(5-Whys)은 무엇인가요?`,
+            options: [
+              "완벽주의 때문에 첫 페이지를 쓰지 못하고 기획만 수정하다 포기함",
+              "퇴근 후 뇌 피로와 에너지 고갈로 스마트폰 숏폼만 보며 시간을 낭비함",
+              "남들의 평가에 대한 막연한 두려움으로 초안 공개를 꺼리는 심리적 저항",
+              "매일 규칙적으로 작성할 수 있는 강제성 있는 3분 환경 및 알람 시스템 부재"
+            ]
+          },
+          {
+            id: 'q3',
+            slot: 'leverage',
+            pillar: 'Tier 2. 지식 구조화 (PARA)',
+            title: '💎 지식 자산 & 레버리지',
+            text: `기존 지식과 차별화되는 당신만의 '구조화된 핵심 경험 데이터 및 PARA Resources 자산'은 무엇인가요?`,
+            options: [
+              "수년간 현장에서 직접 부딪치며 검증한 실제 실패 사례와 극복 체크리스트",
+              "복잡한 이론을 누구나 3분 안에 따라 할 수 있는 템플릿과 프로세스 맵",
+              "노션과 옵시디언에 체계적으로 아카이빙된 4단계 PARA 지식 데이터베이스",
+              "고객의 진짜 결핍 1가지만을 날카롭게 해결해 주는 핵심 1장 가이드북"
+            ]
+          },
+          {
+            id: 'q4',
+            slot: 'microAction',
+            pillar: 'Tier 3. 수직 정렬 (GTD Runway)',
+            title: '⚡ 3분 물리적 최소 행동',
+            text: `지금 당장 3분 안에 마찰 없이 쓸 수 있는 '프롤로그의 첫 한 줄 (Next Physical Action)'은 무엇인가요?`,
+            options: [
+              "스마트폰 메모장에 책의 핵심 키워드 3단어 적기",
+              "컴퓨터를 켜고 프롤로그 첫 문장: '이 책은 나의 가장 처절했던 실패에서 시작되었다' 입력",
+              "3분 타이머를 켜고 목차 1장의 핵심 소제목 1줄만 작성하기",
+              "나에게 카카오톡으로 오늘 밤 10시까지 쓸 1줄 주제 전송하기"
+            ]
+          }
         ];
       }
 
       if (t.includes('돈') || t.includes('수익') || t.includes('사업') || t.includes('매출') || t.includes('부업') || t.includes('월')) {
         return [
-          { id: 'q1', slot: 'endState', pillar: 'Tier 1. 잠재의식 & DCA (Need)', title: '💰 고객의 지불 가치 (Need)', text: `고객이 기꺼이 지갑을 열고 돈을 낼 수밖에 없는 '가장 절실한 고통(Pain Point)'과 내가 제공할 단 하나의 정량적 가치는?` },
-          { id: 'q2', slot: 'bottleneck', pillar: 'Tier 4. 기계 피드백 & 5-Whys', title: '🛑 수익화 병목 & 편향 진단', text: `첫 1원 또는 첫 결제자를 확보하는 데 가장 큰 장애물은 무엇이며, 이를 차단할 If-Then 방어 원칙은 무엇인가요?` },
-          { id: 'q3', slot: 'leverage', pillar: 'Tier 2. 지식 구조화 (PARA)', title: '📈 확장 엔진 & CODE 증류', text: `나의 시간을 직접 쓰지 않고도 24시간 작동할 수 있는 'PARA Projects 및 자동화 지식 DB'는 무엇인가요?` },
-          { id: 'q4', slot: 'microAction', pillar: 'Tier 3. 수직 정렬 (GTD Runway)', title: '⚡ 3분 물리적 최소 행동', text: `오늘 당장 3분 안에 잠재 고객에게 보여줄 수 있는 '한 줄 가치 제안 (Next Physical Action)'은 무엇인가요?` }
+          {
+            id: 'q1',
+            slot: 'endState',
+            pillar: 'Tier 1. 잠재의식 & DCA (Need)',
+            title: '💰 고객의 지불 가치 (Need)',
+            text: `고객이 기꺼이 지갑을 열고 돈을 낼 수밖에 없는 '가장 절실한 고통(Pain Point)'과 내가 제공할 단 하나의 정량적 가치는?`,
+            options: [
+              "월 100만 원의 지속 가능한 지식 자동화 파이프라인 구축",
+              "복잡한 업무 시간을 80% 단축해 주는 1인 자동화 템플릿 제공",
+              "초보자가 겪는 시행착오 비용 500만 원을 아껴주는 실전 가이드",
+              "퇴근 후 1시간 만으로 첫 유료 고객을 확보하는 액션 로드맵"
+            ]
+          },
+          {
+            id: 'q2',
+            slot: 'bottleneck',
+            pillar: 'Tier 4. 기계 피드백 & 5-Whys',
+            title: '🛑 수익화 병목 & 편향 진단',
+            text: `첫 1원 또는 첫 결제자를 확보하는 데 가장 큰 장애물은 무엇이며, 이를 차단할 If-Then 방어 원칙은 무엇인가요?`,
+            options: [
+              "완벽한 상품을 만들어야 한다는 강박으로 런칭을 무기한 연기함",
+              "고객의 반응이 없을까 봐 두려워 무료 배포조차 시도하지 못함",
+              "홍보 및 마케팅 채널이 없어 내 가치를 세상에 알리지 못함",
+              "하루 3분씩 지속하는 최소 실행 루틴이 없어 흐지부지됨"
+            ]
+          },
+          {
+            id: 'q3',
+            slot: 'leverage',
+            pillar: 'Tier 2. 지식 구조화 (PARA)',
+            title: '📈 확장 엔진 & CODE 증류',
+            text: `나의 시간을 직접 쓰지 않고도 24시간 작동할 수 있는 'PARA Projects 및 자동화 지식 DB'는 무엇인가요?`,
+            options: [
+              "한 번 작성해 두면 지속 판매되는 디지털 PDF 가이드북",
+              "자동 메일링 및 텔레그램 알람으로 배포되는 데일리 인사이트",
+              "고객이 스스로 적용할 수 있는 셀프 워크시트와 체크리스트 패키지",
+              "반복 질문을 1클릭으로 해결해 주는 지식 아카이브 Q&A 볼트"
+            ]
+          },
+          {
+            id: 'q4',
+            slot: 'microAction',
+            pillar: 'Tier 3. 수직 정렬 (GTD Runway)',
+            title: '⚡ 3분 물리적 최소 행동',
+            text: `오늘 당장 3분 안에 잠재 고객에게 보여줄 수 있는 '한 줄 가치 제안 (Next Physical Action)'은 무엇인가요?`,
+            options: [
+              "SNS/블로그에 '제가 겪은 시행착오를 해결한 1가지 원칙' 1줄 포스팅",
+              "지인이나 오픈채팅방에 무료 피드백 나눔 메시지 1통 보내기",
+              "스마트폰 메모장에 상품 핵심 혜택 3가지 불렛포인트 적기",
+              "3분 타이머 켜고 첫 랜딩페이지 헤드카피 1문장 작성하기"
+            ]
+          }
         ];
       }
 
       return [
-        { id: 'q1', slot: 'endState', pillar: 'Tier 1. 잠재의식 & DCA (Need)', title: '🎯 본원적 열망 (Subconscious)', text: `[${userText.substring(0, 15)}]이(가) 완벽히 실현되었을 때, 삶에서 얻게 되는 '가장 핵심적인 변화(Need)'와 명확한 북극성 지표는?` },
-        { id: 'q2', slot: 'bottleneck', pillar: 'Tier 4. 기계 피드백 & 5-Whys', title: '🛑 마찰 요인 & 의사결정 규칙', text: `이 일을 시작하거나 지속하려 할 때 나를 멈추게 만드는 '마찰 요인'과 이를 자동 해결할 If-Then 원칙은 무엇인가요?` },
-        { id: 'q3', slot: 'leverage', pillar: 'Tier 2. 지식 구조화 (PARA)', title: '💎 PARA 지식 자산화 (CODE)', text: `이 목표를 달성하기 위해 장기적으로 구축·관리해야 할 '핵심 프로젝트(Projects)와 지식 자산(Resources)'은 무엇인가요?` },
-        { id: 'q4', slot: 'microAction', pillar: 'Tier 3. 수직 정렬 (GTD Runway)', title: '⚡ 3분 물리적 최소 행동', text: `실패가 물리적으로 불가능할 정도로 작은, '지금 당장 3분 안에 할 수 있는 최소 물리적 행동(Runway Action)'은 무엇인가요?` }
+        {
+          id: 'q1',
+          slot: 'endState',
+          pillar: 'Tier 1. 잠재의식 & DCA (Need)',
+          title: '🎯 본원적 열망 (Subconscious)',
+          text: `[${userText.substring(0, 15)}]이(가) 완벽히 실현되었을 때, 삶에서 얻게 되는 '가장 핵심적인 변화(Need)'와 명확한 북극성 지표는?`,
+          options: [
+            "타인에게 종속되지 않는 시간적·경제적 완전한 자기 결정권 확보",
+            "내 이름으로 된 대체 불가능한 전문 브랜드 및 파이프라인 구축",
+            "매일 성장을 체감하며 불안 없이 주도적으로 살아가는 내적 충만감",
+            "가족과 소중한 사람들에게 최고의 환경과 시간을 선물하는 자유"
+          ]
+        },
+        {
+          id: 'q2',
+          slot: 'bottleneck',
+          pillar: 'Tier 4. 기계 피드백 & 5-Whys',
+          title: '🛑 마찰 요인 & 의사결정 규칙',
+          text: `이 일을 시작하거나 지속하려 할 때 나를 멈추게 만드는 '마찰 요인'과 이를 자동 해결할 If-Then 원칙은 무엇인가요?`,
+          options: [
+            "시작하기 전 과도한 생각과 완벽주의 ➔ 무조건 3분 마이크로 액션 선실행",
+            "동기부여 저하와 피로 ➔ 소셜 알람 파트너에게 즉시 인증 링크 발송",
+            "방향성의 불명확함 ➔ 질문 1번에 답하며 핵심 북극성 지표 1개로 수렴",
+            "시간 부족 ➔ 퇴근 후 무의미한 숏폼 시청 1시간을 대가로 포기"
+          ]
+        },
+        {
+          id: 'q3',
+          slot: 'leverage',
+          pillar: 'Tier 2. 지식 구조화 (PARA)',
+          title: '💎 PARA 지식 자산화 (CODE)',
+          text: `이 목표를 달성하기 위해 장기적으로 구축·관리해야 할 '핵심 프로젝트(Projects)와 지식 자산(Resources)'은 무엇인가요?`,
+          options: [
+            "90일 안에 런칭할 1인 지식 엔터프라이즈 프로젝트",
+            "매일 1줄씩 축적하는 개인화된 의사결정 원칙집(Constitution DB)",
+            "성공 관리 5대 거장 프레임워크를 융합한 개인 운영체제(OS)",
+            "언제든 재활용 가능한 분야별 핵심 레퍼런스 및 템플릿 아카이브"
+          ]
+        },
+        {
+          id: 'q4',
+          slot: 'microAction',
+          pillar: 'Tier 3. 수직 정렬 (GTD Runway)',
+          title: '⚡ 3분 물리적 최소 행동',
+          text: `실패가 물리적으로 불가능할 정도로 작은, '지금 당장 3분 안에 할 수 있는 최소 물리적 행동(Runway Action)'은 무엇인가요?`,
+          options: [
+            "스마트폰 메모장에 오늘 할 가장 중요한 1가지 행동 적기",
+            "3분 타이머 누르고 바로 책상 정리 및 작업 파일 열기",
+            "내가 원하는 미래의 DCA 확약 진술문 소리 내어 1번 읽기",
+            "파트너에게 '오늘 3분 미션 시작합니다' 카톡 한 줄 보내기"
+          ]
+        }
       ];
     };
 
     function App() {
-      // 🌟 [핵심 개선] 대화 워크스페이스 내 각 영역별 독립 글씨 크기 상태
-      // 1. AI 성공코치 & 사용자 말풍선 대화 글씨
+      // 각 영역별 독립 글씨 크기
       const [coachChatFontSize, setCoachChatFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_COACH_CHAT') || '1.15'));
-      // 2. 대화창 (답변 작성 및 음성 텍스트 입력창) 글씨
       const [inputBoxFontSize, setInputBoxFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_INPUT_BOX') || '1.15'));
-      // 3. 4개 계층 심층 성공관리시스템 (Tier 1~4) 글씨
       const [tierSystemFontSize, setTierSystemFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_TIER_SYSTEM') || '1.15'));
 
-      // 기타 탭 글씨 크기
       const [backupFontSize, setBackupFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_BACKUP') || '1.10'));
       const [analysisFontSize, setAnalysisFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ANALYSIS') || '1.20'));
       const [actionFontSize, setActionFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ACTION') || '1.20'));
@@ -247,21 +387,24 @@
       const [leftWidthPercent, setLeftWidthPercent] = useState(() => parseFloat(localStorage.getItem('AG_SPLIT_PERCENT') || '50'));
       const [isDragging, setIsDragging] = useState(false);
       const [inputHeightPx, setInputHeightPx] = useState(90);
-      const [selectedQuestion, setSelectedQuestion] = useState(null);
+      
+      // 🌟 질문 선택 및 질문 기본값 설정 (처음부터 1번 질문 활성화)
+      const [activeQuestions, setActiveQuestions] = useState(() => generateSocratic4Questions("월 100만 원 부업 수익 만들기"));
+      const [selectedQuestion, setSelectedQuestion] = useState(() => activeQuestions[0]);
 
       // 6대 메인 탭: 'WORKSPACE' | 'BACKUP_LOGS' | 'MATRIX' | 'ANALYSIS' | 'ACTION' | 'SOCIAL_ALARM'
       const [mainNavTab, setMainNavTab] = useState('WORKSPACE');
       const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
 
-      // 4단계 계층 시스템 활성 탭 (우측 상단 뷰 필터: 'ALL' | 'TIER1' | 'TIER2' | 'TIER3' | 'TIER4')
+      // 4단계 계층 시스템 활성 탭
       const [tierFilter, setTierFilter] = useState('ALL');
 
-      // 시스템 구축 진행 단계 (1단계 탐색 -> 2단계 체계화 -> 3단계 구체화 -> 4단계 최적화)
+      // 시스템 구축 진행 단계
       const [buildStep, setBuildStep] = useState(() => parseInt(localStorage.getItem('AG_BUILD_STEP') || '2', 10));
       const [buildProgressPercent, setBuildProgressPercent] = useState(() => parseInt(localStorage.getItem('AG_BUILD_PROGRESS') || '72', 10));
       const [dialogueCount, setDialogueCount] = useState(() => parseInt(localStorage.getItem('AG_DIALOGUE_COUNT') || '3', 10));
 
-      // 소셜 알람 설정 상태
+      // 소셜 알람 설정
       const [socialAlarmSettings, setSocialAlarmSettings] = useState(() => {
         const saved = localStorage.getItem('AG_SOCIAL_ALARM_SETTINGS_V1');
         return saved ? JSON.parse(saved) : {
@@ -278,9 +421,6 @@
       });
 
       const [alarmSimulatedAlert, setAlarmSimulatedAlert] = useState(null);
-
-      // 4대 질문 목록
-      const [activeQuestions, setActiveQuestions] = useState(() => generateSocratic4Questions("월 100만 원 부업 수익 만들기"));
 
       // 5대 거장 심층 분석 데이터
       const [fiveMastersData, setFiveMastersData] = useState(() => {
@@ -381,7 +521,7 @@
         {
           id: 1,
           sender: 'coach',
-          text: `안녕하세요! 반갑습니다 😊\n\n대화를 나눌수록 작성자님의 생각이 **[Tier 1 잠재의식 & DCA] ➔ [Tier 2 PARA 지식구조화] ➔ [Tier 3 GTD 수직정렬] ➔ [Tier 4 If-Then 원칙진화]**의 4대 메커니즘으로 체계화되며 명확한 성공시스템으로 진화합니다. 지금 떠오르는 생각을 편하게 적거나 마이크로 말씀해 주세요! 👇`,
+          text: `안녕하세요! 반갑습니다 😊\n\n대화를 나눌수록 작성자님의 생각이 **[Tier 1 잠재의식 & DCA] ➔ [Tier 2 PARA 지식구조화] ➔ [Tier 3 GTD 수직정렬] ➔ [Tier 4 If-Then 원칙진화]**로 체계화됩니다.\n\n👇 아래 추천 답변을 **마우스로 1클릭**하거나, 숫자 **1, 2, 3, 4**를 입력하시면 쉽고 빠르게 성공시스템을 완성할 수 있습니다!`,
           time: '지금'
         }
       ]);
@@ -406,7 +546,6 @@
         localStorage.setItem('AG_DIALOGUE_COUNT', dialogueCount.toString());
         localStorage.setItem('AG_SPLIT_PERCENT', leftWidthPercent.toString());
         
-        // 각각 독립 글씨 크기 로컬 저장
         localStorage.setItem('AG_FONT_COACH_CHAT', coachChatFontSize.toString());
         localStorage.setItem('AG_FONT_INPUT_BOX', inputBoxFontSize.toString());
         localStorage.setItem('AG_FONT_TIER_SYSTEM', tierSystemFontSize.toString());
@@ -532,9 +671,30 @@
         playSound('pop');
       };
 
-      const sendChat = () => {
-        const text = inputMsg.trim();
+      // 🌟 [핵심 기능] 마우스 원클릭으로 추천 답변 선택 및 즉시 전송/채우기
+      const handleSelectOptionPreset = (optionText, autoSubmit = true) => {
+        setInputMsg(optionText);
+        playSound('pop');
+        if (autoSubmit) {
+          executeSend(optionText);
+        }
+      };
+
+      // 실제 전송 실행 로직
+      const executeSend = (rawText) => {
+        let text = (rawText || inputMsg).trim();
         if (!text || isThinking) return;
+
+        // 🌟 [핵심 기능] 숫자(1, 2, 3, 4)만 입력했을 때 현재 선택된 질문의 해당 번호 보기로 자동 변환
+        if (selectedQuestion && selectedQuestion.options) {
+          const numMatch = text.match(/^[1-4]$/);
+          if (numMatch) {
+            const idx = parseInt(numMatch[0], 10) - 1;
+            if (selectedQuestion.options[idx]) {
+              text = selectedQuestion.options[idx];
+            }
+          }
+        }
 
         if (isRecording) {
           isExplicitStopRef.current = true;
@@ -594,7 +754,13 @@
           setBuildProgressPercent(prev => Math.min(100, prev + 10));
 
           setInputMsg("");
-          setSelectedQuestion(null);
+
+          // 다음 번 질문으로 자동 포커스 이동 (1 -> 2 -> 3 -> 4)
+          const currentIdx = activeQuestions.findIndex(q => q.id === qObj.id);
+          if (currentIdx >= 0 && currentIdx < activeQuestions.length - 1) {
+            setSelectedQuestion(activeQuestions[currentIdx + 1]);
+          }
+
           playSound('cheer');
           setIsThinking(true);
 
@@ -602,7 +768,7 @@
             const coachMsg = {
               id: Date.now() + 1,
               sender: 'coach',
-              text: `✨ **"${qObj.title}"**에 대한 답변이 분석되어 **4대 계층 성공관리시스템 (Tier 1~4)**에 즉시 동기화되었습니다! 목표의 명확도가 한 단계 더 진화했습니다 🚀`,
+              text: `✨ **"${qObj.title}"**에 대한 답변 [${text.substring(0, 25)}...]이(가) **4대 계층 성공관리시스템 (Tier 1~4)**에 즉시 반영되었습니다! 다음 질문도 마우스 클릭이나 숫자로 편하게 작성해 보세요 🚀`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
             setMessages(prev => [...prev, coachMsg]);
@@ -642,6 +808,7 @@
         setTimeout(() => {
           const questions = generateSocratic4Questions(text);
           setActiveQuestions(questions);
+          setSelectedQuestion(questions[0]);
 
           setFiveMastersData(prev => ({
             ...prev,
@@ -672,7 +839,7 @@
           const coachMsg = {
             id: Date.now() + 1,
             sender: 'coach',
-            text: `작성자님의 대화 로그가 분석되어 우측의 **[4대 계층 종합 성공시스템]**이 진화되었습니다. 이제 방향성 질문에 답변하여 시스템을 더욱 견고하게 구축해 보세요! 👇`,
+            text: `작성자님의 목표 [${text}]에 맞춰 4대 질문과 객관식 선택지가 생성되었습니다. 아래의 **[1, 2, 3, 4번 추천 답변]**을 마우스로 클릭하거나 숫자를 입력해 보세요! 👇`,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
 
@@ -680,6 +847,10 @@
           setIsThinking(false);
           playSound('pop');
         }, 400);
+      };
+
+      const sendChat = () => {
+        executeSend(inputMsg);
       };
 
       const triggerTestAlarm = (type) => {
@@ -706,7 +877,6 @@
         playSound('cheer');
       };
 
-      // 🌟 각각 독립된 픽셀 폰트 계산
       const coachChatPx = Math.max(14, 16 * coachChatFontSize);
       const inputBoxPx = Math.max(14, 16 * inputBoxFontSize);
       const tierSystemPx = Math.max(14, 15.5 * tierSystemFontSize);
@@ -860,7 +1030,7 @@
                   className="flex flex-col bg-space-950/80 border-r border-cyan-500/10 relative overflow-hidden"
                   style={{ width: `${leftWidthPercent}%` }}>
                   
-                  {/* 🌟 1) AI 성공코치 영역 전용 헤더 & 독립 글씨 조절기 */}
+                  {/* AI 성공코치 대화 헤더 & 독립 글씨 조절기 */}
                   <div className="px-4 py-2 bg-space-900/90 border-b border-cyan-500/20 flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm">🌱</span>
@@ -896,40 +1066,40 @@
                   </div>
 
                   {/* 4대 전문 방향성 질문 카드 바 (세로 4개 1열 리스트) */}
-                  <div className="px-4 py-2.5 bg-space-900/95 border-t border-b border-cyan-500/20 shadow-md max-h-[38%] overflow-y-auto">
-                    <div className="flex items-center justify-between mb-2">
+                  <div className="px-4 py-2 bg-space-900/95 border-t border-b border-cyan-500/20 shadow-md max-h-[35%] overflow-y-auto">
+                    <div className="flex items-center justify-between mb-1.5">
                       <span className="text-xs md:text-sm font-bold text-cyan-300 flex items-center gap-1.5">
-                        <span>🧭</span> 4대 계층 심층 방향성 질문 (클릭하여 아래 답변 작성):
+                        <span>🧭</span> 4대 계층 심층 방향성 질문 (클릭하여 아래 추천답변 선택):
                       </span>
-                      <span className="text-[10px] font-mono text-gold-300 bg-space-850 px-2.5 py-0.5 rounded-full">
-                        Tier 1~4 Deep Probing
+                      <span className="text-[10px] font-mono text-gold-300 bg-space-850 px-2 py-0.5 rounded-full">
+                        Tier 1~4 Probing
                       </span>
                     </div>
 
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-1.5">
                       {activeQuestions.map((q, idx) => {
                         const isSelected = selectedQuestion?.id === q.id;
                         return (
                           <button
                             key={q.id}
                             onClick={() => handleSelectQuestion(q)}
-                            className={`w-full p-3 rounded-xl text-left border transition shadow-sm ${
+                            className={`w-full p-2.5 rounded-xl text-left border transition shadow-sm ${
                               isSelected 
                                 ? 'bg-cyan-500/25 border-cyan-300 ring-2 ring-cyan-400/40' 
                                 : 'bg-space-800 hover:bg-cyan-500/15 border-slate-700 hover:border-cyan-400'
                             }`}>
-                            <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center justify-between mb-0.5">
                               <span className="text-xs md:text-sm font-black text-cyan-300 font-mono flex items-center gap-1.5">
                                 <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-300 inline-flex items-center justify-center text-xs font-bold border border-cyan-500/40">
                                   {idx + 1}
                                 </span>
                                 {q.title}
                               </span>
-                              <span className="text-[10.5px] text-slate-300 px-2 py-0.5 rounded bg-space-900 border border-slate-800 font-medium">
+                              <span className="text-[10.5px] text-slate-300 px-2 py-0.2 rounded bg-space-900 border border-slate-800 font-medium">
                                 {q.pillar}
                               </span>
                             </div>
-                            <p className="text-xs md:text-sm text-slate-100 leading-relaxed font-medium pl-6">
+                            <p className="text-xs text-slate-200 leading-relaxed font-medium pl-6 line-clamp-1">
                               {q.text}
                             </p>
                           </button>
@@ -938,35 +1108,48 @@
                     </div>
                   </div>
 
-                  {selectedQuestion && (
-                    <div className="px-4 py-2 bg-cyan-950/90 border-b border-cyan-400 flex items-center justify-between animate-fadeIn">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base">🎯</span>
-                        <div>
-                          <div className="text-xs font-bold text-cyan-300 font-mono">선택된 질문: {selectedQuestion.title}</div>
-                          <div className="text-xs font-medium text-white">{selectedQuestion.text}</div>
-                        </div>
+                  {/* 🌟 [신규 기능] 마우스 원클릭 추천 답변 & 숫자 단축 선택 바 */}
+                  {selectedQuestion && selectedQuestion.options && (
+                    <div className="px-4 py-2 bg-space-850 border-t border-cyan-400/30 space-y-1.5 animate-fadeIn">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-gold-300 flex items-center gap-1">
+                          <span>💡</span> [질문 {selectedQuestion.title}] 1클릭 마우스 선택 / 숫자(1~4) 작성 추천답변:
+                        </span>
+                        <span className="text-[10.5px] text-slate-400 font-mono">
+                          입력창에 숫자만 쓰고 엔터쳐도 즉시 등록됩니다
+                        </span>
                       </div>
-                      <button onClick={() => setSelectedQuestion(null)} className="text-xs text-slate-400 hover:text-white px-2 py-0.5 rounded bg-space-900 border border-slate-700">취소 ✕</button>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+                        {selectedQuestion.options.map((opt, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => handleSelectOptionPreset(opt, true)}
+                            className="p-2 text-left rounded-xl bg-space-900 hover:bg-cyan-500/20 border border-slate-750 hover:border-cyan-400 text-xs text-slate-100 font-medium transition flex items-start gap-1.5 shadow-sm group">
+                            <span className="w-5 h-5 rounded-md bg-gold-500/20 text-gold-300 font-mono font-black inline-flex items-center justify-center text-xs shrink-0 group-hover:bg-gold-500 group-hover:text-black">
+                              {i + 1}
+                            </span>
+                            <span className="line-clamp-2 leading-relaxed">{opt}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
 
-                  {isRecording && (
-                    <div className="px-5 py-1.5 bg-rose-950/90 border-t border-rose-500/40 flex items-center justify-between text-xs font-bold text-rose-200 animate-pulse">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-rose-500 mic-pulse inline-block"></span>
-                        <span>🎙️ 30분 연속 음성 인식 중... (말씀하시면 실시간 입력됩니다)</span>
-                      </div>
-                      <div className="font-mono text-gold-300 bg-space-900 px-2 py-0.5 rounded-lg border border-rose-500/30">⏱️ {formatTime(recordDuration)} / 30:00+</div>
-                    </div>
-                  )}
-
-                  {/* 🌟 2) 대화창 (입력창) 전용 헤더 및 독립 글씨 조절기 */}
+                  {/* 대화창 (입력창) 헤더 및 독립 글씨 조절기 */}
                   <div className="p-3 bg-space-900/95 border-t border-cyan-500/20 space-y-2">
                     <div className="flex items-center justify-between pb-0.5">
-                      <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1">
-                        <span>✍️</span> 대화창 (답변 작성 및 음성 입력)
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1">
+                          <span>✍️</span> 대화창 (마우스 클릭 또는 숫자 1~4 입력)
+                        </span>
+                        {selectedQuestion && (
+                          <span className="text-[10.5px] text-cyan-300 bg-cyan-950 px-2 py-0.2 rounded border border-cyan-500/40">
+                            선택됨: {selectedQuestion.title}
+                          </span>
+                        )}
+                      </div>
                       <FontController label="대화창 글씨:" value={inputBoxFontSize} onChange={setInputBoxFontSize} />
                     </div>
 
@@ -983,7 +1166,7 @@
                         }}
                         placeholder={
                           selectedQuestion 
-                            ? `[${selectedQuestion.title}]에 대한 나의 생각을 작성하거나 음성으로 말씀하세요...`
+                            ? `위 추천답변을 [마우스 클릭]하거나, 숫자 [1], [2], [3], [4]를 입력 후 엔터를 누르세요 (직접 작성 및 음성도 가능)...`
                             : (isRecording ? "마이크로 편하게 계속 말씀하세요 (30분 연속 작성 가능)..." : "목표나 고민을 편하게 말씀하세요. 대화할수록 목표가 정밀하게 구조화됩니다...")
                         }
                         className="w-full bg-space-950 border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none resize-y font-sans leading-relaxed min-h-[55px] max-h-[350px]"
@@ -1000,6 +1183,22 @@
                             <i data-lucide={isRecording ? "mic-off" : "mic"} className="w-3.5 h-3.5"></i>
                             <span>{isRecording ? "녹음 중지" : "🎙️ 30분 음성"}</span>
                           </button>
+
+                          {/* 숫자 원터치 1, 2, 3, 4 단축 버튼 */}
+                          {selectedQuestion && (
+                            <div className="flex items-center gap-1 bg-space-800 border border-slate-700 rounded-xl p-0.5">
+                              <span className="text-[10px] text-gold-300 font-bold px-1">숫자:</span>
+                              {[1, 2, 3, 4].map(num => (
+                                <button
+                                  key={num}
+                                  type="button"
+                                  onClick={() => handleSelectOptionPreset(selectedQuestion.options[num - 1], true)}
+                                  className="w-6 h-6 rounded-lg bg-space-900 hover:bg-gold-400 hover:text-black text-gold-300 font-black text-xs transition flex items-center justify-center border border-slate-750">
+                                  {num}
+                                </button>
+                              ))}
+                            </div>
+                          )}
 
                           <div className="flex items-center bg-space-800 rounded-xl border border-slate-700 p-0.5 text-xs font-bold text-slate-300">
                             <span className="px-1 text-[10px] text-slate-400">높이:</span>
@@ -1027,7 +1226,7 @@
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-slate-600 rounded-full"></div>
                 </div>
 
-                {/* 🌟 3) 4개 계층 심층 성공시스템 영역 & 전용 독립 글씨 조절기 */}
+                {/* 4개 계층 심층 성공시스템 영역 */}
                 <aside className="flex-1 flex flex-col bg-space-950/95 overflow-hidden" style={{ width: `${100 - leftWidthPercent}%` }}>
                   
                   <div className="h-full p-4 md:p-6 flex flex-col overflow-hidden space-y-3">
