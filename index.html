@@ -4,17 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>안티그레비티 - 5대 성공관리 마스터 시스템 & 소셜 알람 플랫폼</title>
-  <!-- Tailwind CSS -->
+  
+  <!-- Tailwind CSS (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- React 18 & ReactDOM -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <!-- Babel for JSX -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- React 18 & ReactDOM (Cloudflare CDN for 100% Stability) -->
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel for In-Browser JSX Compilation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.10/babel.min.js"></script>
+  
   <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,7 +75,7 @@
     body {
       background-color: #030508;
       color: #F8FAFC;
-      font-family: 'Pretendard', sans-serif;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
       overflow-x: hidden;
       font-size: 15px;
       line-height: 1.6;
@@ -110,18 +113,6 @@
       100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
     }
 
-    .resizer-bar {
-      width: 9px;
-      cursor: col-resize;
-      background: #141E33;
-      transition: background 0.2s ease;
-      position: relative;
-    }
-    .resizer-bar:hover, .resizer-bar.dragging {
-      background: #00F0FF;
-      box-shadow: 0 0 16px #00F0FF;
-    }
-
     .tier-badge {
       font-size: 10px;
       padding: 2px 7px;
@@ -147,7 +138,16 @@
   </style>
 </head>
 <body class="bg-soft-pattern min-h-screen">
-  <div id="root"></div>
+  
+  <!-- 초기 로딩 스피너 (React 렌더링 시 자동 교체됨) -->
+  <div id="root">
+    <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#030508;color:#22D3EE;font-family:sans-serif;">
+      <div style="width:48px;height:48px;border:4px solid #1D2A47;border-top-color:#00F0FF;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px;"></div>
+      <h2 style="font-size:18px;font-weight:bold;margin:0 0 8px 0;">안티그레비티 AG-SMS 로딩 중...</h2>
+      <p style="font-size:13px;color:#94A3B8;margin:0;">5대 성공관리 시스템 데이터를 준비하고 있습니다.</p>
+      <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+    </div>
+  </div>
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
@@ -304,18 +304,35 @@
     };
 
     function App() {
-      // 글씨 크기 상태 관리
-      const [questionsFontSize, setQuestionsFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_QUESTIONS') || '1.10'));
-      const [set2FontSize, setSet2FontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_SET2') || '1.10'));
-      const [inputBoxFontSize, setInputBoxFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_INPUT_BOX') || '1.10'));
-      const [tierSystemFontSize, setTierSystemFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_TIER_SYSTEM') || '1.10'));
-      const [backupFontSize, setBackupFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_BACKUP') || '1.05'));
-      const [analysisFontSize, setAnalysisFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ANALYSIS') || '1.10'));
-      const [actionFontSize, setActionFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ACTION') || '1.15'));
-      const [alarmFontSize, setAlarmFontSize] = useState(() => parseFloat(localStorage.getItem('AG_FONT_ALARM') || '1.10'));
+      // 폰트 크기 상태 관리
+      const [questionsFontSize, setQuestionsFontSize] = useState(() => {
+        try { return parseFloat(localStorage.getItem('AG_FONT_QUESTIONS') || '1.10'); } catch(e) { return 1.10; }
+      });
+      const [set2FontSize, setSet2FontSize] = useState(() => {
+        try { return parseFloat(localStorage.getItem('AG_FONT_SET2') || '1.10'); } catch(e) { return 1.10; }
+      });
+      const [inputBoxFontSize, setInputBoxFontSize] = useState(() => {
+        try { return parseFloat(localStorage.getItem('AG_FONT_INPUT_BOX') || '1.10'); } catch(e) { return 1.10; }
+      });
+      const [tierSystemFontSize, setTierSystemFontSize] = useState(() => {
+        try { return parseFloat(localStorage.getItem('AG_FONT_TIER_SYSTEM') || '1.10'); } catch(e) { return 1.10; }
+      });
+      const [backupFontSize, setBackupFontSize] = useState(() => {
+        try { return parseFloat(localStorage.getItem('AG_FONT_BACKUP') || '1.05'); } catch(e) { return 1.05; }
+      });
+      const [analysisFontSize, setAnalysisFontSize] = useState(() => {
+        try { return parseFloat(localStorage.getItem('AG_FONT_ANALYSIS') || '1.10'); } catch(e) { return 1.10; }
+      });
+      const [actionFontSize, setActionFontSize] = useState(() => {
+        try { return parseFloat(localStorage.getItem('AG_FONT_ACTION') || '1.15'); } catch(e) { return 1.15; }
+      });
+      const [alarmFontSize, setAlarmFontSize] = useState(() => {
+        try { return parseFloat(localStorage.getItem('AG_FONT_ALARM') || '1.10'); } catch(e) { return 1.10; }
+      });
 
-      const [mainNavTab, setMainNavTab] = useState('ACTION'); // 6대 탭
-      const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('DALIO');
+      // 6대 메인 탭 (기본: 대화 워크스페이스)
+      const [mainNavTab, setMainNavTab] = useState('WORKSPACE');
+      const [selectedMasterInAnalysis, setSelectedMasterInAnalysis] = useState('dalio');
 
       // 세트1 / 세트2 접기·펴기 상태
       const [set1Collapsed, setSet1Collapsed] = useState(() => localStorage.getItem('AG_SET1_COLLAPSED') === 'true');
@@ -332,32 +349,46 @@
       const [editingLogId, setEditingLogId] = useState(null);
       const [editingLogText, setEditingLogText] = useState("");
       const [qaBackupLogs, setQaBackupLogs] = useState(() => {
-        const saved = localStorage.getItem('AG_QA_BACKUP_LOGS_V6');
-        return saved ? JSON.parse(saved) : [
-          { id: 1, type: 'GOAL', question: '🎯 나의 핵심 목표', answer: '월 100만 원 부업 수익 만들기', time: '기본 등록' },
-          { id: 2, type: 'QNA', question: '💬 자유 발언 / 목표 기획', answer: '나는 10조 자산가가 되고 싶어.', time: '오후 07:19' },
-          { id: 3, type: 'QNA', question: '🎯 달성 후의 본질적 가치', answer: '나의 경제적 자유를 위해', time: '오후 07:20' }
-        ];
+        try {
+          const saved = localStorage.getItem('AG_QA_BACKUP_LOGS_V6');
+          return saved ? JSON.parse(saved) : [
+            { id: 1, type: 'GOAL', question: '🎯 나의 핵심 목표', answer: '월 100만 원 부업 수익 만들기', time: '기본 등록' },
+            { id: 2, type: 'QNA', question: '💬 자유 발언 / 목표 기획', answer: '나는 10조 자산가가 되고 싶어.', time: '오후 07:19' },
+            { id: 3, type: 'QNA', question: '🎯 달성 후의 본질적 가치', answer: '나의 경제적 자유를 위해', time: '오후 07:20' }
+          ];
+        } catch(e) {
+          return [
+            { id: 1, type: 'GOAL', question: '🎯 나의 핵심 목표', answer: '월 100만 원 부업 수익 만들기', time: '기본 등록' }
+          ];
+        }
       });
 
       // 5대 거장 데이터
       const [fiveMastersData, setFiveMastersData] = useState(() => {
-        const saved = localStorage.getItem('AG_FIVE_MASTERS_V5');
-        if (saved) {
-          try { return { ...MASTER_SYSTEMS_CANONICAL, ...JSON.parse(saved) }; } catch(e) {}
-        }
+        try {
+          const saved = localStorage.getItem('AG_FIVE_MASTERS_V5');
+          if (saved) return { ...MASTER_SYSTEMS_CANONICAL, ...JSON.parse(saved) };
+        } catch(e) {}
         return MASTER_SYSTEMS_CANONICAL;
       });
 
       // 행동연계 탭 전용 상태
       const [inActionScratchpad, setInActionScratchpad] = useState(() => localStorage.getItem('AG_INACTION_SCRATCHPAD') || "");
       const [dailyRoutineChecks, setDailyRoutineChecks] = useState(() => {
-        const saved = localStorage.getItem('AG_DAILY_ROUTINE_CHECKS_V1');
-        return saved ? JSON.parse(saved) : { morning: false, midday: false, night: false };
+        try {
+          const saved = localStorage.getItem('AG_DAILY_ROUTINE_CHECKS_V1');
+          return saved ? JSON.parse(saved) : { morning: false, midday: false, night: false };
+        } catch(e) {
+          return { morning: false, midday: false, night: false };
+        }
       });
       const [masterActionChecks, setMasterActionChecks] = useState(() => {
-        const saved = localStorage.getItem('AG_MASTER_ACTION_CHECKS_V1');
-        return saved ? JSON.parse(saved) : { dalio: false, robbins: false, forte: false, hill: false, gtd: false };
+        try {
+          const saved = localStorage.getItem('AG_MASTER_ACTION_CHECKS_V1');
+          return saved ? JSON.parse(saved) : { dalio: false, robbins: false, forte: false, hill: false, gtd: false };
+        } catch(e) {
+          return { dalio: false, robbins: false, forte: false, hill: false, gtd: false };
+        }
       });
 
       const [timeLeft, setTimeLeft] = useState(180);
@@ -368,45 +399,64 @@
 
       // 소셜 알람 설정 상태
       const [socialAlarmSettings, setSocialAlarmSettings] = useState(() => {
-        const saved = localStorage.getItem('AG_SOCIAL_ALARM_SETTINGS_V4');
-        return saved ? JSON.parse(saved) : {
-          enableEmail: true,
-          userEmail: "my-success@example.com",
-          enableKakao: true,
-          userKakaoPhone: "010-9876-5432",
-          enableTelegram: true,
-          telegramChatId: "@my_daily_action_bot",
-          partnerName: "성공 파트너 (김동반)",
-          partnerPhone: "010-1234-5678",
-          penaltyPerMiss: "10,000",
-          socialPledgeUrl: "https://anti-gravity.app/pledge/user-7ef32b",
-          morningAlarmTime: "07:00",
-          middayAlarmTime: "13:00",
-          nightAlarmTime: "22:00"
-        };
+        try {
+          const saved = localStorage.getItem('AG_SOCIAL_ALARM_SETTINGS_V4');
+          return saved ? JSON.parse(saved) : {
+            enableEmail: true,
+            userEmail: "my-success@example.com",
+            enableKakao: true,
+            userKakaoPhone: "010-9876-5432",
+            enableTelegram: true,
+            telegramChatId: "@my_daily_action_bot",
+            partnerName: "성공 파트너 (김동반)",
+            partnerPhone: "010-1234-5678",
+            penaltyPerMiss: "10,000",
+            socialPledgeUrl: "https://anti-gravity.app/pledge/user-7ef32b",
+            morningAlarmTime: "07:00",
+            middayAlarmTime: "13:00",
+            nightAlarmTime: "22:00"
+          };
+        } catch(e) {
+          return {
+            enableEmail: true,
+            userEmail: "my-success@example.com",
+            enableKakao: true,
+            userKakaoPhone: "010-9876-5432",
+            enableTelegram: true,
+            telegramChatId: "@my_daily_action_bot",
+            partnerName: "성공 파트너 (김동반)",
+            partnerPhone: "010-1234-5678",
+            penaltyPerMiss: "10,000",
+            socialPledgeUrl: "https://anti-gravity.app/pledge/user-7ef32b",
+            morningAlarmTime: "07:00",
+            middayAlarmTime: "13:00",
+            nightAlarmTime: "22:00"
+          };
+        }
       });
 
       const [alarmSimulatedAlert, setAlarmSimulatedAlert] = useState(null);
 
       useEffect(() => {
-        localStorage.setItem('AG_FIVE_MASTERS_V5', JSON.stringify(fiveMastersData));
-        localStorage.setItem('AG_QA_BACKUP_LOGS_V6', JSON.stringify(qaBackupLogs));
-        localStorage.setItem('AG_INACTION_SCRATCHPAD', inActionScratchpad);
-        localStorage.setItem('AG_DAILY_ROUTINE_CHECKS_V1', JSON.stringify(dailyRoutineChecks));
-        localStorage.setItem('AG_MASTER_ACTION_CHECKS_V1', JSON.stringify(masterActionChecks));
-        localStorage.setItem('AG_ACTION_STREAKS', completedStreaks.toString());
-        localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V4', JSON.stringify(socialAlarmSettings));
-        localStorage.setItem('AG_SET1_COLLAPSED', set1Collapsed.toString());
-        localStorage.setItem('AG_SET2_COLLAPSED', set2Collapsed.toString());
-        localStorage.setItem('AG_FONT_QUESTIONS', questionsFontSize.toString());
-        localStorage.setItem('AG_FONT_SET2', set2FontSize.toString());
-        localStorage.setItem('AG_FONT_INPUT_BOX', inputBoxFontSize.toString());
-        localStorage.setItem('AG_FONT_TIER_SYSTEM', tierSystemFontSize.toString());
-        localStorage.setItem('AG_FONT_BACKUP', backupFontSize.toString());
-        localStorage.setItem('AG_FONT_ANALYSIS', analysisFontSize.toString());
-        localStorage.setItem('AG_FONT_ACTION', actionFontSize.toString());
-        localStorage.setItem('AG_FONT_ALARM', alarmFontSize.toString());
-        if (window.lucide) window.lucide.createIcons();
+        try {
+          localStorage.setItem('AG_FIVE_MASTERS_V5', JSON.stringify(fiveMastersData));
+          localStorage.setItem('AG_QA_BACKUP_LOGS_V6', JSON.stringify(qaBackupLogs));
+          localStorage.setItem('AG_INACTION_SCRATCHPAD', inActionScratchpad);
+          localStorage.setItem('AG_DAILY_ROUTINE_CHECKS_V1', JSON.stringify(dailyRoutineChecks));
+          localStorage.setItem('AG_MASTER_ACTION_CHECKS_V1', JSON.stringify(masterActionChecks));
+          localStorage.setItem('AG_ACTION_STREAKS', completedStreaks.toString());
+          localStorage.setItem('AG_SOCIAL_ALARM_SETTINGS_V4', JSON.stringify(socialAlarmSettings));
+          localStorage.setItem('AG_SET1_COLLAPSED', set1Collapsed.toString());
+          localStorage.setItem('AG_SET2_COLLAPSED', set2Collapsed.toString());
+          localStorage.setItem('AG_FONT_QUESTIONS', questionsFontSize.toString());
+          localStorage.setItem('AG_FONT_SET2', set2FontSize.toString());
+          localStorage.setItem('AG_FONT_INPUT_BOX', inputBoxFontSize.toString());
+          localStorage.setItem('AG_FONT_TIER_SYSTEM', tierSystemFontSize.toString());
+          localStorage.setItem('AG_FONT_BACKUP', backupFontSize.toString());
+          localStorage.setItem('AG_FONT_ANALYSIS', analysisFontSize.toString());
+          localStorage.setItem('AG_FONT_ACTION', actionFontSize.toString());
+          localStorage.setItem('AG_FONT_ALARM', alarmFontSize.toString());
+        } catch(e) {}
       }, [fiveMastersData, qaBackupLogs, inActionScratchpad, dailyRoutineChecks, masterActionChecks, completedStreaks, socialAlarmSettings, set1Collapsed, set2Collapsed, questionsFontSize, set2FontSize, inputBoxFontSize, tierSystemFontSize, backupFontSize, analysisFontSize, actionFontSize, alarmFontSize, mainNavTab]);
 
       useEffect(() => {
@@ -1498,7 +1548,12 @@
       );
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    try {
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    } catch(err) {
+      console.error("React render error:", err);
+      document.getElementById('root').innerHTML = '<div style="padding:30px;color:#F43F5E;font-family:sans-serif;"><h3>화면 렌더링 중 오류가 발생했습니다.</h3><p>' + err.message + '</p></div>';
+    }
   </script>
 </body>
 </html>
